@@ -2,6 +2,8 @@
 
 ## About
 
+[TODO]
+
 ## Repository Structure and Access
 
 ```
@@ -38,11 +40,11 @@
 |
 ```
 
-## Writing and Styling Guidelines
+## Guidelines
 
 All important content lives in `src/`. Two main file types exist:
 
-### TeX Files (main thesis files)
+### Writing
 
 - Make sure that we have consistent formatting and notation.
 - Avoid bullet points.
@@ -50,10 +52,12 @@ All important content lives in `src/`. Two main file types exist:
 - Avoid small paragraphs.
 - Good citations. Not too less, not too many.
 
-### Markdown Files (helper files)
+### Style
 
-- No `---` separators.
+- Avoid `---` separators.
 - No non-ASCII characters in the codebase.
 - Everything should be aligned well.
 
-## Taste and Focus
+## Taste
+
+[TODO]
