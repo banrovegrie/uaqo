@@ -9,7 +9,7 @@
 For use in `src/` (main thesis work):
 1. `paper/` and `rough/` are the most important because they are about the published work.
 2. `references/` and `citations/` are important because they are about the references and citations used in the published work. The published work has only one great paper citing it which is the only one there. We can use the bibliography of that to use in our thesis.
-3. `taste/` and `template/` are about the style (think: taste) and template (think: format), respectively, to base thesis on. Mostly we will distill this information here itself under the `Taste and Style` section.
+3. `taste/` is about the style to base thesis on. Mostly we will distill this information here itself under the `Taste and Style` section.
 
 ```
 .
@@ -29,23 +29,13 @@ For use in `src/` (main thesis work):
 |   |-- README.md               Index organized by author with style notes
 |   +-- *.md                    Works and papers in markdown format
 |
-|-- template/               LaTeX template to follow
-|   |-- main.tex                Main TeX file
-|   |-- Makefile                Makefile for building the PDF
-|   |-- chapters/               Chapter TeX files
-|   |-- frontmatter/            Title, abstract, acknowledgements, etc.
-|   |-- images/                 Images used
-|   +-- references/             BibTeX files
-|
 |-- src/                    Main thesis work
 |   |-- main.tex                Main TeX file
 |   |-- Makefile                Makefile for building the PDF
+|   |-- references.bib          BibTeX references
 |   |-- chapters/               Chapter TeX files
 |   |-- frontmatter/            Title, abstract, acknowledgements, etc.
-|   |-- images/                 Images used in entire src
-|   |-- references/             References for the thesis (not paper) as BibTeX files
-|   |-- tests/                  Alignment tests (notation consistency, etc.)
-|   +-- experiments/            New ideas, explorations and rough drafts
+|   +-- images/                 Images used in thesis
 |
 ```
 
@@ -67,9 +57,7 @@ All important content lives in `src/`.
 - Generate a broad chapter index first. Use it as skeleton. Plan the story flow before filling content. Rearranging pieces later is hard.
 - LLMs struggle with technical depth. Feed relevant source content (paper, references) to produce substantive paragraphs.
 - Notation and math hallucination is easy to miss. Import math directly from the published paper where possible. Shantanav catches math errors immediately.
-- Structure is fluid. Plan extensively before committing. Use tests/ for notation consistency checks.
-- Chapter structure follows template/ as seed. Chapters are: Introduction, Background, Primitives, Annealing, Least-Squares, QLSA, Regularized Quantum Regression, Conclusion.
-- Each chapter follows: Introduction (why this matters) -> Preliminaries (if needed) -> Main content -> Summary.
+- Structure is fluid. Plan extensively before committing. Use `tests/` for notation consistency checks and more.
 
 ### Formatting
 

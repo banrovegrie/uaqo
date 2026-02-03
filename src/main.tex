@@ -75,29 +75,12 @@
 
 %% Writing algorithms
 
-\usepackage{algorithm} % captioning 
+\usepackage{algorithm} % captioning
 \usepackage{algpseudocode}
 
 % \def\NoNumber#1{{\def\alglinenumber##1{}\State #1}\addtocounter{ALG@line}{-1}}
 
 \graphicspath{ {images/} }
-
-%%%%% Custom Definitions %%
-\newcommand{\rr}{\mathbb{R}}
-\newcommand{\nn}{\mathbb{N}}
-\newcommand{\cc}{\mathbb{C}}
-\newcommand{\paren}[1]{\left( #1 \right)}
-\newcommand{\parenfl}[1]{\left\{ #1 \right\}}
-\newcommand{\logp}[1]{\log \left( #1 \right)}
-\newcommand{\logpp}[2]{\log^{#1} \left( #2 \right)}
-\newcommand{\maxp}[1]{\max \left( #1 \right)}
-\newcommand{\normalized}[1]{\frac{#1}{\norm{#1}}}
-\newcommand{\ohtilde}[1]{\widetilde{\mathcal{O}}\paren{ #1 }}
-\newcommand{\polylog}[1]{\mathrm{polylog}\paren{#1}}
-\newcommand{\controlled}[1]{C\text{-}#1}
-\def\wmax{{w_\text{max}}}
-\def\wmin{{w_\text{min}}}
-%%%%%%%
 
 
 \begin{document}
@@ -117,7 +100,7 @@
 \chapter*{Abstract}
 \input{frontmatter/abstract.tex}
 
-\chapter*{Acknowledgent}
+\chapter*{Acknowledgement}
 \input{frontmatter/acknowledgement.tex}
 
 \tableofcontents
@@ -126,37 +109,28 @@
 \listoffigures
 
 
-\chapter{Overview and Motivation}
+\chapter{Introduction}
 
 \pagenumbering{arabic}
 
 \input{chapters/introduction.tex}
 
-\chapter{Background}
-\input{chapters/background.tex}
+\chapter{Chapter 2}
+\input{chapters/chapter2.tex}
 
-\chapter{Linear Systems Problem}
-\input{chapters/least-squares.tex}
+\chapter{Chapter 3}
+\input{chapters/chapter3.tex}
 
-\chapter{Algorithmic Primitives}
-\input{chapters/primitives.tex}
+\chapter{Chapter 4}
+\input{chapters/chapter4.tex}
 
-\chapter{Quantum Linear Systems Algorithms}
-\input{chapters/qlsa.tex}
-
-\chapter{Regularized Quantum Regression}
-\input{chapters/regularized-quantum-regression.tex}
-
-% \chapter{Quantum Annealing}
-% \input{chapters/annealing.tex}
-% 
-\chapter{Conclusion and Future Directions}
+\chapter{Conclusion}
 \input{chapters/conclusion.tex}
 
 \appendix
 
 \bibliographystyle{unsrtnat}
-\bibliography{./references/qlsa.bib, references/adiabatic.bib, references/qc-intro.bib}
+\bibliography{references.bib}
 
 \end{document}
 
