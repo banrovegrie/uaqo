@@ -51,7 +51,7 @@ For use in `src/` (main thesis work):
 
 ## Guidelines
 
-All important content lives in `src/`. Two main file types exist:
+All important content lives in `src/`.
 
 ### Writing
 
@@ -61,6 +61,15 @@ All important content lives in `src/`. Two main file types exist:
 - Not a lot of subsections. Chapters and sections best.
 - Avoid small paragraphs.
 - Good citations. Not too less, not too many.
+- Avoid grandesque statements. Keep sentences small and direct.
+- No empty sentences. LLMs produce filler sentences that mean nothing. Every sentence must carry information.
+- Background check previous chapters before introducing definitions. Common repeated terms: hermitian, unitary, spectral gap. Do not re-define.
+- Generate a broad chapter index first. Use it as skeleton. Plan the story flow before filling content. Rearranging pieces later is hard.
+- LLMs struggle with technical depth. Feed relevant source content (paper, references) to produce substantive paragraphs.
+- Notation and math hallucination is easy to miss. Import math directly from the published paper where possible. Shantanav catches math errors immediately.
+- Structure is fluid. Plan extensively before committing. Use tests/ for notation consistency checks.
+- Chapter structure follows template/ as seed. Chapters are: Introduction, Background, Primitives, Annealing, Least-Squares, QLSA, Regularized Quantum Regression, Conclusion.
+- Each chapter follows: Introduction (why this matters) -> Preliminaries (if needed) -> Main content -> Summary.
 
 ### Formatting
 
@@ -70,4 +79,14 @@ All important content lives in `src/`. Two main file types exist:
 
 ## Taste and Style
 
-[TODO]
+Good technical writing makes the reader feel that each idea arrives exactly when needed. Before any definition appears, the reader already wants it. Before any theorem is stated, the reader understands what gap it fills. This is not achieved by announcing "we now motivate X" but by genuinely building the intellectual tension that makes X necessary.
+
+The best thesis writing combines three voices. The Philosopher asks why this matters, what is at stake, what question the reader already cares about. The Engineer states precisely what is achieved and at what cost, with explicit bounds and dependencies. The Teacher guides the reader through unfamiliar territory with patience, using concrete examples that recur throughout. Use all three: philosophical framing in introductions, engineering precision in results, pedagogical care everywhere.
+
+A common failure mode is to name these qualities rather than embody them. Writing "from a philosophical standpoint" or "to provide intuition" signals awareness of good practice while missing the substance. The goal is invisible craft: the reader experiences clarity without noticing technique.
+
+When writing with AI assistance, there is a specific danger. LLMs are trained on text that often fills space rather than carrying meaning. The output will tend toward vague generalities, hedged claims, and filler sentences unless actively counteracted. Every sentence must earn its place. If a sentence can be removed without information loss, remove it.
+
+The thesis concerns adiabatic quantum optimization. Use consistent notation throughout. Import mathematical statements directly from the published paper where possible. Notation and mathematical details are where LLMs fail most invisibly. Shantanav will catch errors here.
+
+For elaboration on specific authors and detailed patterns, see `taste/README.md`.
