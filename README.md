@@ -2,7 +2,7 @@
 
 My master's thesis on Unstructured Adiabatic Quantum Optimization, supervised by Shantanav Chakraborty. Built on the published paper [Unstructured Adiabatic Quantum Optimization: Optimality with Limitations](https://arxiv.org/abs/2411.05736) (Braida, Chakraborty, Chaudhuri, Cunningham, Menavlikar, Novo, Roland, 2025).
 
-The thesis tells a story with the structure of a scientific thriller: we build hope that adiabatic quantum computing can solve hard problems optimally, deliver the technical victory, then reveal the twist, achieving optimality requires solving a problem as hard as the one we started with.
+Make sure that the way this thesis would be written is satisfactory to Prof. Shantanav Chakraborty (check `taste/` for papers by him). We also aim to beat the baseline expectations of the theses we have with us in `taste/` (of Zeeshan Ahmed and Ronald de Wolf).
 
 ## Table of Contents
 
@@ -35,7 +35,7 @@ The thesis tells a story with the structure of a scientific thriller: we build h
 | 2.5 Grover's Algorithm | Unstructured search in O(sqrt(N)). Geometric visualization. Optimality. |
 | 2.6 Amplitude Amplification | Extension to optimization. Finding ground states in the circuit model. |
 
-### Chapter 3: Complexity and Adiabatic Computation
+### Chapter 3: Adiabatic Quantum Computation
 
 | Section | Content |
 |---------|---------|
@@ -109,69 +109,8 @@ This chapter synthesizes results, presents explorations beyond the paper, and id
 |---------|----------|----------------|
 | Introduction | Hook | "This is an interesting question" |
 | Quantum Computation | Preparation | "I understand quantum computation" |
-| Complexity and Adiabatic | Context | "I see complexity and adiabaticity together" |
+| Adiabatic Quantum Computation | Context | "I see how adiabatic computation works" |
 | Spectral Analysis | Technical heart | "The spectrum is tractable" |
 | Optimal Algorithm | Victory | "We achieved optimal speedup!" |
 | Hardness | Twist | "Oh. There's a catch." |
 | Conclusion | Resolution | "The question is deeper than expected" |
-
-## Key Technical Elements
-
-### The Spectral Parameter A_1
-
-The quantity A_1 = (1/N) sum_{k>=1} d_k/(E_k - E_0) is central to everything:
-
-- **Position of avoided crossing**: s* = A_1/(A_1+1)
-- **Window size**: delta_s = (2/(A_1+1)^2) sqrt(d_0 A_2/N)
-- **Minimum gap**: g_min = (2A_1/(A_1+1)) sqrt(d_0/(A_2 N))
-- **Running time**: T depends on A_1, A_2, Delta
-- **Both hardness proofs**: NP and #P reductions via A_1
-
-### The Three-Region Analysis
-
-| Region | Interval | Technique | Gap Bound |
-|--------|----------|-----------|-----------|
-| Left | [0, s* - delta_s) | Variational ansatz | g(s) >= (A_1(A_1+1)/A_2)(s* - s) |
-| Window | [s* - delta_s, s* + delta_s] | Quadratic approximation | g(s) = Theta(g_min) |
-| Right | (s* + delta_s, 1] | Resolvent + Sherman-Morrison | g(s) >= (Delta/30)(s - s_0)/(1 - s_0) |
-
-### The Hardness Gap
-
-| Precision | Complexity | Method |
-|-----------|------------|--------|
-| Required for optimality | ~2^{-n/2} | Unknown |
-| NP-hard threshold | 1/(72(n-1)) | 2 oracle calls solve 3-SAT |
-| #P-hard threshold | 2^{-poly(n)} | poly(n) calls extract degeneracies |
-
-## Running Examples
-
-Three running examples thread through the thesis:
-
-1. **3-SAT**: The canonical NP-complete problem. Used in NP-hardness reduction (Chapter 6).
-2. **Ising Hamiltonian**: H_sigma = sum J_{ij} sigma_z^i sigma_z^j + sum h_j sigma_z^j. The natural problem Hamiltonian.
-3. **Small systems (n=3,4)**: Concrete examples for spectral intuition (Chapter 4 figures).
-
-## Three Voices
-
-- **Philosopher**: Introduction, Conclusion. Why does this matter?
-- **Engineer**: Chapters 4-6 technical sections. Precise bounds, explicit dependencies.
-- **Teacher**: Chapters 2-3, all transitions, intuition checkpoints. Patient exposition.
-
-## What We Validated (from experiments)
-
-| Claim | Status | Evidence |
-|-------|--------|----------|
-| Gap position r* = A_1 for H(r) | VALIDATED | Error < 2% for n = 8, 10, 12 |
-| Gap formula g_min = 2A_1 sqrt(d_0/(A_2 N)) | VALIDATED | Ratio to actual = 1.01-1.02 |
-| Loschmidt echo calibration | FAILED | Multi-level interference destroys signal |
-
-## Critical Source Files
-
-| File | Purpose |
-|------|---------|
-| `paper/v3-quantum.tex` | Final published version. All theorems, proofs, notation. |
-| `rough/main.tex` | Working notes with derivations. |
-| `rough/bibliography.bib` | Complete references. |
-| `rough/images/` | Figures: spectrum, gap bounds. |
-| `taste/README.md` | Writing style guidance. |
-| `src/experiments/RIGOROUS_ASSESSMENT.md` | Honest status of new explorations. |

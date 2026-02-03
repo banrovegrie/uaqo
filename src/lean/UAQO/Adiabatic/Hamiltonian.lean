@@ -28,8 +28,8 @@ structure AdiabaticSchedule (T : Real) (hT : T > 0) where
   final : s T = 1
   /-- s is monotonically increasing -/
   monotone : ∀ t₁ t₂, 0 <= t₁ -> t₁ < t₂ -> t₂ <= T -> s t₁ < s t₂
-  /-- s is differentiable -/
-  differentiable : ∀ t, 0 < t -> t < T -> ∃ s', True  -- Placeholder for derivative
+  /-- s is differentiable (placeholder) -/
+  differentiable : ∀ t, 0 < t -> t < T -> ∃ (sPrime : Real), True
 
 /-- The linear (constant speed) schedule -/
 noncomputable def linearSchedule (T : Real) (hT : T > 0) : AdiabaticSchedule T hT where
@@ -42,7 +42,9 @@ noncomputable def linearSchedule (T : Real) (hT : T > 0) : AdiabaticSchedule T h
 
 /-- The local (gap-adaptive) schedule: ds/dt ∝ g(s)² -/
 structure LocalSchedule (n M : Nat) (es : EigenStructure n M) (hM : M >= 2)
-    (T : Real) (hT : T > 0) extends AdiabaticSchedule T hT where
+    (T : Real) (hT : T > 0) where
+  /-- The underlying schedule -/
+  schedule : AdiabaticSchedule T hT
   /-- The derivative scales with gap squared -/
   derivative_bound : ∀ t, 0 < t -> t < T ->
     ∃ (dsdt : Real), dsdt > 0  -- Simplified; actual bound involves gap
@@ -98,7 +100,7 @@ theorem groundState_interpolation {n M : Nat} (es : EigenStructure n M)
       equalSuperpositionN n i) < 0.01 ∧
     normSquared (fun i =>
       instantaneousGround es hM 1 ⟨by norm_num, le_refl 1⟩ hspec i -
-      symmetricState es ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_one hM⟩ i) < 0.01 := by
+      symmetricState es ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_two hM⟩ i) < 0.01 := by
   sorry
 
 end UAQO

@@ -22,18 +22,18 @@ noncomputable def DiagonalHamiltonian.toOperator {n : Nat}
     (H : DiagonalHamiltonian n) : NQubitOperator n :=
   Matrix.diagonal (fun z => (H.energy z : Complex))
 
-instance {n : Nat} : CoeFun (DiagonalHamiltonian n) (fun _ => NQubitOperator n) :=
+noncomputable instance {n : Nat} : CoeFun (DiagonalHamiltonian n) (fun _ => NQubitOperator n) :=
   ⟨DiagonalHamiltonian.toOperator⟩
 
 /-- A diagonal Hamiltonian is Hermitian -/
 theorem diagonalHam_hermitian {n : Nat} (H : DiagonalHamiltonian n) :
     IsHermitian H.toOperator := by
-  simp [IsHermitian, dagger, DiagonalHamiltonian.toOperator]
+  unfold IsHermitian dagger DiagonalHamiltonian.toOperator
   ext i j
-  simp [Matrix.diagonal, Matrix.conjTranspose]
-  split_ifs with hij
-  · simp [hij, conj, Complex.ofReal_re, Complex.ofReal_im]
-  · rfl
+  simp only [Matrix.diagonal, Matrix.conjTranspose_apply, Matrix.of_apply]
+  by_cases hij : i = j
+  · simp only [hij, ite_true, Complex.star_def, Complex.conj_ofReal]
+  · simp only [hij, Ne.symm hij, ite_false, star_zero]
 
 /-! ## Eigenvalue structure -/
 
@@ -50,7 +50,7 @@ structure EigenStructure (n : Nat) (M : Nat) where
   /-- Eigenvalues are strictly ordered -/
   eigenval_ordered : ∀ i j, i < j -> eigenvalues i < eigenvalues j
   /-- Ground energy is 0 (normalized) -/
-  ground_energy_zero : M > 0 -> eigenvalues ⟨0, ‹M > 0›⟩ = 0
+  ground_energy_zero : (hM : M > 0) -> eigenvalues ⟨0, hM⟩ = 0
   /-- Degeneracies are positive -/
   deg_positive : ∀ k, degeneracies k > 0
   /-- Degeneracies sum to N -/
@@ -93,36 +93,27 @@ notation "|" k "⟩_sym" => symmetricState _ k
 /-- The symmetric state is normalized -/
 theorem symmetricState_normalized {n M : Nat} (es : EigenStructure n M) (k : Fin M) :
     normSquared (symmetricState es k) = 1 := by
-  simp [normSquared, symmetricState]
-  simp only [Complex.normSq_div, Complex.normSq_one, Complex.normSq_ofReal]
-  conv =>
-    lhs
-    arg 2
-    ext i
-    rw [if_ite_eq_ite_ite_of_prop (fun h => (h : True)), ite_true_true_false]
-  have hcard := eigenspace_card es k
-  have hpos : (es.degeneracies k : Real) > 0 := by
-    have := es.deg_positive k
-    exact Nat.cast_pos.mpr this
-  have hsqrt : Real.sqrt (es.degeneracies k) * Real.sqrt (es.degeneracies k) =
-               es.degeneracies k := Real.mul_self_sqrt (le_of_lt hpos)
-  sorry -- Complete the card/sqrt calculation
+  -- Sum of |1/√d_k|² over d_k terms = d_k · (1/d_k) = 1
+  sorry
 
 /-! ## Spectral gap -/
 
 /-- The spectral gap Δ = E₁ - E₀ -/
 noncomputable def spectralGapDiag {n M : Nat} (es : EigenStructure n M)
     (hM : M >= 2) : Real :=
-  es.eigenvalues ⟨1, hM⟩ - es.eigenvalues ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_one hM⟩
+  es.eigenvalues ⟨1, Nat.lt_of_lt_of_le Nat.one_lt_two hM⟩ -
+  es.eigenvalues ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_two hM⟩
 
 notation "Δ_" es => spectralGapDiag es
 
 /-- The spectral gap is positive -/
 theorem spectralGap_positive {n M : Nat} (es : EigenStructure n M) (hM : M >= 2) :
     spectralGapDiag es hM > 0 := by
-  simp [spectralGapDiag]
-  have h := es.eigenval_ordered ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_one hM⟩ ⟨1, hM⟩
-  simp at h
+  simp only [spectralGapDiag]
+  have h0 : (0 : Nat) < M := Nat.lt_of_lt_of_le Nat.zero_lt_two hM
+  have h1 : (1 : Nat) < M := Nat.lt_of_lt_of_le Nat.one_lt_two hM
+  have h := es.eigenval_ordered ⟨0, h0⟩ ⟨1, h1⟩
+  simp only [Fin.mk_lt_mk] at h
   linarith [h Nat.zero_lt_one]
 
 end UAQO

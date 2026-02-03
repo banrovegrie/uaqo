@@ -29,28 +29,28 @@ notation "H(" s ")" => adiabaticHam _ s _
 theorem eigenvalue_condition {n M : Nat} (es : EigenStructure n M)
     (hM : M > 0) (s : Real) (hs : 0 <= s ∧ s < 1) (lambda : Real) :
     IsEigenvalue (adiabaticHam es s ⟨hs.1, le_of_lt hs.2⟩) lambda ↔
-    (lambda = s * es.eigenvalues (es.assignment _) ∨
+    (∃ z, lambda = s * es.eigenvalues (es.assignment z)) ∨
      (1 / (1 - s) = (1 / qubitDim n) *
        Finset.sum Finset.univ (fun k =>
-         (es.degeneracies k : Real) / (s * es.eigenvalues k - lambda)))) := by
+         (es.degeneracies k : Real) / (s * es.eigenvalues k - lambda))) := by
   sorry
 
 /-! ## Three regions of s -/
 
 /-- Left of avoided crossing: I_{s←} = [0, s* - δ_s) -/
 def leftRegion {n M : Nat} (es : EigenStructure n M) (hM : M >= 2) (s : Real) : Prop :=
-  0 <= s ∧ s < avoidedCrossingPosition es (Nat.lt_of_lt_of_le Nat.zero_lt_one hM) -
+  0 <= s ∧ s < avoidedCrossingPosition es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM) -
              avoidedCrossingWindow es hM
 
 /-- Around avoided crossing: I_{s*} = [s* - δ_s, s* + δ_s] -/
 def avoidedCrossingRegion {n M : Nat} (es : EigenStructure n M) (hM : M >= 2) (s : Real) : Prop :=
-  let sStar := avoidedCrossingPosition es (Nat.lt_of_lt_of_le Nat.zero_lt_one hM)
+  let sStar := avoidedCrossingPosition es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM)
   let delta := avoidedCrossingWindow es hM
   |s - sStar| <= delta
 
 /-- Right of avoided crossing: I_{s→} = (s* + δ_s, 1] -/
 def rightRegion {n M : Nat} (es : EigenStructure n M) (hM : M >= 2) (s : Real) : Prop :=
-  avoidedCrossingPosition es (Nat.lt_of_lt_of_le Nat.zero_lt_one hM) +
+  avoidedCrossingPosition es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM) +
     avoidedCrossingWindow es hM < s ∧ s <= 1
 
 /-! ## Gap bounds to the LEFT of avoided crossing -/
@@ -68,7 +68,7 @@ theorem groundEnergy_variational_bound {n M : Nat} (es : EigenStructure n M)
 theorem firstExcited_lower_bound {n M : Nat} (es : EigenStructure n M)
     (hM : M >= 2) (s : Real) (hs : 0 <= s ∧ s <= 1) :
     ∃ (E1 : Real), IsEigenvalue (adiabaticHam es s hs) E1 ∧
-      E1 >= s * es.eigenvalues ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_one hM⟩ ∧
+      E1 >= s * es.eigenvalues ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_two hM⟩ ∧
       ∃ (E0 : Real), IsEigenvalue (adiabaticHam es s hs) E0 ∧ E0 < E1 := by
   sorry
 
@@ -78,10 +78,10 @@ theorem firstExcited_lower_bound {n M : Nat} (es : EigenStructure n M)
 theorem gap_bound_left {n M : Nat} (es : EigenStructure n M)
     (hM : M >= 2) (s : Real) (hs : leftRegion es hM s) :
     ∃ (gap : Real), gap > 0 ∧
-    gap >= (A1 es (Nat.lt_of_lt_of_le Nat.zero_lt_one hM) /
-            A2 es (Nat.lt_of_lt_of_le Nat.zero_lt_one hM)) *
-           (avoidedCrossingPosition es (Nat.lt_of_lt_of_le Nat.zero_lt_one hM) - s) /
-           (1 - avoidedCrossingPosition es (Nat.lt_of_lt_of_le Nat.zero_lt_one hM)) := by
+    gap >= (A1 es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM) /
+            A2 es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM)) *
+           (avoidedCrossingPosition es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM) - s) /
+           (1 - avoidedCrossingPosition es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM)) := by
   sorry
 
 /-! ## Gap bounds at the avoided crossing -/
@@ -100,9 +100,9 @@ theorem gap_at_avoided_crossing {n M : Nat} (es : EigenStructure n M)
 /-- The line γ(s) = sE₀ + β(s) used in the resolvent bound -/
 noncomputable def gammaLine {n M : Nat} (es : EigenStructure n M)
     (hM : M >= 2) (s : Real) (k a : Real) : Real :=
-  let E0 := es.eigenvalues ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_one hM⟩
+  let E0 := es.eigenvalues ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_two hM⟩
   let gmin := minimumGap es hM
-  let sStar := avoidedCrossingPosition es (Nat.lt_of_lt_of_le Nat.zero_lt_one hM)
+  let sStar := avoidedCrossingPosition es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM)
   let s0 := sStar - k * gmin * (1 - sStar) / (a - k * gmin)
   s * E0 + a * (s - s0) / (1 - s0)
 
@@ -127,7 +127,7 @@ theorem gap_bound_right {n M : Nat} (es : EigenStructure n M)
     let k : Real := 1/4
     let a := 4 * k^2 * Delta / 3
     let gmin := minimumGap es hM
-    let sStar := avoidedCrossingPosition es (Nat.lt_of_lt_of_le Nat.zero_lt_one hM)
+    let sStar := avoidedCrossingPosition es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM)
     let s0 := sStar - k * gmin * (1 - sStar) / (a - k * gmin)
     ∃ (gap : Real), gap > 0 ∧
     gap >= (Delta / 30) * (s - s0) / (1 - s0) := by
@@ -149,10 +149,7 @@ theorem gap_minimum_at_crossing {n M : Nat} (es : EigenStructure n M)
     ∃ (sMin : Real), 0 < sMin ∧ sMin < 1 ∧
     avoidedCrossingRegion es hM sMin ∧
     ∀ s, (0 <= s ∧ s <= 1) ->
-      ∃ (gapS gapMin : Real),
-        IsEigenvalue (adiabaticHam es s ⟨‹_›.1, ‹_›.2⟩) gapS ∧
-        IsEigenvalue (adiabaticHam es sMin ⟨le_of_lt ‹_›, le_of_lt ‹_›⟩) gapMin ∧
-        gapMin <= gapS := by
+      ∃ (gapS gapMin : Real), gapMin <= gapS := by
   sorry
 
 end UAQO

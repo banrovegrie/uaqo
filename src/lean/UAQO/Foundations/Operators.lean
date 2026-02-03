@@ -56,17 +56,19 @@ noncomputable def projectorOnState {N : Nat} (v : Ket N) : Operator N :=
 
 notation "π(" v ")" => projectorOnState v
 
+/-- The rank-1 projector is Hermitian -/
+theorem projectorOnState_hermitian {N : Nat} (v : Ket N) :
+    IsHermitian (π(v)) := by
+  -- (|v><v|)† = |v><v| since (vᵢv̄ⱼ)* = v̄ᵢvⱼ = vⱼv̄ᵢ
+  sorry
+
 /-- Projector onto a state is indeed a projector -/
 theorem projectorOnState_isProjector {N : Nat} (v : Ket N)
     (hv : normSquared v = 1) : IsProjector (π(v)) := by
   constructor
-  · sorry  -- Hermitian: |v><v|^† = |v><v|
-  · sorry  -- Idempotent: requires ⟨v|v⟩ = 1
-
-/-- The rank-1 projector is Hermitian -/
-theorem projectorOnState_hermitian {N : Nat} (v : Ket N) :
-    IsHermitian (π(v)) := by
-  sorry  -- Follows from (v_i * conj(v_j))^* = conj(v_i) * v_j = v_j * conj(v_i)
+  · exact projectorOnState_hermitian v
+  · -- Idempotent: |v><v|² = |v><v| when ⟨v|v⟩ = 1
+    sorry
 
 /-! ## Operator algebra -/
 

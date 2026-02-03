@@ -15,7 +15,7 @@ namespace UAQO
 def qubitDim (n : Nat) : Nat := 2^n
 
 instance qubitDim_neZero (n : Nat) : NeZero (qubitDim n) :=
-  ⟨Nat.ne_of_gt (Nat.pow_pos (by norm_num : 0 < 2) n)⟩
+  ⟨Nat.ne_of_gt (Nat.pow_pos (by norm_num : 0 < 2))⟩
 
 /-- A qubit is a 2-dimensional quantum system -/
 abbrev Qubit := Ket 2
@@ -98,6 +98,6 @@ def natToBitstring (n : Nat) (k : Fin (2^n)) : Fin n -> Bool :=
 /-- Convert an n-bit bitstring to a natural number -/
 def bitstringToNat (n : Nat) (bits : Fin n -> Bool) : Fin (2^n) :=
   ⟨Finset.sum Finset.univ (fun i => if bits i then 2^i.val else 0),
-   by sorry⟩  -- Bounded by geometric series
+   by sorry⟩  -- Bounded by 2^0 + ... + 2^(n-1) = 2^n - 1 < 2^n
 
 end UAQO

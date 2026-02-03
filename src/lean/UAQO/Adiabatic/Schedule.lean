@@ -28,11 +28,11 @@ noncomputable def totalTimeIntegral {n M : Nat} (es : EigenStructure n M)
 /-- The time can be computed in three parts (left, crossing, right) -/
 noncomputable def totalTimeThreeParts {n M : Nat} (es : EigenStructure n M)
     (hM : M >= 2) (hspec : spectralCondition es hM 0.02 (by norm_num)) : Real :=
-  let sStar := avoidedCrossingPosition es (Nat.lt_of_lt_of_le Nat.zero_lt_one hM)
+  let sStar := avoidedCrossingPosition es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM)
   let deltaS := avoidedCrossingWindow es hM
   let gmin := minimumGap es hM
-  let A1_val := A1 es (Nat.lt_of_lt_of_le Nat.zero_lt_one hM)
-  let A2_val := A2 es (Nat.lt_of_lt_of_le Nat.zero_lt_one hM)
+  let A1_val := A1 es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM)
+  let A2_val := A2 es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM)
   let Delta := spectralGapDiag es hM
   -- Time in each region (simplified bounds)
   let T_left := A2_val / (A1_val^2 * (1 - sStar)) -- ∫_{0}^{s*-δ} g(s)^{-2} ds
@@ -61,7 +61,7 @@ noncomputable def buildPiecewiseSchedule {n M : Nat} (es : EigenStructure n M)
     (hM : M >= 2) (T : Real) (hT : T > 0)
     (pw : PiecewiseSchedule n M es hM T hT) : AdiabaticSchedule T hT where
   s := fun t =>
-    let sStar := avoidedCrossingPosition es (Nat.lt_of_lt_of_le Nat.zero_lt_one hM)
+    let sStar := avoidedCrossingPosition es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM)
     let deltaS := avoidedCrossingWindow es hM
     if t <= pw.T_left then
       -- Linear from 0 to s* - δ

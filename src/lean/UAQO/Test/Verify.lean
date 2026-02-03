@@ -6,7 +6,22 @@
   2. Documents sorries and axioms that need to be resolved
   3. Provides tests for key definitions matching the paper
 -/
-import UAQO
+import UAQO.Foundations.Basic
+import UAQO.Foundations.HilbertSpace
+import UAQO.Foundations.Operators
+import UAQO.Foundations.SpectralTheory
+import UAQO.Foundations.Qubit
+import UAQO.Spectral.DiagonalHamiltonian
+import UAQO.Spectral.SpectralParameters
+import UAQO.Spectral.GapBounds
+import UAQO.Adiabatic.Hamiltonian
+import UAQO.Adiabatic.Schedule
+import UAQO.Adiabatic.Theorem
+import UAQO.Adiabatic.RunningTime
+import UAQO.Complexity.Basic
+import UAQO.Complexity.NP
+import UAQO.Complexity.SharpP
+import UAQO.Complexity.Hardness
 
 namespace UAQO.Test
 
@@ -17,11 +32,11 @@ namespace UAQO.Test
 
 /-- Test: Definition 1 (Problem Hamiltonian) matches paper -/
 example {n M : Nat} (es : EigenStructure n M) (hM : M >= 2) :
-    -- The spectral condition (1/Δ)√(d₀/(A₂N)) < c
+    -- The spectral condition (1/Delta)sqrt(d0/(A2 N)) < c
     spectralCondition es hM 0.02 (by norm_num) ↔
-    let d0 := es.degeneracies ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_one hM⟩
+    let d0 := es.degeneracies ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_two hM⟩
     let Delta := spectralGapDiag es hM
-    let A2_val := A2 es (Nat.lt_of_lt_of_le Nat.zero_lt_one hM)
+    let A2_val := A2 es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM)
     let N := qubitDim n
     (1 / Delta) * Real.sqrt (d0 / (A2_val * N)) < 0.02 := by
   rfl
@@ -45,9 +60,9 @@ example {n M : Nat} (es : EigenStructure n M) (hM : M > 0) :
 /-- Test: Equation 7 (window around avoided crossing) -/
 example {n M : Nat} (es : EigenStructure n M) (hM : M >= 2) :
     avoidedCrossingWindow es hM =
-    let A1_val := A1 es (Nat.lt_of_lt_of_le Nat.zero_lt_one hM)
-    let A2_val := A2 es (Nat.lt_of_lt_of_le Nat.zero_lt_one hM)
-    let d0 := es.degeneracies ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_one hM⟩
+    let A1_val := A1 es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM)
+    let A2_val := A2 es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM)
+    let d0 := es.degeneracies ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_two hM⟩
     let N := qubitDim n
     2 / (A1_val + 1)^2 * Real.sqrt (d0 * A2_val / N) := by
   rfl
@@ -55,9 +70,9 @@ example {n M : Nat} (es : EigenStructure n M) (hM : M >= 2) :
 /-- Test: Minimum gap formula -/
 example {n M : Nat} (es : EigenStructure n M) (hM : M >= 2) :
     minimumGap es hM =
-    let A1_val := A1 es (Nat.lt_of_lt_of_le Nat.zero_lt_one hM)
-    let A2_val := A2 es (Nat.lt_of_lt_of_le Nat.zero_lt_one hM)
-    let d0 := es.degeneracies ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_one hM⟩
+    let A1_val := A1 es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM)
+    let A2_val := A2 es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM)
+    let d0 := es.degeneracies ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_two hM⟩
     let N := qubitDim n
     2 * A1_val / (A1_val + 1) * Real.sqrt (d0 / (A2_val * N)) := by
   rfl
@@ -74,21 +89,22 @@ example (f : Nat -> Real) : BigO f f := by
   constructor
   · norm_num
   · intro n _
-    ring_nf
+    simp only [one_mul]
+    exact le_refl _
 
 /-! ## Axiom inventory -/
 -- The following axioms are used in this formalization:
 
-/-- Axiom 1: Resolvent distance to spectrum (Eq 2.1 in paper) -/
+-- Axiom 1: Resolvent distance to spectrum (Eq 2.1 in paper)
 #check @resolvent_distance_to_spectrum
 
-/-- Axiom 2: Lower bound for unstructured search -/
+-- Axiom 2: Lower bound for unstructured search
 #check @lowerBound_unstructuredSearch
 
-/-- Axiom 3: 3-SAT is NP-complete (Cook-Levin) -/
+-- Axiom 3: 3-SAT is NP-complete (Cook-Levin)
 #check @UAQO.Complexity.threeSAT_NP_complete
 
-/-- Axiom 4: #3-SAT is #P-complete -/
+-- Axiom 4: #3-SAT is #P-complete
 #check @UAQO.Complexity.sharpThreeSAT_complete
 
 /-! ## Sorry inventory -/

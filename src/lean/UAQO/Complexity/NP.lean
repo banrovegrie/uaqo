@@ -70,7 +70,10 @@ theorem P_subset_NP (prob : DecisionProblem) (h : InP prob) : InNP prob := by
     cert_bound := by
       use 1
       intro x cert _
-      sorry  -- Certificate not needed for P problems
+      -- The verify function ignores cert, so any accepted cert works
+      -- We just need cert.length <= x.length^1 + 1, which holds since
+      -- in the complete case we use [] which has length 0
+      sorry
     sound := by
       intro x cert h
       exact (hdecide x).mp h

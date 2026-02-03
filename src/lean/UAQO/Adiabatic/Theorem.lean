@@ -34,7 +34,7 @@ structure SchrodingerEvolution (n : Nat) (T : Real) (hT : T > 0) where
 -/
 noncomputable def adiabaticError {n M : Nat} (es : EigenStructure n M)
     (hM : M >= 2) (T : Real) (hT : T > 0) (s : Real) (hs : 0 <= s ∧ s <= 1) : Real :=
-  let d : Real := es.degeneracies ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_one hM⟩
+  let d : Real := es.degeneracies ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_two hM⟩
   let C : Real := 1  -- Universal constant
   -- Simplified bound
   C / T * d / (minimumGap es hM)^2

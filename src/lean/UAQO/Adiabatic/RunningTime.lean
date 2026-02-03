@@ -16,10 +16,10 @@ namespace UAQO
 /-- The running time formula from Theorem 1 -/
 noncomputable def runningTime {n M : Nat} (es : EigenStructure n M)
     (hM : M >= 2) (epsilon : Real) (heps : epsilon > 0) : Real :=
-  let A1_val := A1 es (Nat.lt_of_lt_of_le Nat.zero_lt_one hM)
-  let A2_val := A2 es (Nat.lt_of_lt_of_le Nat.zero_lt_one hM)
+  let A1_val := A1 es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM)
+  let A2_val := A2 es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM)
   let Delta := spectralGapDiag es hM
-  let d0 := es.degeneracies ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_one hM⟩
+  let d0 := es.degeneracies ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_two hM⟩
   let N := qubitDim n
   (1 / epsilon) * (Real.sqrt A2_val / (A1_val^2 * Delta^2)) * Real.sqrt (N / d0)
 
@@ -33,10 +33,10 @@ theorem mainResult1 {n M : Nat} (es : EigenStructure n M)
     (hspec : spectralCondition es hM 0.02 (by norm_num))
     (epsilon : Real) (heps : 0 < epsilon ∧ epsilon < 1) :
     let T := runningTime es hM epsilon heps.1
-    let d0 := es.degeneracies ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_one hM⟩
+    let d0 := es.degeneracies ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_two hM⟩
     ∃ (evol : SchrodingerEvolution n T (by sorry)),
       let finalState := evol.psi T
-      let groundSym := symmetricState es ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_one hM⟩
+      let groundSym := symmetricState es ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_two hM⟩
       normSquared (fun i => finalState i - groundSym i) <= epsilon := by
   sorry
 
@@ -47,11 +47,11 @@ theorem runningTime_ising {n M : Nat} (es : EigenStructure n M)
     (hM : M >= 2)
     (hspec : spectralCondition es hM 0.02 (by norm_num))
     (hIsing : ∃ (p : Nat), (spectralGapDiag es hM) >= 1 / n^p)
-    (hA1bound : ∃ (q : Nat), A1 es (Nat.lt_of_lt_of_le Nat.zero_lt_one hM) <= n^q)
-    (hA2bound : ∃ (r : Nat), A2 es (Nat.lt_of_lt_of_le Nat.zero_lt_one hM) <= n^r)
+    (hA1bound : ∃ (q : Nat), A1 es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM) <= n^q)
+    (hA2bound : ∃ (r : Nat), A2 es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM) <= n^r)
     (epsilon : Real) (heps : 0 < epsilon ∧ epsilon < 1) :
     let T := runningTime es hM epsilon heps.1
-    let d0 := es.degeneracies ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_one hM⟩
+    let d0 := es.degeneracies ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_two hM⟩
     let N := qubitDim n
     ∃ (polyFactor : Nat -> Real),
       (∃ deg, ∀ m, polyFactor m <= m^deg) ∧
@@ -75,7 +75,7 @@ theorem runningTime_matches_lower_bound {n M : Nat} (es : EigenStructure n M)
     (hIsing : ∃ (p : Nat), (spectralGapDiag es hM) >= 1 / n^p)
     (epsilon : Real) (heps : 0 < epsilon ∧ epsilon < 1) :
     let T := runningTime es hM epsilon heps.1
-    let d0 := es.degeneracies ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_one hM⟩
+    let d0 := es.degeneracies ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_two hM⟩
     ∃ (c₁ c₂ : Real) (polylog : Nat -> Real),
       c₁ > 0 ∧ c₂ > 0 ∧
       (∀ m, polylog m <= (Real.log m)^10) ∧
@@ -91,11 +91,11 @@ theorem finalState_symmetric {n M : Nat} (es : EigenStructure n M)
     (hM : M >= 2)
     (hspec : spectralCondition es hM 0.02 (by norm_num))
     (epsilon : Real) (heps : 0 < epsilon ∧ epsilon < 1) :
-    let groundSym := symmetricState es ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_one hM⟩
+    let groundSym := symmetricState es ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_two hM⟩
     normSquared groundSym = 1 ∧
     (∀ (z : Fin (qubitDim n)),
-      es.assignment z = ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_one hM⟩ ->
-      groundSym z = 1 / Complex.ofReal (Real.sqrt (es.degeneracies ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_one hM⟩))) := by
+      es.assignment z = ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_two hM⟩ ->
+      groundSym z = 1 / Complex.ofReal (Real.sqrt (es.degeneracies ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_two hM⟩))) := by
   sorry
 
 /-! ## Measurement and solution extraction -/
@@ -108,9 +108,9 @@ theorem measurement_yields_groundstate {n M : Nat} (es : EigenStructure n M)
     let T := runningTime es hM epsilon heps.1
     ∀ (finalState : NQubitState n),
       (normSquared (fun i =>
-        finalState i - symmetricState es ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_one hM⟩ i) <= epsilon) ->
+        finalState i - symmetricState es ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_two hM⟩ i) <= epsilon) ->
       -- Probability of measuring a ground state
-      Finset.sum (eigenspace es ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_one hM⟩)
+      Finset.sum (eigenspace es ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_two hM⟩)
         (fun z => Complex.normSq (finalState z)) >= 1 - 2 * epsilon := by
   sorry
 

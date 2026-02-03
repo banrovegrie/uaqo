@@ -33,4 +33,5 @@ import UAQO.Complexity.NP
 import UAQO.Complexity.SharpP
 import UAQO.Complexity.Hardness
 
-import UAQO.Test.Verify
+-- Note: Test.Verify is not imported here to avoid circular dependency
+-- Build tests separately with `lake build UAQO.Test.Verify`

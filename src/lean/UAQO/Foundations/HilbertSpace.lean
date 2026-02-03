@@ -31,10 +31,11 @@ notation "⟪" v ", " w "⟫" => innerProd v w
 /-- Inner product is conjugate symmetric -/
 theorem innerProd_conj_symm {N : Nat} (v w : Fin N -> Complex) :
     innerProd v w = conj (innerProd w v) := by
-  simp only [innerProd, conj, map_sum, starRingEnd_apply]
+  simp only [innerProd, conj]
+  rw [map_sum (starRingEnd Complex)]
   congr 1
   ext i
-  simp only [star_mul', star_star]
+  rw [(starRingEnd Complex).map_mul, starRingEnd_self_apply]
   ring
 
 /-- The norm squared of a vector -/
@@ -69,10 +70,27 @@ notation "|" v "⟩⟨" w "|" => outerProd v w
 noncomputable def compBasisState (N : Nat) [NeZero N] (k : Fin N) : Fin N -> Complex :=
   fun i => if i = k then 1 else 0
 
-/-- Computational basis states are orthonormal -/
+/-- Computational basis states are orthonormal.
+    Proof: ⟨j|k⟩ = Σᵢ δᵢⱼ δᵢₖ = δⱼₖ -/
 theorem compBasis_orthonormal (N : Nat) [NeZero N] (j k : Fin N) :
     innerProd (compBasisState N j) (compBasisState N k) = if j = k then 1 else 0 := by
-  sorry  -- Will prove via standard orthonormality argument
+  simp only [innerProd, compBasisState]
+  by_cases hjk : j = k
+  · subst hjk
+    simp only [ite_true]
+    rw [Finset.sum_eq_single j]
+    · simp [conj]
+    · intro i _ hij
+      simp [hij]
+    · intro hj
+      exact absurd (Finset.mem_univ j) hj
+  · simp only [hjk, ite_false]
+    apply Finset.sum_eq_zero
+    intro i _
+    by_cases hij : i = j
+    · subst hij
+      simp only [ite_true, hjk, ite_false, mul_zero]
+    · simp only [hij, ite_false, conj, map_zero, zero_mul]
 
 /-- The equal superposition state |ψ₀⟩ = (1/√N) Σ |k⟩ -/
 noncomputable def equalSuperposition (N : Nat) [NeZero N] : Fin N -> Complex :=
@@ -80,9 +98,15 @@ noncomputable def equalSuperposition (N : Nat) [NeZero N] : Fin N -> Complex :=
 
 notation "|ψ₀⟩" => equalSuperposition
 
-/-- Equal superposition is normalized when N > 0 -/
+/-- Equal superposition is normalized when N > 0.
+    Proof: Σᵢ |1/√N|² = N · (1/N) = 1 -/
 theorem equalSuperposition_normalized (N : Nat) [NeZero N] (hN : (N : Real) > 0) :
     normSquared (equalSuperposition N) = 1 := by
-  sorry  -- Sum of N terms each equal to 1/N = 1
+  simp only [normSquared, equalSuperposition]
+  rw [Finset.sum_const, Finset.card_fin]
+  simp only [nsmul_eq_mul]
+  rw [Complex.normSq_div, Complex.normSq_one, Complex.normSq_ofReal]
+  rw [Real.mul_self_sqrt (le_of_lt hN)]
+  field_simp
 
 end UAQO
