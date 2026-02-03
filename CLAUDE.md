@@ -6,19 +6,28 @@
 
 ## Repository Structure and Access
 
+For use in `src/` (main thesis work):
+1. `paper/` and `rough/` are the most important because they are about the published work.
+2. `references/` and `citations/` are important because they are about the references and citations used in the published work. The published work has only one great paper citing it which is the only one there. We can use the bibliography of that to use in our thesis.
+3. `taste/` and `template/` are about the style and template to based thesis on. Mostly we will distill this information here itself under the `Taste` section.
+
 ```
 .
 |-- paper/                  Published work
 |
 |-- rough/                  Full Overleaf project for the published work
 |
-|-- references/             References cited in the published work (and more)
-|   |-- README.md               Details on usage
-|   +-- mds/                    Markdown conversions of PDFs
+|-- references/             References cited in the paper (usable for thesis)
+|   |-- README.md               Index of references
+|   +-- mds/                    Markdown files of the references
 |
-|-- citations/              Papers that cite the published work
-|   |-- README.md               Details on usage
-|   +-- mds/                    Markdown conversions of PDFs
+|-- citations/              Papers that cite the paper (usable for thesis)
+|   |-- README.md               Index of citing papers
+|   +-- *.tex                   LaTeX files of the citations
+|
+|-- taste/                  Style reference work
+|   |-- README.md               Index organized by author with style notes
+|   +-- *.md                    Works and papers in markdown format
 |
 |-- template/               LaTeX template to follow
 |   |-- main.tex                Main TeX file
@@ -34,7 +43,7 @@
 |   |-- chapters/               Chapter TeX files
 |   |-- frontmatter/            Title, abstract, acknowledgements, etc.
 |   |-- images/                 Images used in entire src
-|   |-- references/             BibTeX files
+|   |-- references/             References for the thesis (not paper) as BibTeX files
 |   |-- tests/                  Alignment tests (notation consistency, etc.)
 |   +-- experiments/            New ideas, explorations and rough drafts
 |
