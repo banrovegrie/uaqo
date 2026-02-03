@@ -8,8 +8,13 @@
 
 For use in `src/` (main thesis work):
 1. `paper/` and `rough/` are the most important because they are about the published work.
-2. `references/` and `citations/` are important because they are about the references and citations used in the published work. The published work has only one great paper citing it which is the only one there. We can use the bibliography of that to use in our thesis.
+2. `references/` and `citations/` are important because they are about the references and citations used in the published work. The published work has only one good paper citing it which is the only one there (in `citations/`). We can make use of the bibliographies present in either for our thesis.
 3. `taste/` is about the style to base thesis on. Mostly we will distill this information here itself under the `Taste and Style` section.
+4. `src/experiments/` for new ideas, explorations, and rough drafts before they mature into chapters.
+5. `src/tests/` for alignment tests including notation consistency checks, taste comparisons, and math verification prompts.
+
+For direct comparison and unsupervised feedback we have `taste/zeeshan_ms_thesis.md` and `taste/dewolf_phd_thesis.md` as barebone baselines. We aim to write much much better than them with new work introduced as well.
+
 
 ```
 .
@@ -35,7 +40,9 @@ For use in `src/` (main thesis work):
 |   |-- references.bib          BibTeX references
 |   |-- chapters/               Chapter TeX files
 |   |-- frontmatter/            Title, abstract, acknowledgements, etc.
-|   +-- images/                 Images used in thesis
+|   |-- images/                 Images used in thesis
+|   |-- tests/                  Alignment tests (notation consistency, etc.)
+|   +-- experiments/            New ideas, explorations and rough drafts
 |
 ```
 

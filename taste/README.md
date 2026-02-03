@@ -140,18 +140,24 @@ De Wolf's PhD thesis is perhaps the best model for thesis writing. It opens with
 8. **Historical context**: Weave in who proved what when ("Bernstein and Vazirani also defined...")
 9. **The "helpful comparison" paragraph**: "At this point, a comparison with [X] may be helpful."
 
-### De Wolf vs Template Thesis: Detailed Comparison
+### De Wolf vs Zeeshan Thesis: Detailed Comparison
 
-| Aspect | De Wolf | Template |
-|--------|---------|----------|
-| Opening | Philosophical epigraph, personal voice | Jumps to notation |
-| Acknowledgments | Narrative of intellectual development | Standard list format |
-| Definitions | Motivated before stated | Stated then sometimes motivated |
-| Examples | Running examples throughout | Examples isolated in sections |
-| Transitions | Explicit signposting | Minimal transitions |
-| Summaries | Every chapter has one | Sporadic |
-| Reader assumed | Intelligent but not specialist | Already in the field |
-| Notation | Introduced only when needed | Front-loaded |
+| Aspect | De Wolf | Zeeshan (baseline) |
+|--------|---------|---------------------|
+| **Opening** | Philosophical epigraph: "Se non e vero, e ben trovato" (Even if it's not true, it's a nice idea) sets reflective, honest tone | Standard certificate page followed by Turing quote about intelligent computers |
+| **Abstract** | Structured, separated from main text, brief summary in "Samenvatting" and English "Abstract" at end | Single dense paragraph (500+ words) frontloading all results without breathing room |
+| **Acknowledgments** | Narrative of intellectual development: thanks Harry Buhrman for "creative and interminable source of interesting problems", names specific contributions from each collaborator | Lists names with generic gratitude: "I would like to thank", "His support...will not go unnoticed" |
+| **Chapter structure** | Each chapter has Introduction explaining why it matters, then content, then Summary consolidating insights | Chapters lack internal summaries; transitions are implicit rather than explicit |
+| **Motivation before definition** | "Roughly, by a 'classical' state we mean a state in which the system can be found if we observe it" precedes formal definition | Definitions appear with less intuitive buildup: "The state of an isolated quantum system is described by a unit vector" |
+| **Two-pass exposition** | Consistent pattern: informal explanation, then formal theorem. E.g., explains quantum states intuitively before Hilbert space formalism | Single-pass: formal definitions with explanatory text interwoven but not separated |
+| **Running examples** | OR, PARITY, MAJORITY appear throughout all chapters, building familiarity | Ising model and methane serve as examples but less systematically threaded |
+| **Transitions** | Explicit: "At this point, a comparison with classical probability distributions may be helpful", "An important property that deserves to be mentioned is entanglement" | Implicit: relies on section structure rather than prose bridges |
+| **Historical context** | Weaves attribution naturally: "This was proven independently at around the same time by Farhi, Goldstone, Gutmann, and Sipser" | Citations present but less narrative integration: "[20], [21], [22]" style |
+| **Chapter summaries** | Every chapter ends with "Summary" section restating key results informally and connecting to thesis arc | No chapter summaries; chapters end where content ends |
+| **Voice** | Personal and honest: "Even if the theory of quantum computing never materializes...it is still an extremely interesting idea" | Technical and neutral: avoids personal voice, focuses on results |
+| **Theoretical depth** | Deep original contributions: polynomial method, query complexity bounds, communication complexity lower bounds | Primarily benchmarking and numerical results; theoretical content is survey-like |
+| **Appendix usage** | Linear algebra background in Appendix A, keeping main text focused on ideas | Background material in Chapter 2, competing with main results for attention |
+| **Scope** | PhD thesis: 200+ pages, multiple original research papers, broad theoretical contribution | MS thesis: 69 pages, focused application of existing methods to specific problems |
 
 ### Works
 
