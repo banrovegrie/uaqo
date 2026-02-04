@@ -40,6 +40,12 @@ noncomputable def i : Complex := Complex.I
 /-- Complex conjugate -/
 noncomputable def conj (z : Complex) : Complex := starRingEnd Complex z
 
+/-- conj is the same as star for Complex -/
+lemma conj_eq_star (z : Complex) : conj z = star z := rfl
+
+/-- star is the same as starRingEnd for Complex -/
+lemma star_eq_starRingEnd (z : Complex) : star z = starRingEnd Complex z := rfl
+
 /-- Absolute value squared -/
 noncomputable def absSquared (z : Complex) : Real := Complex.normSq z
 

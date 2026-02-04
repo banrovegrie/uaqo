@@ -1,87 +1,98 @@
-# TODO: Gap-Uninformed Separation Theorem
+# TODO: Research Threads
 
-## The Theorem to Prove
-
-**Theorem**: For adiabatic evolution with gap minimum at unknown s* in [s_L, s_R]:
-
-```
-T_uninformed / T_informed >= (s_R - s_L) / delta_s
-```
-
-For unstructured search: this ratio is Omega(2^{n/2}).
+Active tasks across all experiments.
 
 
-## Novelty (Verified)
+## Immediate Priority: 07_partial_information
 
-| Paper | What they do | What they don't |
-|-------|-------------|-----------------|
-| Original (2025) | Prove A_1 hardness | Quantify runtime cost |
-| Guo-An (2025) | Optimal informed schedule | Address uninformed case |
-| Matsuura et al. (2021) | Variational method | Prove separation |
-| Shingu-Hatomura (2025) | Geometrical method | Prove optimality |
-| Nayak 2011 | Adaptive probing | Fixed schedule bounds |
-| Han-Park-Choi 2025 | Constant speed (adaptive) | Fixed schedule bounds |
+The interpolation theorem is the most tractable next step.
 
-**Our contribution fills the gap: prove FUNDAMENTAL LIMITS on fixed uninformed schedules.**
+### Tasks
 
-
-## Proof Steps
-
-### Step 1: Define gap class G
-- [x] Formalize: Delta in G iff Delta has unique minimum at s* in [s_L, s_R] with Delta* >= delta_min
-- [x] Include measure condition for applicability of Guo-An bounds
-
-### Step 2: Lower bound (adversarial argument)
-- [x] For any schedule u, find s' where u is "fastest" in [s_L, s_R]
-- [x] Construct gap Delta in G with minimum at s* = s'
-- [x] Apply Jansen-Ruskai-Seiler error bound
-- [x] Conclude: u must be slow throughout [s_L, s_R]
-
-### Step 3: Upper bound (uniform slow schedule)
-- [x] Define uniform slow: constant velocity in [s_L, s_R]
-- [x] Show it achieves the lower bound (up to constants)
-- [x] Conclude: uniform slow is minimax optimal
-
-### Step 4: Apply to unstructured search
-- [x] Identify s_L, s_R from A_1 range (Theta(1) uncertainty)
-- [x] Use delta_s = O(Delta_*) = O(2^{-n/2})
-- [x] Get separation Omega(2^{n/2})
+- [ ] Derive precision-runtime tradeoff formula from JRS bounds
+- [ ] Verify formula numerically for n = 8, 10, 12
+- [ ] Check for phase transitions at special precision levels
+- [ ] Write up theorem statement and proof sketch
+- [ ] Consider Lean formalization
 
 
-## Tools
+## High Priority: 05_adaptive_schedules
 
-- [x] Read Jansen-Ruskai-Seiler (2007) for adiabatic error bounds - via Guo-An Lemma 2.1
-- [x] Use Guo-An variational framework as template
-- [ ] Consider Lean formalization for rigor (optional, for future work)
+The natural follow-up to the separation theorem.
 
+### Tasks
 
-## Files
-
-- `04_separation_theorem/main_theorem.md` - Theorem statement and proof sketch
-- `04_separation_theorem/formal_proof.md` - Complete formal proof with literature verification
-- `archive/` - Previous explorations (for reference)
-
-
-## Success Criteria
-
-1. [x] Theorem statement is precise and unambiguous
-2. [x] Proof is complete (no gaps in logic)
-3. [x] Verified not in prior literature (7 papers checked)
-4. [x] Significance is clear (quantifies NP-hardness cost)
+- [ ] Literature survey on quantum parameter estimation
+- [ ] Formalize the measurement model precisely
+- [ ] Compute Fisher information for fidelity measurements
+- [ ] Attempt adversarial argument extension from 04
+- [ ] Investigate query complexity connection
 
 
-## Remaining Refinements
+## Medium Priority: 06_measure_condition
 
-- [ ] Make constants explicit (track C from Jansen-Ruskai-Seiler)
-- [ ] Extend to partial information (knowing A_1 to precision epsilon)
-- [ ] Write Lean formalization (long-term)
+Direct extension of Guo-An.
+
+### Tasks
+
+- [ ] Construct explicit examples violating measure condition
+- [ ] Numerically verify O(1/Delta_*^2) scaling for these examples
+- [ ] Attempt lower bound proof via JRS integral analysis
+- [ ] Survey which problem classes satisfy/violate condition
 
 
-## Status: PROOF COMPLETE
+## Medium Priority: 09_guo_an_gap
 
-The Gap-Uninformed Separation Theorem has been proven. The key results:
+Unifying the hardness results.
 
-1. **Lower bound**: Any fixed uninformed schedule requires T >= (s_R - s_L) / Delta_*^2
-2. **Upper bound**: Uniform slow schedule achieves this bound
-3. **Separation**: T_unf / T_inf = (s_R - s_L) / delta_s = Omega(2^{n/2}) for unstructured search
-4. **Novelty verified**: No prior work proves this result (7 papers checked)
+### Tasks
+
+- [ ] Formalize reduction: schedule -> A_1
+- [ ] Check if Delta_* alone suffices (not full Delta(s))
+- [ ] Verify Guo-An's specific examples (Grover, QLSP) have tractable schedules
+- [ ] Write up the circularity argument
+
+
+## Exploratory: 08_structured_tractability_v2
+
+Looking for positive results.
+
+### Tasks
+
+- [ ] Complete analysis of unique solution case
+- [ ] Investigate planted solution construction
+- [ ] Survey specific NP-hard problems for special structure
+- [ ] Attempt impossibility proof (no sweet spot)
+
+
+## Long-term: 10_information_theoretic
+
+The most ambitious direction.
+
+### Tasks
+
+- [ ] Formalize oracle model
+- [ ] Review query complexity techniques
+- [ ] Prove basic Grover lower bound in this framework
+- [ ] Define "additional information" formally
+
+
+## Completed
+
+### 04_separation_theorem
+
+- [x] Formalize gap class G[s_L, s_R, Delta_*]
+- [x] Prove adversarial lower bound
+- [x] Prove uniform slow schedule achieves bound
+- [x] Apply to unstructured search: Omega(2^{n/2}) separation
+- [x] Verify novelty (7 papers checked)
+- [x] Lean formalization
+- [ ] Make constants explicit (optional refinement)
+
+
+## Notes
+
+- Start with 07 as warmup before tackling 05
+- 06 and 09 can proceed in parallel
+- 08 is high-risk: might prove impossibility instead of finding examples
+- 10 should wait until other threads mature

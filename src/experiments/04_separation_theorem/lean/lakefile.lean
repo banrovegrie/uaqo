@@ -12,4 +12,4 @@ require mathlib from git
 
 @[default_target]
 lean_lib «SeparationTheorem» where
-  globs := #[.submodules `SeparationTheorem]
+  globs := #[.one `SeparationTheorem, .submodules `SeparationTheorem]

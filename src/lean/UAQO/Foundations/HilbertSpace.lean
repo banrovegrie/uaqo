@@ -50,6 +50,26 @@ theorem normSquared_nonneg {N : Nat} (v : Fin N -> Complex) : normSquared v >= 0
   intro i _
   exact Complex.normSq_nonneg (v i)
 
+/-- Sum of star(v k) * v k equals normSquared as a Complex -/
+lemma sum_star_mul_self_eq_normSquared {N : Nat} (v : Fin N → Complex) :
+    Finset.sum Finset.univ (fun k => star (v k) * v k) = (normSquared v : Complex) := by
+  simp only [normSquared, star_eq_starRingEnd]
+  conv_lhs =>
+    arg 2
+    ext k
+    rw [← Complex.normSq_eq_conj_mul_self]
+  rw [← Complex.ofReal_sum]
+
+/-- Sum of v k * star(v k) equals normSquared as a Complex -/
+lemma sum_mul_star_self_eq_normSquared {N : Nat} (v : Fin N → Complex) :
+    Finset.sum Finset.univ (fun k => v k * star (v k)) = (normSquared v : Complex) := by
+  simp only [normSquared, star_eq_starRingEnd]
+  conv_lhs =>
+    arg 2
+    ext k
+    rw [Complex.mul_conj]
+  rw [← Complex.ofReal_sum]
+
 /-- Bra-ket notation: |v⟩ is a ket (column vector) -/
 abbrev Ket (N : Nat) := Fin N -> Complex
 

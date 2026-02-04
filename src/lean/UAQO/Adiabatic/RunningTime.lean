@@ -89,14 +89,17 @@ theorem runningTime_matches_lower_bound {n M : Nat} (es : EigenStructure n M)
     |v(1)⟩ = (1/√d₀) Σ_{z ∈ Ω₀} |z⟩ -/
 theorem finalState_symmetric {n M : Nat} (es : EigenStructure n M)
     (hM : M >= 2)
-    (hspec : spectralCondition es hM 0.02 (by norm_num))
-    (epsilon : Real) (heps : 0 < epsilon ∧ epsilon < 1) :
+    (_hspec : spectralCondition es hM 0.02 (by norm_num))
+    (_epsilon : Real) (_heps : 0 < _epsilon ∧ _epsilon < 1) :
     let groundSym := symmetricState es ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_two hM⟩
     normSquared groundSym = 1 ∧
     (∀ (z : Fin (qubitDim n)),
       es.assignment z = ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_two hM⟩ ->
       groundSym z = 1 / Complex.ofReal (Real.sqrt (es.degeneracies ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_two hM⟩))) := by
-  sorry
+  constructor
+  · exact symmetricState_normalized es ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_two hM⟩
+  · intro z hz
+    simp only [symmetricState, hz, ↓reduceIte]
 
 /-! ## Measurement and solution extraction -/
 

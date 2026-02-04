@@ -37,9 +37,25 @@ noncomputable def A2 {n M : Nat} (es : EigenStructure n M) (hM : M > 0) : Real :
 
 /-- A_p is positive for p ≥ 1 when M ≥ 2 -/
 theorem spectralParam_positive {n M : Nat} (es : EigenStructure n M)
-    (hM : M >= 2) (p : Nat) (hp : p >= 1) :
+    (hM : M >= 2) (p : Nat) (_hp : p >= 1) :
     spectralParam es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM) p > 0 := by
-  sorry  -- Sum of positive terms is positive
+  simp only [spectralParam]
+  apply mul_pos
+  · apply div_pos one_pos
+    simp only [qubitDim]
+    exact Nat.cast_pos.mpr (Nat.pow_pos (by norm_num : 0 < 2))
+  · apply Finset.sum_pos
+    · intro k hk
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hk
+      apply div_pos
+      · exact Nat.cast_pos.mpr (es.deg_positive k)
+      · apply pow_pos
+        have h0 : (0 : Nat) < M := Nat.lt_of_lt_of_le Nat.zero_lt_two hM
+        have hord := es.eigenval_ordered ⟨0, h0⟩ k
+        linarith [hord hk]
+    · use ⟨1, hM⟩
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+      norm_num
 
 /-- A_2 ≥ (N-d_0)/N * Δ^{-2} ≥ (1 - 1/N) * Δ^{-2} -/
 theorem A2_lower_bound {n M : Nat} (es : EigenStructure n M) (hM : M >= 2) :
@@ -87,7 +103,14 @@ theorem avoidedCrossing_in_interval {n M : Nat} (es : EigenStructure n M)
     (hM : M >= 2) :
     0 < avoidedCrossingPosition es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM) ∧
     avoidedCrossingPosition es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM) < 1 := by
-  sorry  -- Follows from A_1 > 0 and algebraic manipulation
+  simp only [avoidedCrossingPosition, A1]
+  have hA1pos : spectralParam es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM) 1 > 0 :=
+    spectralParam_positive es hM 1 (by norm_num)
+  constructor
+  · apply div_pos hA1pos
+    linarith
+  · rw [div_lt_one (by linarith : 0 < spectralParam es _ 1 + 1)]
+    linarith
 
 /-- The window around the avoided crossing: δ_s = 2/(A_1+1)² √(d_0 A_2/N) -/
 noncomputable def avoidedCrossingWindow {n M : Nat} (es : EigenStructure n M)
@@ -115,6 +138,33 @@ notation "g_min" => minimumGap
 theorem minimumGap_scaling {n M : Nat} (es : EigenStructure n M) (hM : M >= 2) :
     ∃ (c : Real), c > 0 ∧
     minimumGap es hM <= c * Real.sqrt ((es.degeneracies ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_two hM⟩ : Real) / qubitDim n) := by
-  sorry
+  simp only [minimumGap]
+  let A1_val := A1 es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM)
+  let A2_val := A2 es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM)
+  let d0 := (es.degeneracies ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_two hM⟩ : Real)
+  let N := (qubitDim n : Real)
+  have hA2pos : A2_val > 0 := spectralParam_positive es hM 2 (by norm_num)
+  have hA1pos : A1_val > 0 := spectralParam_positive es hM 1 (by norm_num)
+  have hNpos : N > 0 := Nat.cast_pos.mpr (Nat.pow_pos (by norm_num : 0 < 2))
+  have hd0nn : d0 >= 0 := Nat.cast_nonneg _
+  use 2 / Real.sqrt A2_val
+  constructor
+  · apply div_pos (by norm_num : (2 : Real) > 0)
+    exact Real.sqrt_pos.mpr hA2pos
+  · have h1 : A1_val / (A1_val + 1) < 1 := by
+      rw [div_lt_one (by linarith)]
+      linarith
+    calc 2 * A1_val / (A1_val + 1) * Real.sqrt (d0 / (A2_val * N))
+        = 2 * (A1_val / (A1_val + 1)) * Real.sqrt (d0 / (A2_val * N)) := by ring
+      _ <= 2 * 1 * Real.sqrt (d0 / (A2_val * N)) := by
+           apply mul_le_mul_of_nonneg_right
+           apply mul_le_mul_of_nonneg_left (le_of_lt h1) (by norm_num : (0 : Real) <= 2)
+           apply Real.sqrt_nonneg
+      _ = 2 * Real.sqrt (d0 / (A2_val * N)) := by ring
+      _ = 2 * Real.sqrt ((d0 / N) / A2_val) := by
+           congr 1; rw [div_div]; ring_nf
+      _ = 2 * (Real.sqrt (d0 / N) / Real.sqrt A2_val) := by
+           rw [Real.sqrt_div (div_nonneg hd0nn (le_of_lt hNpos))]
+      _ = 2 / Real.sqrt A2_val * Real.sqrt (d0 / N) := by ring
 
 end UAQO

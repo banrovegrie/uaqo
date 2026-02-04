@@ -66,20 +66,23 @@ axiom threeSAT_NP_complete : IsNPComplete ThreeSAT
 theorem P_subset_NP (prob : DecisionProblem) (h : InP prob) : InNP prob := by
   rcases h with ⟨decide, _, hdecide⟩
   use {
-    verify := fun x _ => decide x
+    -- Only accept if cert is empty AND decide accepts
+    verify := fun x cert => decide x && cert.isEmpty
     cert_bound := by
       use 1
-      intro x cert _
-      -- The verify function ignores cert, so any accepted cert works
-      -- We just need cert.length <= x.length^1 + 1, which holds since
-      -- in the complete case we use [] which has length 0
-      sorry
+      intro x cert hverify
+      simp only [Bool.and_eq_true] at hverify
+      simp only [List.isEmpty_iff] at hverify
+      rw [hverify.2]
+      simp
     sound := by
-      intro x cert h
-      exact (hdecide x).mp h
+      intro x cert hverify
+      simp only [Bool.and_eq_true] at hverify
+      exact (hdecide x).mp hverify.1
     complete := by
       intro x hx
       use []
+      simp only [Bool.and_eq_true, List.isEmpty_nil, and_true]
       exact (hdecide x).mpr hx
   }
 

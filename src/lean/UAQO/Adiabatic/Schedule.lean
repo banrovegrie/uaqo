@@ -75,10 +75,23 @@ noncomputable def buildPiecewiseSchedule {n M : Nat} (es : EigenStructure n M)
       let t' := t - pw.T_left - pw.T_cross
       (sStar + deltaS) + (1 - sStar - deltaS) * t' / pw.T_right
   initial := by
-    simp
-    sorry
+    simp only
+    have hTL : pw.T_left > 0 := pw.times_pos.1
+    have h : (0 : Real) <= pw.T_left := le_of_lt hTL
+    simp only [h, ↓reduceIte]
+    ring
   final := by
-    sorry
+    have hTL : pw.T_left > 0 := pw.times_pos.1
+    have hTC : pw.T_cross > 0 := pw.times_pos.2.1
+    have hTR : pw.T_right > 0 := pw.times_pos.2.2
+    have hsum : pw.T_left + pw.T_cross + pw.T_right = T := pw.times_sum
+    have h1 : ¬ T <= pw.T_left := by linarith
+    have h2 : ¬ T <= pw.T_left + pw.T_cross := by linarith
+    simp only [h1, ↓reduceIte, h2]
+    have h3 : T - pw.T_left - pw.T_cross = pw.T_right := by linarith
+    rw [h3]
+    field_simp
+    ring
   monotone := by
     sorry
   differentiable := by

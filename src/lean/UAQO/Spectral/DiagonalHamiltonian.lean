@@ -93,8 +93,26 @@ notation "|" k "⟩_sym" => symmetricState _ k
 /-- The symmetric state is normalized -/
 theorem symmetricState_normalized {n M : Nat} (es : EigenStructure n M) (k : Fin M) :
     normSquared (symmetricState es k) = 1 := by
-  -- Sum of |1/√d_k|² over d_k terms = d_k · (1/d_k) = 1
-  sorry
+  simp only [normSquared, symmetricState]
+  conv_lhs =>
+    arg 2
+    ext i
+    rw [show Complex.normSq (if es.assignment i = k
+                             then 1 / Complex.ofReal (Real.sqrt (es.degeneracies k)) else 0) =
+        if es.assignment i = k
+        then Complex.normSq (1 / Complex.ofReal (Real.sqrt (es.degeneracies k))) else 0 by
+      split_ifs <;> simp [Complex.normSq_zero]]
+  rw [Finset.sum_ite, Finset.sum_const_zero, add_zero]
+  simp only [Finset.sum_const]
+  have hcard : (Finset.filter (fun x => es.assignment x = k) Finset.univ).card =
+               es.degeneracies k := by
+    rw [es.deg_count k]
+  rw [hcard]
+  rw [Complex.normSq_div, Complex.normSq_one, Complex.normSq_ofReal]
+  rw [Real.mul_self_sqrt (Nat.cast_nonneg (es.degeneracies k))]
+  have hd : (es.degeneracies k : Real) > 0 := Nat.cast_pos.mpr (es.deg_positive k)
+  simp only [nsmul_eq_mul]
+  field_simp
 
 /-! ## Spectral gap -/
 

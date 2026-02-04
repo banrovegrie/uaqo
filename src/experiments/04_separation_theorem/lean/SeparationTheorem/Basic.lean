@@ -14,6 +14,7 @@ import Mathlib.Analysis.Calculus.Deriv.Basic
 import Mathlib.Topology.Order.Basic
 import Mathlib.Data.Real.Basic
 import Mathlib.Order.ConditionallyCompleteLattice.Basic
+import Mathlib.Tactic
 
 namespace SeparationTheorem
 
@@ -68,49 +69,47 @@ def GapClass (s_L s_R Delta_star : Real) : Set GapProfile :=
 
 /-- The local error contribution at position s is proportional to v(s)²/Delta(s)³.
     This captures the essential structure of the JRS bound. -/
-def localError (v Delta : Real) : Real :=
+noncomputable def localError (v Delta : Real) : Real :=
   v^2 / Delta^3
 
 /-- The crossing width is proportional to Delta_star -/
-def crossingWidth (Delta_star : Real) : Real :=
+noncomputable def crossingWidth (Delta_star : Real) : Real :=
   Delta_star
 
 /-- Error at the crossing: v_star² * delta_s / Delta_star³ -/
-def crossingError (v_star Delta_star : Real) : Real :=
+noncomputable def crossingError (v_star Delta_star : Real) : Real :=
   v_star^2 * (crossingWidth Delta_star) / Delta_star^3
 
 /-- Simplified: crossingError = v_star² / Delta_star² -/
 theorem crossingError_simplified (v_star Delta_star : Real) (h : Delta_star > 0) :
     crossingError v_star Delta_star = v_star^2 / Delta_star^2 := by
-  simp [crossingError, crossingWidth]
-  ring
+  simp only [crossingError, crossingWidth]
+  have h1 : Delta_star ≠ 0 := ne_of_gt h
+  field_simp
 
 /-! ## Time Model -/
 
 /-- Time to traverse an interval with given velocity -/
-def traversalTime (interval_width : Real) (velocity : Real) : Real :=
+noncomputable def traversalTime (interval_width : Real) (velocity : Real) : Real :=
   interval_width / velocity
 
 /-- Time for the crossing region -/
-def crossingTime (Delta_star : Real) (v_cross : Real) : Real :=
+noncomputable def crossingTime (Delta_star : Real) (v_cross : Real) : Real :=
   traversalTime (crossingWidth Delta_star) v_cross
 
 /-! ## Key Lemma: Velocity-Error Tradeoff -/
 
 /-- For constant error epsilon, the velocity at crossing must satisfy:
-    v_star² / Delta_star² ≤ epsilon * T
-    Therefore: v_star ≤ sqrt(epsilon * T) * Delta_star -/
-theorem velocity_bound_for_error (epsilon T Delta_star v_star : Real)
-    (heps : epsilon > 0) (hT : T > 0) (hDelta : Delta_star > 0)
+    v_star² / Delta_star² ≤ epsilon
+    Therefore: v_star ≤ sqrt(epsilon) * Delta_star -/
+theorem velocity_bound_for_error (epsilon Delta_star v_star : Real)
+    (_ : epsilon > 0) (hDelta : Delta_star > 0)
     (herror : crossingError v_star Delta_star ≤ epsilon) :
     v_star^2 ≤ epsilon * Delta_star^2 := by
-  simp [crossingError, crossingWidth] at herror
-  have h1 : Delta_star^3 > 0 := by positivity
-  have h2 : v_star^2 / Delta_star^2 ≤ epsilon := by
-    calc v_star^2 / Delta_star^2
-        = (v_star^2 * Delta_star) / Delta_star^3 := by ring
-      _ = v_star^2 * Delta_star / Delta_star^3 := by ring
-      _ ≤ epsilon := herror
-  linarith [sq_nonneg v_star, sq_nonneg Delta_star]
+  rw [crossingError_simplified v_star Delta_star hDelta] at herror
+  have h1 : Delta_star^2 > 0 := sq_pos_of_pos hDelta
+  have h2 : v_star^2 / Delta_star^2 ≤ epsilon := herror
+  calc v_star^2 = (v_star^2 / Delta_star^2) * Delta_star^2 := by field_simp
+    _ ≤ epsilon * Delta_star^2 := by nlinarith [sq_nonneg v_star]
 
 end SeparationTheorem

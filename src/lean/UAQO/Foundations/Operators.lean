@@ -59,8 +59,10 @@ notation "π(" v ")" => projectorOnState v
 /-- The rank-1 projector is Hermitian -/
 theorem projectorOnState_hermitian {N : Nat} (v : Ket N) :
     IsHermitian (π(v)) := by
-  -- (|v><v|)† = |v><v| since (vᵢv̄ⱼ)* = v̄ᵢvⱼ = vⱼv̄ᵢ
-  sorry
+  unfold IsHermitian dagger projectorOnState outerProd
+  ext i j
+  simp only [Matrix.conjTranspose_apply, Matrix.of_apply, conj_eq_star]
+  rw [StarMul.star_mul, star_star]
 
 /-- Projector onto a state is indeed a projector -/
 theorem projectorOnState_isProjector {N : Nat} (v : Ket N)
@@ -68,7 +70,15 @@ theorem projectorOnState_isProjector {N : Nat} (v : Ket N)
   constructor
   · exact projectorOnState_hermitian v
   · -- Idempotent: |v><v|² = |v><v| when ⟨v|v⟩ = 1
-    sorry
+    unfold projectorOnState outerProd
+    ext i j
+    simp only [Matrix.mul_apply, Matrix.of_apply, conj_eq_star]
+    have h : ∀ k, (v i * star (v k)) * (v k * star (v j)) = v i * (star (v k) * v k) * star (v j) := by
+      intro k; ring
+    simp_rw [h]
+    rw [← Finset.sum_mul, ← Finset.mul_sum]
+    rw [sum_star_mul_self_eq_normSquared, hv]
+    simp
 
 /-! ## Operator algebra -/
 
@@ -77,6 +87,28 @@ noncomputable def applyOp {N : Nat} (A : Operator N) (v : Ket N) : Ket N :=
   fun i => Finset.sum Finset.univ (fun j => A i j * v j)
 
 infixl:70 " ⬝ " => applyOp
+
+/-- Applying a scalar multiple of an operator -/
+lemma applyOp_smul {N : Nat} (c : Complex) (A : Operator N) (v : Ket N) :
+    applyOp (c • A) v = c • applyOp A v := by
+  funext i
+  simp only [applyOp, Pi.smul_apply, smul_eq_mul]
+  rw [Finset.mul_sum]
+  congr 1
+  ext j
+  simp [Matrix.smul_apply]
+  ring
+
+/-- Applying a projector to its defining state -/
+lemma applyOp_projector_self {N : Nat} (v : Ket N) (hv : normSquared v = 1) :
+    applyOp (projectorOnState v) v = v := by
+  funext i
+  simp only [applyOp, projectorOnState, outerProd, Matrix.of_apply, conj_eq_star]
+  have h : forall j, (v i * star (v j)) * v j = v i * (v j * star (v j)) := by
+    intro j; ring
+  simp_rw [h]
+  rw [← Finset.mul_sum, sum_mul_star_self_eq_normSquared, hv]
+  simp
 
 /-- Expectation value ⟨v|A|v⟩ -/
 noncomputable def expectation {N : Nat} (A : Operator N) (v : Ket N) : Complex :=

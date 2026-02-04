@@ -28,28 +28,34 @@ namespace SeparationTheorem
 
 /-! ## Main Results Summary -/
 
+#check gap_uninformed_separation_theorem
 #check separation_ratio
-#check separation_ratio_simplified
 #check unstructured_search_separation
 #check separation_exponential
+#check velocity_bounded_everywhere
+#check adversarialGap_in_class
 
 /-! ## Verified Claims
 
-1. **Lower Bound (Theorem `uninformed_time_lower_bound`)**:
-   Any fixed schedule achieving error epsilon for all gaps in
-   GapClass(s_L, s_R, Delta_star) requires time at least
-   (s_R - s_L) / (sqrt(epsilon) * Delta_star).
+1. **Adversarial Construction (Theorem `adversarialGap_in_class`)**:
+   For any point s in [s_L, s_R], we can construct a gap function
+   with minimum at s that belongs to the gap class.
 
-2. **Upper Bound (Theorem `informed_time_upper_bound`)**:
-   An informed schedule knowing the gap achieves time 1/(epsilon * Delta_star).
+2. **Velocity Bound (Theorem `velocity_bounded_everywhere`)**:
+   Any schedule achieving error epsilon for all gaps in
+   GapClass(s_L, s_R, Delta_star) must have velocity bounded by
+   sqrt(epsilon) * Delta_star at every point in [s_L, s_R].
 
-3. **Separation (Theorem `separation_ratio`)**:
-   The ratio T_unf / T_inf = (s_R - s_L) * sqrt(epsilon) / 1
+3. **Separation Ratio (Theorem `separation_ratio`)**:
+   T_unf / T_inf = (s_R - s_L) * sqrt(epsilon)
    For constant epsilon, this is Theta((s_R - s_L) / Delta_star).
 
 4. **Unstructured Search (Theorem `unstructured_search_separation`)**:
    For n-qubit unstructured search with Delta_star = 2^{-n/2}
    and constant uncertainty interval width, the separation is Omega(2^{n/2}).
+
+5. **Main Theorem (Theorem `gap_uninformed_separation_theorem`)**:
+   Combines all the above into a single statement.
 -/
 
 end SeparationTheorem
