@@ -124,4 +124,4 @@ Files: `planted_structure_analysis.md`, `verify_planted_A1.py`, `planted_maxcut_
 
 **Strength**: Novel angle, honest characterization, practical implications.
 
-**Weakness**: Limited scale (n ≤ 12), random instances only, no rigorous bounds.
+**Weakness**: Limited scale ($n \leq 12$), random instances only, no rigorous bounds.

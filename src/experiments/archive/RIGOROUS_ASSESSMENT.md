@@ -80,7 +80,7 @@ Since the minimum gap position gives A_1 directly, an alternative calibration us
 
 **Theorem (Partial)**: If there exists a quantum protocol that can measure the spectral gap g(r) of H(r) = -|psi_0><psi_0| + r*H_z to precision O(g_min) using O(1/g_min) evolution time, then A_1 can be estimated to precision O(delta_s) using O(n/g_min) total evolution time.
 
-**Proof**: Binary search over r requires O(log(1/precision)) = O(n) iterations. Each iteration measures the gap, requiring O(1/g_min) time. The minimum gap occurs at r ≈ A_1, so finding the minimum gives A_1.
+**Proof**: Binary search over r requires O(log(1/precision)) = O(n) iterations. Each iteration measures the gap, requiring O(1/g_min) time. The minimum gap occurs at $r \approx A_1$, so finding the minimum gives $A_1$.
 
 **Gap in the argument**: We have not proven that measuring g(r) can be done in O(1/g_min) time quantumly. Standard QPE requires O(1/precision) queries, which for precision g_min means O(1/g_min) time. This seems circular.
 
@@ -91,7 +91,7 @@ Despite the Loschmidt echo failure, we have established:
 
 1. **The minimum gap formula for H(r)**: g_min = 2*A_1*sqrt(d_0/(A_2*N)). This is new - the paper only derives the adiabatic formula.
 
-2. **The resonance position**: r_min_gap ≈ A_1. This confirms that the time-independent Hamiltonian H(r) has an avoided crossing at the expected position.
+2. **The resonance position**: $r_{\min\_gap} \approx A_1$. This confirms that the time-independent Hamiltonian H(r) has an avoided crossing at the expected position.
 
 3. **The structure question**: The question "can quantum experiments estimate A_1 more efficiently than classical computation?" remains open and is well-posed.
 

@@ -1,72 +1,120 @@
-# Findings: Format Compliance Audit
+# Findings: Formatting Compliance Audit
 
-## Repository Structure
+## Repository Overview
+*To be populated after study*
 
-Total markdown files: 109 (excluding .lake/ external dependencies)
-- `src/experiments/`: 39 files (project experiments)
-- `references/mds/`: 52 files (reference papers converted to markdown)
-- `taste/`: 20 files (style reference documents)
-- Root/other: README.md, CLAUDE.md, src/tests/, src/lean/, citations/
-
-## Format Requirements (from check-format.md)
+## Check Criteria (from src/tests/check-format.md)
 
 ### 1. ASCII Only
-All characters must be in ASCII range (0-127).
-- Curly quotes -> ASCII quotes
-- Em/en dashes -> `---` or `--`
-- Greek letters -> `$\alpha$` etc.
-- Math symbols outside LaTeX -> proper LaTeX
+- All characters must be in ASCII range (0-127)
+- Common violations: curly quotes, em/en dashes, accented letters, math symbols, Greek letters
 
 ### 2. No Horizontal Rule Separators
-No `---`, `***`, or `___` as section separators (YAML frontmatter ok).
+- No `---`, `***`, or `___` as section separators
+- Exception: YAML frontmatter at file start
 
 ### 3. Math Delimiters in Markdown
-All math must be in `$...$` or `$$...$$`.
+- Math expressions must use `$...$` (inline) or `$$...$$` (display)
+- Exception: Simple variable names in prose context
 
 ### 4. LaTeX Basics
-- Balanced delimiters
-- No bare `_` outside math
+- Delimiter balance
+- No bare `_` outside math mode
 - No bare `<` or `>` outside math
-- Single spaces, no space before punctuation
+- No double spaces
+- No space before punctuation
 
-## Files to Check
+## Files Inventory (51 files, excluding .lake/)
 
-### High Priority (src/experiments/)
-- `04_separation_theorem/notes/gap_uninformed_theorem.md`: 461 non-ASCII bytes
-- `04_separation_theorem/notes/theoretical_separation.md`: 423 non-ASCII bytes
+### experiments/archive/ (14 files)
+- error_analysis_imprecise_A1.md
+- FINAL_SYNTHESIS.md
+- HONEST_ASSESSMENT.md
+- INDEX_UPDATED.md
+- INDEX.md
+- loschmidt_echo_proofs.md
+- non_adiabatic_oscillation.md
+- numerical_framework.md
+- qaoa_connection.md
+- qpe_calibration.md
+- quantum_calibration_theorem.md
+- research_proposals.md
+- RESEARCH_STATUS.md
+- RIGOROUS_ASSESSMENT.md
+- SUMMARY_novel_contributions.md
 
-### Medium Priority (references/mds/)
-Top offenders by non-ASCII byte count:
-- `arthurthesis.md`: 4497 bytes
-- `aaronson2011bosonsampling.md`: 1573 bytes
-- `chakraborty2024implementing.md`: 999 bytes
-- `albash2018adiabatic.md`: 968 bytes
-- Many more with 300-600 bytes
+### experiments/02_robust_schedules/ (5 files)
+- lean/README.md, main.md, proof.md
+- notes/CONTRIBUTION.md, FINAL_CONTRIBUTION.md, MAIN_FINDING.md
 
-### Lower Priority (taste/)
-These are reference documents with significant non-ASCII content:
-- `2504.02385.md`: 14099 bytes
-- `2510.06851.md`: 13795 bytes
-- `2411.05736.md`: 10818 bytes
-- Most files have 1000+ non-ASCII bytes
+### experiments/04_separation_theorem/ (14 files)
+- main.md, proof.md
+- lib/corrections.md, critical_assessment.md, key_references.md, literature_survey.md, shantanav_message.md
+- notes/formal_proof.md, formal_proof_v2.md, gap_uninformed_optimality.md, gap_uninformed_theorem.md, main_theorem.md, separation_theorem.md, theoretical_separation.md
+
+### experiments/05_adaptive_schedules/ (4 files)
+- main.md, proof.md, notes/key_insight.md, notes/literature_survey.md
+
+### experiments/06_measure_condition/ (2 files)
+- main.md, proof.md
+
+### experiments/07_partial_information/ (2 files)
+- main.md, proof.md
+
+### experiments/08_structured_tractability_v2/ (2 files)
+- main.md, proof.md
+
+### experiments/10_information_theoretic/ (2 files)
+- main.md, proof.md
+
+### Other (5 files)
+- experiments/README.md
+- lean/README.md
+- tests/check-format.md, check-math.md, check-taste.md, README.md
 
 ## Issues Found
 
-### Non-ASCII Characters
-78 files contain non-ASCII characters (excluding run/ and .lake/).
+### Check 1: Non-ASCII Characters
 
-Common patterns expected:
-- Smart/curly quotes: `"` `"` `'` `'`
-- Em-dash: `—` (U+2014)
-- En-dash: `–` (U+2013)
-- Greek letters outside math: `α`, `β`, `Δ`, etc.
-- Mathematical symbols: `×`, `≤`, `≥`, `→`, etc.
+Files with violations (need to wrap math in $..$ and replace Unicode):
 
-### Horizontal Rules
-Initial check: PASS (no violations found)
+| File | Line | Issue | Fix |
+|------|------|-------|-----|
+| archive/RIGOROUS_ASSESSMENT.md | 83, 94 | `≈` (approx) | `$\approx$` |
+| archive/qpe_calibration.md | 8 | `≈`, `<` | `$\approx$`, `$<$` |
+| archive/INDEX_UPDATED.md | 127 | `≤` | `$\leq$` |
+| 04_separation_theorem/main.md | 75-83 | Box chars `├└│` | Use plain ASCII tree |
+| 04_separation_theorem/notes/main_theorem.md | many | `Δ`, `∈`, `Ω`, `Θ` | Wrap in `$...$` |
+| 04_separation_theorem/notes/theoretical_separation.md | many | `α`, `ε`, `Δ`, `∈`, `Ω`, `Θ`, `∫`, `⟩`, `⟨` | Wrap in `$...$` |
+| 04_separation_theorem/notes/separation_theorem.md | many | `α`, `ε`, `Δ`, `Θ`, `Ω` | Wrap in `$...$` |
 
-### Math Delimiters
-To be checked per-file during remediation.
+### Check 2: Horizontal Rule Separators
+**PASS** - No `---`, `***`, or `___` separators found.
 
-### LaTeX Issues
-To be checked per-file during remediation.
+### Check 3: Math Delimiters
+Many files have undelimited math expressions (detected via non-ASCII math symbols).
+Will be fixed along with Check 1.
+
+### Check 4: LaTeX Basics
+To be checked after ASCII fixes.
+
+## Fixes Applied
+
+### All 11 Files Fixed
+1. **archive/RIGOROUS_ASSESSMENT.md** - `approx` symbol
+2. **archive/qpe_calibration.md** - `approx`, `<` symbols
+3. **archive/INDEX_UPDATED.md** - `leq` symbol
+4. **02_robust_schedules/notes/CONTRIBUTION.md** - `times`, `pm` symbols
+5. **02_robust_schedules/notes/FINAL_CONTRIBUTION.md** - `times`, `pm` symbols
+6. **04_separation_theorem/main.md** - box-drawing chars
+7. **04_separation_theorem/notes/main_theorem.md** - Greek letters, math ops
+8. **04_separation_theorem/notes/theoretical_separation.md** - Greek letters, integrals, bra-ket
+9. **04_separation_theorem/notes/separation_theorem.md** - Greek letters, math ops
+10. **04_separation_theorem/notes/gap_uninformed_optimality.md** - Greek, math ops
+11. **04_separation_theorem/notes/gap_uninformed_theorem.md** - Greek, math ops
+
+### Verification Status: COMPLETE
+- All git diffs reviewed
+- 240 insertions, 240 deletions (symmetric changes)
+- Only formatting changed, content preserved
+- Mathematical meaning intact

@@ -15,13 +15,13 @@ We provide the first quantitative characterization of the "value of information"
 
 ### Scaling with System Size
 
-| n | Uniform | Wide [0.4,0.8] | Centered [s*±0.15] | II Improvement | A_1 Value |
+| n | Uniform | Wide [0.4,0.8] | Centered $[s^* \pm 0.15]$ | II Improvement | $A_1$ Value |
 |---|---------|----------------|-------------------|----------------|-----------|
 | 8 | 0.652 | 0.805 | 0.827 | +23.5% | +3.3% |
 | 10 | 0.600 | 0.693 | 0.828 | +15.5% | +22.5% |
 | 12 | 0.545 | 0.657 | 0.762 | +20.6% | +19.4% |
 
-(T = 5 × T_optimal, 10 random instances per size)
+($T = 5 \times T_{\text{optimal}}$, 10 random instances per size)
 
 
 ### Detailed Analysis (n = 10, 20 instances)
@@ -32,7 +32,7 @@ We provide the first quantitative characterization of the "value of information"
 | Wide Slow [0.4, 0.8] | 0.661 | No |
 | Local (theory formula) | 0.611 | Yes |
 | Local (actual gap) | 0.705 | Yes (full spectrum) |
-| Centered [s*±0.15] | 0.786 | Yes (just s*) |
+| Centered $[s^* \pm 0.15]$ | 0.786 | Yes (just $s^*$) |
 
 
 ## Key Insights
@@ -76,7 +76,7 @@ Our finding adds:
 
 1. **For prototyping**: Use Wide [0.4, 0.8] schedule - no calibration needed.
 
-2. **For better performance**: Estimate s* roughly (even 0.1 precision helps) and use Centered [s*±0.15].
+2. **For better performance**: Estimate $s^*$ roughly (even 0.1 precision helps) and use Centered $[s^* \pm 0.15]$.
 
 3. **Theoretical analysis overestimates local schedule benefit**: The actual gap structure differs from the analytical approximation.
 
@@ -94,7 +94,7 @@ Our finding adds:
 1. **Small scale**: Tested up to n=12 qubits only
 2. **Random instances**: Real NP-hard problems may behave differently
 3. **Sample size**: 10-20 instances per condition
-4. **Time regime**: Only T = 5 × T_optimal tested
+4. **Time regime**: Only $T = 5 \times T_{\text{optimal}}$ tested
 
 ### What Would Make This Stronger
 

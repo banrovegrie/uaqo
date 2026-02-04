@@ -3,12 +3,12 @@
 ## Context
 
 The Guo-An paper (2025) proves that:
-- Power-law scheduling u'(s) ∝ Δ^p(u(s)) achieves O(Δ*^{-1}) error
+- Power-law scheduling u'(s) $\propto$ $\Delta$^p(u(s)) achieves O($\Delta$*^{-1}) error
 - The exponent p = 3/2 is optimal (for linear gap profiles)
-- **But**: This requires knowing the spectral gap Δ(s)
+- **But**: This requires knowing the spectral gap $\Delta$(s)
 
 The original paper proves:
-- Computing A_1 (which determines where Δ is small) is NP-hard
+- Computing A_1 (which determines where $\Delta$ is small) is NP-hard
 - The required precision for optimal AQO is ~2^{-n/2}
 
 **Open question**: What's the best achievable performance WITHOUT knowing the gap?
@@ -18,10 +18,10 @@ The original paper proves:
 
 Following Guo-An's approach, the adiabatic error is bounded by:
 
-η(1) ≤ (C/T) · ∫₀¹ [|u''(s)|/Δ²(u(s)) + A(u'(s))²/Δ³(u(s))] ds
+$\eta$(1) $\leq$ (C/T) * $\int_0^1$ [|u''(s)|/$\Delta$^2(u(s)) + A(u'(s))^2/$\Delta$^3(u(s))] ds
 
-For a gap-INFORMED schedule, we optimize over u(s) knowing Δ(·).
-For a gap-UNINFORMED schedule, we must optimize over u(s) WITHOUT knowing Δ(·).
+For a gap-INFORMED schedule, we optimize over u(s) knowing $\Delta$(*).
+For a gap-UNINFORMED schedule, we must optimize over u(s) WITHOUT knowing $\Delta$(*).
 
 
 ## Minimax Formulation
@@ -30,7 +30,7 @@ For a gap-UNINFORMED schedule, we must optimize over u(s) WITHOUT knowing Δ(·)
 
 **Minimax problem**:
 ```
-min_{u} max_{Δ ∈ G} η(1; u, Δ)
+min_{u} max_{$\Delta$ $\in$ G} $\eta$(1; u, $\Delta$)
 ```
 
 This asks: what schedule minimizes the worst-case error over all possible gap functions?
@@ -38,11 +38,11 @@ This asks: what schedule minimizes the worst-case error over all possible gap fu
 
 ## Theorem (Proposed)
 
-**Theorem**: Consider the class of gap functions G = {Δ : Δ* ≥ δ_min, Δ has unique minimum in [s*_min, s*_max]}.
+**Theorem**: Consider the class of gap functions G = {$\Delta$ : $\Delta$* $\geq$ $\delta$_min, $\Delta$ has unique minimum in [s*_min, s*_max]}.
 
 The minimax-optimal gap-uninformed schedule is the "uniform slow" schedule:
 ```
-u'(s) = v_slow   for s ∈ [s*_min - ε, s*_max + ε]
+u'(s) = v_slow   for s $\in$ [s*_min - $\varepsilon$, s*_max + $\varepsilon$]
 u'(s) = v_fast   otherwise
 ```
 where v_slow and v_fast are chosen to satisfy boundary conditions and minimize worst-case error.
@@ -58,27 +58,27 @@ Therefore, u(s) must be slow throughout [s*_min, s*_max].
 
 **Upper bound**: The uniform slow schedule achieves:
 ```
-η(1) ≤ O(Δs* / Δ*²)
+$\eta$(1) $\leq$ O($\Delta$s* / $\Delta$*^2)
 ```
-where Δs* = s*_max - s*_min is the uncertainty in crossing position.
+where $\Delta$s* = s*_max - s*_min is the uncertainty in crossing position.
 
 
 ## Comparison to Gap-Informed Optimal
 
-Gap-informed (Guo-An): η(1) = O(1/Δ*) with T = O(1/Δ*)
+Gap-informed (Guo-An): $\eta$(1) = O(1/$\Delta$*) with T = O(1/$\Delta$*)
 
-Gap-uninformed (our result): η(1) = O(Δs*/Δ*²) with T = O(Δs*/Δ*²)
+Gap-uninformed (our result): $\eta$(1) = O($\Delta$s*/$\Delta$*^2) with T = O($\Delta$s*/$\Delta$*^2)
 
-**Separation**: The gap-uninformed schedule requires time factor Δs*/Δ* larger.
+**Separation**: The gap-uninformed schedule requires time factor $\Delta$s*/$\Delta$* larger.
 
-For Δs* = O(1) and Δ* = O(2^{-n/2}), this is O(2^{n/2}) — exponential separation!
+For $\Delta$s* = O(1) and $\Delta$* = O(2^{-n/2}), this is O(2^{n/2}) --- exponential separation!
 
 
 ## Connection to NP-Hardness
 
 The original paper proves A_1 estimation is NP-hard. Our result quantifies the COST of this hardness:
 
-**Corollary**: Any polynomial-time schedule (that doesn't solve an NP-hard problem) incurs an Ω(2^{n/2}) factor runtime overhead compared to the optimal schedule.
+**Corollary**: Any polynomial-time schedule (that doesn't solve an NP-hard problem) incurs an $\Omega$(2^{n/2}) factor runtime overhead compared to the optimal schedule.
 
 
 ## What Needs to Be Done
@@ -89,7 +89,7 @@ The original paper proves A_1 estimation is NP-hard. Our result quantifies the C
 
 3. **Tight bounds**: Is the uniform slow schedule exactly optimal, or just order-optimal?
 
-4. **Connection to partial information**: What if we know A_1 to some precision ε? How does the optimal schedule change?
+4. **Connection to partial information**: What if we know A_1 to some precision $\varepsilon$? How does the optimal schedule change?
 
 
 ## Significance

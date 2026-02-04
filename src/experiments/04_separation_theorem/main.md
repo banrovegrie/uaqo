@@ -72,15 +72,15 @@ See `lib/critical_assessment.md` for detailed analysis.
 
 ```
 04_separation_theorem/
-├── main.md              # This file (overview)
-├── proof.md             # Rigorous mathematical proof
-├── notes/               # Working notes and drafts
-├── lib/                 # Literature survey, critical assessment
-└── lean/                # Formal verification
-    ├── SeparationTheorem.lean       # Summary and main #check statements
-    └── SeparationTheorem/
-        ├── Basic.lean               # Definitions and error model
-        └── Separation.lean          # Main theorems
+|-- main.md              # This file (overview)
+|-- proof.md             # Rigorous mathematical proof
+|-- notes/               # Working notes and drafts
+|-- lib/                 # Literature survey, critical assessment
++-- lean/                # Formal verification
+    |-- SeparationTheorem.lean       # Summary and main #check statements
+    +-- SeparationTheorem/
+        |-- Basic.lean               # Definitions and error model
+        +-- Separation.lean          # Main theorems
 ```
 
 ## References

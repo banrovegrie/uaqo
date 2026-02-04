@@ -5,7 +5,7 @@ After the Loschmidt echo approach failed numerical validation, we develop an alt
 
 ## The Core Insight
 
-The minimum spectral gap of H(r) = -|psi_0><psi_0| + r*H_z occurs at r ≈ A_1 (validated numerically with <2% error).
+The minimum spectral gap of H(r) = -|psi_0><psi_0| + r*H_z occurs at $r \approx A_1$ (validated numerically with $<$2% error).
 
 If we can measure the gap g(r) for various r values, we can find A_1 by binary search for the minimum.
 

@@ -18,15 +18,15 @@ We provide the first quantitative characterization of how much benefit A_1 knowl
 
 ## Numerical Evidence
 
-Across 20 random instances (T = 5 × T_optimal):
+Across 20 random instances ($T = 5 \times T_{\text{optimal}}$):
 
 | Schedule | Fidelity | Info Used |
 |----------|----------|-----------|
-| Uniform | 0.573 ± 0.14 | None |
-| Wide Slow [0.4, 0.8] | 0.661 ± 0.16 | None |
-| Local (theory) | 0.611 ± 0.12 | A_1, A_2, d_0 |
-| Local (actual gap) | 0.705 ± 0.20 | Full spectrum |
-| Centered [s*±0.15] | 0.786 ± 0.11 | A_1 (to get s*) |
+| Uniform | $0.573 \pm 0.14$ | None |
+| Wide Slow [0.4, 0.8] | $0.661 \pm 0.16$ | None |
+| Local (theory) | $0.611 \pm 0.12$ | $A_1, A_2, d_0$ |
+| Local (actual gap) | $0.705 \pm 0.20$ | Full spectrum |
+| Centered $[s^* \pm 0.15]$ | $0.786 \pm 0.11$ | $A_1$ (to get $s^*$) |
 
 
 ## Interpretation
@@ -74,7 +74,7 @@ Previous work characterized COMPLEXITY of A_1 estimation but not the VALUE of kn
 
 1. **For resource-limited implementations**: Use Wide Slow [0.4, 0.8] schedule - no calibration needed, captures 40% of the benefit.
 
-2. **For moderate precision A_1**: Even rough estimate of s* (within ±0.15) captures most benefit.
+2. **For moderate precision $A_1$**: Even rough estimate of $s^*$ (within $\pm 0.15$) captures most benefit.
 
 3. **For theoretical analysis**: The gap between instance-independent and A_1-informed schedules (22%) is the "real" cost of the NP-hardness barrier.
 
@@ -85,7 +85,7 @@ Previous work characterized COMPLEXITY of A_1 estimation but not the VALUE of kn
 
 2. **Instance class**: Random instances; specific NP-hard problems may differ.
 
-3. **Time budget**: At T = 5 × T_optimal; asymptotic behavior may differ.
+3. **Time budget**: At $T = 5 \times T_{\text{optimal}}$; asymptotic behavior may differ.
 
 
 ## Open Questions
