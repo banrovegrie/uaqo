@@ -28,11 +28,12 @@ namespace UAQO.Proofs
 /-!
 # Axiom Elimination Status
 
-## Fully Proved (2 axioms, 0 sorry)
+## Fully Proved (3 axioms, 0 sorry)
 - `satisfies_iff_countUnsatisfied_zero` (SATSemantics.lean)
 - `threeSATDegPositive_ground` (SATSemantics.lean)
+- `lagrange_interpolation` (LagrangeInterp.lean)
 
-## Partially Proved with Sorry (14 axioms)
+## Partially Proved with Sorry (13 axioms)
 These have proof structures in place but need completion:
 - `A2_lower_bound` (A2Bounds.lean)
 - `modifiedHam_deg_sum`, `modifiedHam_deg_count` (ModifiedHamDeg.lean)
@@ -42,7 +43,6 @@ These have proof structures in place but need completion:
 - `variational_principle`, `variational_minimum` (VariationalPrinciple.lean)
 - `avoidedCrossing_bound`, `piecewiseSchedule_monotone` (ScheduleProperties.lean)
 - `shermanMorrison_resolvent` (ShermanMorrison.lean)
-- `lagrange_interpolation` (LagrangeInterp.lean)
 
 ## External Foundations (9 axioms - kept as axioms)
 - `threeSAT_in_NP`, `threeSAT_NP_complete` (Cook-Levin)

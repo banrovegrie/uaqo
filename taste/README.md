@@ -50,6 +50,34 @@ Aaronson writes for intelligent outsiders. His signature move is to take a techn
 3. 1612.05903 - Aaronson, Chen - Complexity-Theoretic Foundations of Quantum Supremacy Experiments (2016)
 
 
+## Roger Penrose
+
+**Style essence**: Start from physical reality, build the mathematics as the inevitable language, and use geometry as the main intuition engine.
+
+### What Makes His Writing Work
+
+Penrose typically begins with the conceptual confusion first, not with the formalism. He asks what a physical statement even means, then introduces the minimum mathematics that makes the statement precise. The reader gets a feeling that the math is not decoration: it is the only way to say the thing cleanly.
+
+**Structural patterns to borrow**:
+1. **Physical question first**: "What is the world doing?" before "What is the model?"
+2. **Geometry as intuition**: Replace algebraic manipulation with a picture whenever possible (state space, energy landscapes, avoided crossings)
+3. **Build abstractions only when forced**: Each new definition is justified by a specific failure of the previous language
+4. **Long-range signposting**: Remind the reader why a technical detour matters two chapters later
+5. **Relentless clarity about assumptions**: Distinguish "postulate", "definition", "approximation", and "idealization"
+
+### Actionable Pointers for This Thesis (AQC/AQO)
+
+1. **Treat schedules as physical control**: Ask what it means to "set s(t)" in an experiment and what precision costs.
+2. **Make the spectral gap a shape**: Use a repeated schematic of g(s) with the window around s* to carry the entire technical story.
+3. **Use a single running system**: One toy spectrum / two-level avoided crossing picture that reappears in Chapters 4-9.
+4. **Connect complexity to physics via precision**: Frame NP/#P hardness as hardness of extracting fine spectral data, not as an abstract oracle game.
+5. **End chapters with synthesis**: A short summary that answers the opening physical question in the new language.
+
+### Works (not stored here)
+
+Penrose's relevant expository style is best seen in his books (e.g., The Emperor's New Mind, The Road to Reality). Use them as a tone reference, not as a technical source for AQC.
+
+
 ## Aram Harrow
 
 **Style essence**: Maximum information density with perfect clarity. Every sentence earns its place.
@@ -310,4 +338,3 @@ Before finalizing any section, ask:
 6. **The assumed background**: Using terms without definition or reference
 7. **The citation-free claim**: Making strong statements without supporting references
 8. **The emotional hedge**: "We believe that..." instead of stating precisely what's proven
-

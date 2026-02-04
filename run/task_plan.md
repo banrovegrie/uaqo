@@ -1,22 +1,39 @@
 # Task Plan: Master's Thesis Implementation
 
 ## Objective
-Write 10-chapter thesis on Adiabatic Quantum Optimization based on arXiv:2411.05736.
+Write a 10-chapter thesis on Unstructured Adiabatic Quantum Optimization based on arXiv:2411.05736 that is:
+
+| Goal | Meaning in practice |
+|---|---|
+| Teachable | A reader can learn AQC/AQO from it without constant external lookup |
+| Rigorous | Math and parameter dependence match the paper; no hidden assumptions |
+| Coherent | One spine: model -> spectrum -> schedule -> information barrier -> responses |
+| Honest | Clear about limitations, what is proved, and what is conjectural |
 
 ## Chapter Structure
 
-| Ch | Title | Pages | Status |
-|----|-------|-------|--------|
-| 1 | Introduction | ~15 | Pending |
-| 2 | Physics and Computation | ~25 | Pending |
-| 3 | Quantum Computation | ~25 | Pending |
-| 4 | Adiabatic Quantum Computation | ~25 | Pending |
-| 5 | Adiabatic Quantum Optimization | ~20 | Pending |
-| 6 | Spectral Analysis | ~30 | Pending |
-| 7 | The Optimal Schedule | ~25 | Pending (Alapan's contribution) |
-| 8 | Hardness of Optimality | ~25 | Pending |
-| 9 | Exploring the Hardness Barrier | ~35 | Pending (Thesis extensions) |
-| 10 | Conclusion | ~10 | Pending |
+| Ch | Title | Status |
+|----|-------|--------|
+| 1 | Introduction | Pending |
+| 2 | Physics and Computation | Pending |
+| 3 | Quantum Computation | Pending |
+| 4 | Adiabatic Quantum Computation | Pending |
+| 5 | Adiabatic Quantum Optimization | Pending |
+| 6 | Spectral Analysis | Pending |
+| 7 | The Optimal Schedule | Pending (Alapan's contribution) |
+| 8 | Hardness of Optimality | Pending |
+| 9 | Exploring the Hardness Barrier | Pending (Thesis extensions) |
+| 10 | Conclusion | Pending |
+
+## Spine (what keeps the thesis coherent)
+
+| Part | Chapters | What the reader should walk away with |
+|---|---|---|
+| Framing | 1 | The paradox and why it matters; scope and ground rules |
+| Foundations | 2-4 | Computation as physics; Grover baseline; adiabatic theorem -> algorithm |
+| Core technical story | 5-7 | The unstructured AQO model; gap profile; optimal schedule runtime |
+| Information barrier | 8-9 | Optimality needs hard-to-compute spectral information; what can be done instead |
+| Closing | 10 | Synthesis and open problems |
 
 ## Phases
 
