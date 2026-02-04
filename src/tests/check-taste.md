@@ -156,6 +156,61 @@ Making simple ideas sound complicated:
 
 This doesn't mean avoiding technical depth. The adiabatic theorem is genuinely subtle. But "$H(s)$ interpolates between $H_0$ and $H_P$" needs no elaboration.
 
+### 14. Lean Code Quality
+
+Proof code should embody the same standards as prose. The proof IS the explanation.
+
+**Meta-signalling:** Comments that signal what you're doing instead of doing it:
+- `-- Now we prove the main result` (just prove it)
+- `-- This is straightforward` (if so, no comment needed)
+- `-- The key step is...` (the structure should show what's key)
+- `-- We use induction here` (the `induction` tactic says this)
+
+**Test:** Delete the comment. Does the proof become harder to understand? If no, delete.
+
+**Scaffolding in docstrings:**
+- `This theorem states that...` (the theorem statement says this)
+- `The proof proceeds by...` (the proof shows this)
+
+**Test:** Does the docstring add information beyond what the statement and proof contain?
+
+**Good docstrings explain WHY, not WHAT:**
+- **BAD:** `Proves that A implies B using lemma C.`
+- **GOOD:** `A implies B because the spectral gap bounds the transition rate. This is the key step in the runtime analysis.`
+
+**Acceptable comments:**
+- References to paper sections: `-- PAPER: Lemma 2.6, line 780`
+- Non-obvious mathematical insights: `-- The factor of 2 comes from spin degeneracy`
+- Warnings about subtle points: `-- Note: requires M >= 2, not just M > 0`
+- Citations for standard results: `-- Standard result, see Kato's adiabatic theorem`
+
+**Structure over commentary:** A well-structured proof needs fewer comments. Use:
+- Helper lemmas with descriptive names instead of inline comments
+- `have` statements that name intermediate results
+- `calc` blocks that show the chain of reasoning
+- Whitespace to separate logical sections
+
+**BAD:**
+```lean
+theorem foo : A := by
+  -- First we show X
+  have h1 : X := ...
+  -- Now we use X to get Y
+  have h2 : Y := ...
+  -- Finally, Y gives us A
+  exact ...
+```
+
+**GOOD:**
+```lean
+theorem foo : A := by
+  have hX : X := ...
+  have hY : Y := hX.trans ...
+  exact hY.of_something
+```
+
+**Mathlib style:** Follow Mathlib conventions for naming, indentation, and tactic use. Proofs should look like they belong in Mathlib.
+
 ## Positive Criteria
 
 A section passes when:

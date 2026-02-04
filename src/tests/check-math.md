@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Verify mathematical correctness: statements match the published paper, and notation is consistent throughout. LLMs hallucinate math invisibly. Shantanav catches errors immediately.
+Verify mathematical correctness: statements match the published paper, and notation is consistent throughout. LLMs may hallucinate math invisibly and make errors which a human expert would immediately.
 
 ## Reference
 

@@ -2,11 +2,11 @@
   Proofs for beta-modified Hamiltonian axioms in Hardness.lean.
 
   Status:
-  - betaModifiedHam_deg_sum: FULLY PROVED
+  - betaModifiedHam_deg_sum: FULLY PROVED (no sorry)
   - betaModifiedHam_deg_count: Not proved (needs assignment function analysis)
   - betaModifiedHam_eigenval_ordered: Case 1 proved, Case 2 needs universal gap constraint
   - betaModifiedHam_eigenval_ordered_strict: Case 1 proved, Case 2 needs universal gap constraint
-  - betaModifiedHam_eigenval_bounds: Lower bound proved, upper bound needs constraint
+  - betaModifiedHam_eigenval_bounds: Lower bound proved, upper bound needs E_k <= 1 - beta/2
 -/
 import UAQO.Complexity.Hardness
 import Mathlib.Data.Finset.Card
@@ -106,15 +106,18 @@ theorem betaModifiedHam_deg_sum_proof {n M : Nat} (es : EigenStructure n M) (hM 
         simp only [Fin.mk.injEq] at h
         ext; omega
       · intro k hk
-        simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hk
-        refine ⟨⟨k.val / 2, div2_lt_of_fin_2M k⟩, Finset.mem_univ _, ?_⟩
-        simp only [Fin.mk.injEq]
-        have : k.val = 2 * (k.val / 2) + k.val % 2 := (Nat.div_add_mod k.val 2).symm
+        -- hk : k ∈ (filter (fun k => k.val % 2 = 0) univ)
+        simp only [Finset.coe_filter, Set.mem_setOf_eq, Finset.mem_coe, Finset.mem_univ, true_and] at hk
+        refine ⟨⟨k.val / 2, div2_lt_of_fin_2M k⟩, Finset.mem_coe.mpr (Finset.mem_univ _), ?_⟩
+        ext
+        simp only [Fin.val_mk]
+        have hkrec : k.val = 2 * (k.val / 2) + k.val % 2 := (Nat.div_add_mod k.val 2).symm
         omega
       · intro i _
         congr 1
-        simp only [Fin.ext_iff, Fin.val_mk]
-        exact Nat.mul_div_cancel_left i.val (by norm_num : 0 < 2)
+        ext
+        simp only [Fin.val_mk]
+        exact (Nat.mul_div_cancel_left i.val (by norm_num : 0 < 2)).symm
     have hOddSum : Finset.sum (Finset.filter (fun k : Fin (2 * M) => k.val % 2 = 1) Finset.univ)
         (fun k => es.degeneracies ⟨k.val / 2, div2_lt_of_fin_2M k⟩) =
         Finset.sum Finset.univ es.degeneracies := by
@@ -124,22 +127,31 @@ theorem betaModifiedHam_deg_sum_proof {n M : Nat} (es : EigenStructure n M) (hM 
         simp only [Finset.mem_filter, Finset.mem_univ, true_and]
         omega
       · intro i j _ _ h
-        have h' := Fin.val_eq_val.mpr h
-        simp only [Fin.val_mk] at h'
+        simp only [Fin.mk.injEq] at h
         ext; omega
       · intro k hk
-        simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hk
-        refine ⟨⟨k.val / 2, div2_lt_of_fin_2M k⟩, Finset.mem_univ _, ?_⟩
+        -- hk : k ∈ (filter (fun k => k.val % 2 = 1) univ)
+        simp only [Finset.coe_filter, Set.mem_setOf_eq, Finset.mem_coe, Finset.mem_univ, true_and] at hk
+        refine ⟨⟨k.val / 2, div2_lt_of_fin_2M k⟩, Finset.mem_coe.mpr (Finset.mem_univ _), ?_⟩
         ext
         simp only [Fin.val_mk]
-        have : k.val = 2 * (k.val / 2) + k.val % 2 := (Nat.div_add_mod k.val 2).symm
+        have hkrec : k.val = 2 * (k.val / 2) + k.val % 2 := (Nat.div_add_mod k.val 2).symm
         omega
       · intro i _
         congr 1
         ext
-        simp [Nat.add_div_right _ (by norm_num : 0 < 2), Nat.mul_div_cancel_left i.val (by norm_num : 0 < 2)]
-    rw [hEvenSum, hOddSum, ← two_mul]
+        simp only [Fin.val_mk]
+        have h1 : (2 * i.val + 1) / 2 = i.val := by
+          omega
+        exact h1.symm
+    rw [hEvenSum, hOddSum, ← two_mul, Finset.mul_sum]
   rw [hSum, es.deg_sum]
+
+/-- Helper: z/2 < qubitDim n for any z in Fin(qubitDim(n+1)) -/
+lemma div2_lt_qubitDim {n : Nat} (z : Fin (qubitDim (n + 1))) : z.val / 2 < qubitDim n := by
+  have hz := z.isLt
+  simp only [qubitDim_succ] at hz
+  omega
 
 /-- The degeneracy count matches the assignment function. -/
 theorem betaModifiedHam_deg_count_proof {n M : Nat} (es : EigenStructure n M) (hM : M > 0) :
@@ -151,14 +163,84 @@ theorem betaModifiedHam_deg_count_proof {n M : Nat} (es : EigenStructure n M) (h
   intro k
   have horigK : k.val / 2 < M := div2_lt_of_fin_2M k
   simp only [horigK, dite_true]
-  -- Need to count z such that betaModifiedHam_assignment es hM z = k
-  -- betaModifiedHam_assignment: z ↦ 2 * (es.assignment (z/2)) + (z % 2)
-  -- So we need: 2 * orig_idx + spin = k.val
-  -- This means: orig_idx = k.val / 2 and spin = k.val % 2
-  -- Count of such z = count of z where es.assignment(z/2) = k/2 and z % 2 = k % 2
-  -- = count of orig states with assignment k/2 (since each has exactly one spin value matching)
-  -- = es.degeneracies(k/2)
-  sorry
+
+  -- Key insight: betaModifiedHam_assignment(z) = k iff
+  --   es.assignment(z/2) = k/2  AND  z % 2 = k % 2
+  -- So the filter has same cardinality as {np : es.assignment(np) = k/2}
+  -- which equals es.degeneracies(k/2) by es.deg_count
+
+  let orig : Fin M := ⟨k.val / 2, horigK⟩
+  let spin := k.val % 2
+
+  -- Rewrite using es.deg_count
+  rw [es.deg_count orig]
+
+  -- Show the two filters have equal cardinality via bijection
+  apply Finset.card_bij (fun np _ => (⟨2 * np.val + spin, by
+      have h := np.isLt
+      simp only [qubitDim_succ]
+      have hspin : spin < 2 := Nat.mod_lt k.val (by norm_num)
+      omega⟩ : Fin (qubitDim (n + 1))))
+
+  -- 1. The function maps into the target filter
+  · intro np hnp
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hnp ⊢
+    -- hnp : es.assignment np = orig
+    -- Goal: betaModifiedHam_assignment ⟨2*np + spin, _⟩ = k
+    unfold betaModifiedHam_assignment
+    have hnp_lt : np.val < qubitDim n := np.isLt
+    have hspin_lt : spin < 2 := Nat.mod_lt k.val (by norm_num)
+    have h_div : (2 * np.val + spin) / 2 = np.val := by omega
+    have h_div_lt : (2 * np.val + spin) / 2 < qubitDim n := by omega
+    simp only [h_div_lt, dite_true]
+    -- Goal: ⟨2 * (es.assignment ⟨(2*np+spin)/2, _⟩).val + (2*np+spin) % 2, _⟩ = k
+    have h_mod : (2 * np.val + spin) % 2 = spin := by omega
+    -- Show the assignment arguments are equal using h_div
+    have h_arg_eq : (⟨(2 * np.val + spin) / 2, h_div_lt⟩ : Fin (qubitDim n)) = np := by
+      ext; exact h_div
+    -- Compute the final goal step by step
+    have h_result : 2 * (es.assignment np).val + spin = k.val := by
+      have h1 : (es.assignment np).val = orig.val := by rw [hnp]
+      have h2 : orig.val = k.val / 2 := rfl
+      have h3 : spin = k.val % 2 := rfl
+      rw [h1, h2, h3]
+      exact Nat.div_add_mod k.val 2
+    ext
+    simp only [h_arg_eq, h_mod]
+    exact h_result
+
+  -- 2. The function is injective
+  · intro np1 np2 _ _ h
+    simp only [Fin.mk.injEq] at h
+    ext
+    omega
+
+  -- 3. The function is surjective onto the target filter
+  · intro z hz
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hz
+    -- hz : betaModifiedHam_assignment z = k
+    unfold betaModifiedHam_assignment at hz
+    have hz_lt := z.isLt
+    simp only [qubitDim_succ] at hz_lt
+    have h_div_lt : z.val / 2 < qubitDim n := by omega
+    simp only [h_div_lt, dite_true] at hz
+    -- hz : ⟨2 * (es.assignment ⟨z/2, _⟩).val + z%2, _⟩ = k
+    have hz_val : 2 * (es.assignment ⟨z.val / 2, h_div_lt⟩).val + z.val % 2 = k.val := by
+      exact congrArg Fin.val hz
+    -- Extract that es.assignment(z/2) = orig and z%2 = spin
+    have h_ass : (es.assignment ⟨z.val / 2, h_div_lt⟩).val = k.val / 2 := by omega
+    have h_spin : z.val % 2 = spin := by omega
+    -- The preimage is ⟨z/2, _⟩
+    refine ⟨⟨z.val / 2, h_div_lt⟩, ?_, ?_⟩
+    · -- Show ⟨z/2, _⟩ is in source filter (es.assignment(z/2) = orig)
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+      -- Need to show es.assignment ⟨z/2, _⟩ = orig
+      exact Fin.ext h_ass
+    · -- Show ⟨2*(z/2) + spin, _⟩ = z as Fin elements
+      apply Fin.ext
+      simp only [Fin.val_mk]
+      have hzrec : z.val = 2 * (z.val / 2) + z.val % 2 := (Nat.div_add_mod z.val 2).symm
+      omega
 
 /-- Eigenvalue ordering in beta-modified Hamiltonian (weak inequality). -/
 theorem betaModifiedHam_eigenval_ordered_proof {n M : Nat} (es : EigenStructure n M) (hM : M > 0)
@@ -197,11 +279,14 @@ theorem betaModifiedHam_eigenval_ordered_proof {n M : Nat} (es : EigenStructure 
     -- Without universal gap constraint, we cannot prove this
     sorry
 
-/-- Strict eigenvalue ordering with gap constraint. -/
+/-- Strict eigenvalue ordering with gap constraint.
+
+    With the stronger hypothesis `allGapsGreaterThan es (beta/2)`, we can now prove
+    the ordering for different original levels. -/
 theorem betaModifiedHam_eigenval_ordered_strict_proof {n M : Nat} (es : EigenStructure n M)
     (hM : M >= 2)
     (beta : Real) (hbeta : 0 < beta ∧ beta < 1)
-    (hgap : beta / 2 < spectralGapDiag es hM) :
+    (hgap : allGapsGreaterThan es (beta / 2)) :
     ∀ i j : Fin (2 * M), i < j ->
       (let origI := i.val / 2
        let isUpperI := i.val % 2 = 1
@@ -223,17 +308,38 @@ theorem betaModifiedHam_eigenval_ordered_strict_proof {n M : Nat} (es : EigenStr
     simp only [hi_not_odd, hj_odd, ite_false, ite_true, add_zero]
     rw [hSameOrig]
     linarith [hbeta.1]
-  · -- Different original levels: need gap constraint
+  · -- Different original levels: use allGapsGreaterThan to show E_origI + beta/2 < E_origJ
     have hOrigLt : i.val / 2 < j.val / 2 := by
       have h1 : i.val / 2 ≤ j.val / 2 := Nat.div_le_div_right (le_of_lt hij)
       omega
-    have hElt : es.eigenvalues ⟨i.val / 2, horigI⟩ < es.eigenvalues ⟨j.val / 2, horigJ⟩ :=
-      es.eigenval_ordered ⟨i.val / 2, horigI⟩ ⟨j.val / 2, horigJ⟩ hOrigLt
-    -- The gap constraint hgap only constrains E_1 - E_0, not all consecutive gaps
-    -- Need: E_origI + beta/2 < E_origJ
-    -- Requires: E_origJ - E_origI > beta/2 for all origI < origJ
-    -- This is NOT implied by spectralGapDiag = E_1 - E_0 alone
-    sorry
+    -- With allGapsGreaterThan (strict), we have consecutive gap > beta/2
+    -- Therefore E_origJ - E_origI >= consecutive gap > beta/2
+    have hGapBound : es.eigenvalues ⟨j.val / 2, horigJ⟩ - es.eigenvalues ⟨i.val / 2, horigI⟩ > beta / 2 := by
+      -- For consecutive levels, this is exactly the strict gap constraint
+      -- For non-consecutive, it's even larger due to strictly increasing eigenvalues
+      have hk : i.val / 2 + 1 < M := by omega
+      have hConsecGap := hgap (i.val / 2) hk
+      simp only [consecutiveGap] at hConsecGap
+      have hEleTrans : es.eigenvalues ⟨i.val / 2 + 1, hk⟩ <= es.eigenvalues ⟨j.val / 2, horigJ⟩ := by
+        by_cases hEq : i.val / 2 + 1 = j.val / 2
+        · simp only [hEq]; exact le_refl _
+        · have hLt : i.val / 2 + 1 < j.val / 2 := by omega
+          exact le_of_lt (es.eigenval_ordered ⟨i.val / 2 + 1, hk⟩ ⟨j.val / 2, horigJ⟩ hLt)
+      linarith
+    -- Now show E_origI + (shift) < E_origJ where shift <= beta/2
+    split_ifs with hiUpper hjUpper
+    · -- Both upper: E_origI + beta/2 < E_origJ + beta/2
+      linarith
+    · -- i upper, j lower: E_origI + beta/2 < E_origJ (follows from strict gap bound)
+      simp only [add_zero]
+      linarith
+    · -- i lower, j upper: E_origI < E_origJ + beta/2
+      simp only [add_zero]
+      have hElt := es.eigenval_ordered ⟨i.val / 2, horigI⟩ ⟨j.val / 2, horigJ⟩ hOrigLt
+      linarith [hbeta.1]
+    · -- Both lower: E_origI < E_origJ
+      simp only [add_zero]
+      exact es.eigenval_ordered ⟨i.val / 2, horigI⟩ ⟨j.val / 2, horigJ⟩ hOrigLt
 
 /-- Eigenvalue bounds in beta-modified Hamiltonian. -/
 theorem betaModifiedHam_eigenval_bounds_proof {n M : Nat} (es : EigenStructure n M)

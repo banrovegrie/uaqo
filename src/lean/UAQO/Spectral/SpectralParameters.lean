@@ -118,14 +118,101 @@ theorem spectralParam_positive {n M : Nat} (es : EigenStructure n M)
       simp only [Finset.mem_filter, Finset.mem_univ, true_and]
       norm_num
 
-/-- A_2 ≥ (N-d_0)/N * Δ^{-2} ≥ (1 - 1/N) * Δ^{-2}
+/-- A_2 ≤ (N-d_0)/N * Δ^{-2} = (1 - d_0/N) / Δ²
 
-    This follows because A₂ = (1/N) Σ_{k≥1} d_k / (E_k - E₀)² and each term has
-    (E_k - E₀) ≥ Δ, so A₂ ≥ (1/N) Σ_{k≥1} d_k / Δ² = (N - d₀) / (N Δ²). -/
-axiom A2_lower_bound {n M : Nat} (es : EigenStructure n M) (hM : M >= 2) :
-    A2 es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM) >=
+    A₂ = (1/N) Σ_{k≥1} d_k / (E_k - E₀)² and each term has (E_k - E₀)² ≥ Δ²,
+    so d_k/(E_k - E₀)² ≤ d_k/Δ², giving A₂ ≤ (1/N) Σ_{k≥1} d_k/Δ² = (N-d₀)/(NΔ²).
+
+    Note: The original axiom incorrectly claimed this was a lower bound. -/
+theorem A2_upper_bound {n M : Nat} (es : EigenStructure n M) (hM : M >= 2) :
+    A2 es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM) <=
     (1 - (es.degeneracies ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_two hM⟩ : Real) / qubitDim n) /
-    (spectralGapDiag es hM)^2
+    (spectralGapDiag es hM)^2 := by
+  -- Setup
+  simp only [A2, spectralParam, spectralGapDiag]
+  have hM0 : M > 0 := Nat.lt_of_lt_of_le Nat.zero_lt_two hM
+  have hN : (qubitDim n : Real) > 0 := Nat.cast_pos.mpr (Nat.pow_pos (by norm_num : 0 < 2))
+  have hE0 : es.eigenvalues ⟨0, hM0⟩ = 0 := es.ground_energy_zero hM0
+  have hDelta : es.eigenvalues ⟨1, hM⟩ - es.eigenvalues ⟨0, hM0⟩ > 0 := by
+    have h := es.eigenval_ordered ⟨0, hM0⟩ ⟨1, hM⟩
+    simp only [Fin.mk_lt_mk] at h
+    linarith [h Nat.zero_lt_one]
+  let Delta := es.eigenvalues ⟨1, hM⟩ - es.eigenvalues ⟨0, hM0⟩
+  -- Key: for k >= 1, (E_k - E_0)^2 >= Delta^2, so d_k/(E_k - E_0)^2 <= d_k/Delta^2
+  have hterm_bound : ∀ k ∈ Finset.filter (fun k : Fin M => k.val > 0) Finset.univ,
+      (es.degeneracies k : Real) / (es.eigenvalues k - es.eigenvalues ⟨0, hM0⟩)^2 <=
+      (es.degeneracies k : Real) / Delta^2 := by
+    intro k hk
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hk
+    have hk1 : k ≥ ⟨1, hM⟩ := by
+      simp only [Fin.le_iff_val_le_val, Fin.val_mk]
+      omega
+    have hEk : es.eigenvalues k - es.eigenvalues ⟨0, hM0⟩ >= Delta := by
+      have h1 : es.eigenvalues ⟨1, hM⟩ <= es.eigenvalues k := by
+        cases Nat.lt_or_eq_of_le hk1 with
+        | inl hlt => exact le_of_lt (es.eigenval_ordered ⟨1, hM⟩ k hlt)
+        | inr heq =>
+          have hkeq : k = ⟨1, hM⟩ := Fin.ext heq.symm
+          rw [hkeq]
+      linarith
+    have hdk : (es.degeneracies k : Real) >= 0 := Nat.cast_nonneg _
+    have hDelta_sq : Delta^2 > 0 := sq_pos_of_pos hDelta
+    have hEk_sq : (es.eigenvalues k - es.eigenvalues ⟨0, hM0⟩)^2 >= Delta^2 := by
+      apply sq_le_sq' (by linarith) hEk
+    apply div_le_div_of_nonneg_left hdk hDelta_sq hEk_sq
+  -- Sum of terms is bounded
+  have hsum_bound : Finset.sum (Finset.filter (fun k : Fin M => k.val > 0) Finset.univ)
+      (fun k => (es.degeneracies k : Real) / (es.eigenvalues k - es.eigenvalues ⟨0, hM0⟩)^2) <=
+    Finset.sum (Finset.filter (fun k : Fin M => k.val > 0) Finset.univ)
+      (fun k => (es.degeneracies k : Real) / Delta^2) := Finset.sum_le_sum hterm_bound
+  -- Factor out 1/Delta^2
+  have hsum_factor : Finset.sum (Finset.filter (fun k : Fin M => k.val > 0) Finset.univ)
+      (fun k => (es.degeneracies k : Real) / Delta^2) =
+    (1 / Delta^2) * Finset.sum (Finset.filter (fun k : Fin M => k.val > 0) Finset.univ)
+      (fun k => (es.degeneracies k : Real)) := by
+    rw [← Finset.sum_div]
+    have hDelta_sq : Delta^2 ≠ 0 := ne_of_gt (sq_pos_of_pos hDelta)
+    field_simp
+  -- Sum of degeneracies for k >= 1 is N - d_0
+  have hsum_deg : Finset.sum (Finset.filter (fun k : Fin M => k.val > 0) Finset.univ)
+      (fun k => (es.degeneracies k : Real)) =
+    (qubitDim n : Real) - (es.degeneracies ⟨0, hM0⟩ : Real) := by
+    have htotal : Finset.sum Finset.univ (fun k : Fin M => (es.degeneracies k : Real)) =
+        (qubitDim n : Real) := by
+      have h := es.deg_sum
+      simp only [← Nat.cast_sum] at h ⊢
+      exact congrArg Nat.cast h
+    -- Split the full sum into k=0 and k>0 parts
+    have h0_only : Finset.filter (fun k : Fin M => ¬k.val > 0) Finset.univ = {⟨0, hM0⟩} := by
+      ext k
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton, not_lt,
+                 Nat.le_zero]
+      constructor
+      · intro hk; ext; exact hk
+      · intro hk; simp [hk]
+    have hsplit : Finset.sum Finset.univ (fun k : Fin M => (es.degeneracies k : Real)) =
+        Finset.sum (Finset.filter (fun k : Fin M => ¬k.val > 0) Finset.univ)
+          (fun k => (es.degeneracies k : Real)) +
+        Finset.sum (Finset.filter (fun k : Fin M => k.val > 0) Finset.univ)
+          (fun k => (es.degeneracies k : Real)) := by
+      rw [← Finset.sum_filter_add_sum_filter_not (s := Finset.univ)
+          (p := fun k : Fin M => k.val > 0)]
+      ring
+    rw [h0_only, Finset.sum_singleton] at hsplit
+    linarith [htotal, hsplit]
+  -- Now put it all together
+  calc (1 / qubitDim n) * Finset.sum (Finset.filter (fun k => k.val > 0) Finset.univ)
+         (fun k => (es.degeneracies k : Real) / (es.eigenvalues k - es.eigenvalues ⟨0, hM0⟩)^2)
+      <= (1 / qubitDim n) * Finset.sum (Finset.filter (fun k => k.val > 0) Finset.univ)
+           (fun k => (es.degeneracies k : Real) / Delta^2) := by
+        apply mul_le_mul_of_nonneg_left hsum_bound (div_nonneg one_pos.le hN.le)
+    _ = (1 / qubitDim n) * ((1 / Delta^2) * Finset.sum (Finset.filter (fun k => k.val > 0) Finset.univ)
+           (fun k => (es.degeneracies k : Real))) := by rw [hsum_factor]
+    _ = (1 / qubitDim n) * ((1 / Delta^2) * ((qubitDim n : Real) - (es.degeneracies ⟨0, hM0⟩ : Real))) := by
+        rw [hsum_deg]
+    _ = (1 - (es.degeneracies ⟨0, hM0⟩ : Real) / qubitDim n) / Delta^2 := by
+        have hDelta_sq : Delta^2 ≠ 0 := ne_of_gt (sq_pos_of_pos hDelta)
+        field_simp
 
 /-- Simpler lower bound: A_2 ≥ d₁/(NΔ²) where d₁ is the first excited state degeneracy.
     This follows because the k=1 term alone in the sum gives this contribution. -/

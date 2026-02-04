@@ -193,4 +193,50 @@ theorem spectralGap_positive {n M : Nat} (es : EigenStructure n M) (hM : M >= 2)
   simp only [Fin.mk_lt_mk] at h
   linarith [h Nat.zero_lt_one]
 
+/-- The consecutive gap at level k: E_{k+1} - E_k -/
+noncomputable def consecutiveGap {n M : Nat} (es : EigenStructure n M)
+    (k : Nat) (hk : k + 1 < M) : Real :=
+  es.eigenvalues ⟨k + 1, hk⟩ - es.eigenvalues ⟨k, Nat.lt_of_succ_lt hk⟩
+
+/-- Every consecutive gap is positive due to strictly increasing eigenvalues -/
+theorem consecutiveGap_pos {n M : Nat} (es : EigenStructure n M)
+    (k : Nat) (hk : k + 1 < M) : consecutiveGap es k hk > 0 := by
+  simp only [consecutiveGap]
+  have h := es.eigenval_ordered ⟨k, Nat.lt_of_succ_lt hk⟩ ⟨k + 1, hk⟩
+  simp only [Fin.mk_lt_mk] at h
+  linarith [h (Nat.lt_succ_self k)]
+
+/-- Predicate: all consecutive gaps are at least delta (non-strict).
+
+    For typical problem Hamiltonians, all gaps are proportional to 1/poly(n), so
+    this constraint is satisfied with an appropriate choice of beta. -/
+def allGapsAtLeast {n M : Nat} (es : EigenStructure n M) (delta : Real) : Prop :=
+  ∀ k (hk : k + 1 < M), consecutiveGap es k hk >= delta
+
+/-- Predicate: all consecutive gaps are strictly greater than delta.
+
+    This is the constraint needed for the beta-modified Hamiltonian construction
+    to preserve strict ordering: beta/2 must be strictly smaller than ALL
+    consecutive gaps, not just the first one (spectralGapDiag). -/
+def allGapsGreaterThan {n M : Nat} (es : EigenStructure n M) (delta : Real) : Prop :=
+  ∀ k (hk : k + 1 < M), consecutiveGap es k hk > delta
+
+/-- Strict constraint implies non-strict -/
+theorem allGapsGreaterThan_implies_allGapsAtLeast {n M : Nat} (es : EigenStructure n M)
+    (delta : Real) (h : allGapsGreaterThan es delta) : allGapsAtLeast es delta := by
+  intro k hk
+  exact le_of_lt (h k hk)
+
+/-- The first spectral gap is a consecutive gap -/
+theorem spectralGapDiag_eq_consecutiveGap {n M : Nat} (es : EigenStructure n M)
+    (hM : M >= 2) : spectralGapDiag es hM = consecutiveGap es 0 (Nat.lt_of_lt_of_le Nat.one_lt_two hM) := by
+  simp only [spectralGapDiag, consecutiveGap, Nat.zero_add]
+
+/-- If all gaps are at least delta, then spectralGapDiag >= delta -/
+theorem spectralGapDiag_ge_of_allGapsAtLeast {n M : Nat} (es : EigenStructure n M)
+    (hM : M >= 2) (delta : Real) (h : allGapsAtLeast es delta) :
+    spectralGapDiag es hM >= delta := by
+  rw [spectralGapDiag_eq_consecutiveGap]
+  exact h 0 (Nat.lt_of_lt_of_le Nat.one_lt_two hM)
+
 end UAQO

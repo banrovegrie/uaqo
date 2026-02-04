@@ -15,7 +15,7 @@ Tests are prompts an agent evaluates against. They catch errors and drift before
 A reader should finish this thesis understanding adiabatic quantum optimization better than any other single source would give them.
 
 - The writing should be clear enough to teach.
-- Precise and rigorous enough that Shantanav finds no errors. State what results achieve and what they do not.
+- Precise and rigorous enough that there are no errors. State what results achieve and what they do not.
 - Honest, personal and reflective. The goal is new perspective: understanding reality better or building practical things.
 
 The published paper is the foundation. The thesis explains it deeply and weaves the background into a unified whole. It proposes directions beyond the paper (legitimate future work, even if unproven) and `src/experiments/` is where we try to realize them. What succeeds gets folded back into the thesis.

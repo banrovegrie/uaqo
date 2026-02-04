@@ -82,19 +82,91 @@ theorem avoidedCrossingWindow_pos {n M : Nat} (es : EigenStructure n M) (hM : M 
   · apply Real.sqrt_pos.mpr
     apply div_pos (mul_pos hd0pos hA2pos) hNpos
 
-/-- The avoided crossing window is within bounds: δ < s* and s* + δ < 1 -/
-axiom avoidedCrossing_bound {n M : Nat} (es : EigenStructure n M) (hM : M >= 2) :
+/-- The spectral condition required for the avoided crossing bounds.
+
+    This condition ensures that the avoided crossing window δ is small enough
+    relative to the avoided crossing position s*. It holds for "typical" 3-SAT
+    instances but is not a general property of all eigenstructures.
+
+    Specifically:
+    1. A1 > 1 (strong spectral parameter, holds for unstructured search: A1 ≈ √N)
+    2. sqrt(d0 * A2 / N) < (A1 + 1) / 2
+
+    This implies both:
+    - δ < s* (crossing window is within the valid region)
+    - s* + δ < 1 (crossing completes before end of evolution) -/
+def spectralConditionForBounds {n M : Nat} (es : EigenStructure n M) (hM : M >= 2) : Prop :=
+  let A1_val := A1 es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM)
+  let A2_val := A2 es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM)
+  let d0 := es.degeneracies ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_two hM⟩
+  let N := qubitDim n
+  A1_val > 1 ∧ Real.sqrt (d0 * A2_val / N) < (A1_val + 1) / 2
+
+/-- The avoided crossing window is within bounds: δ < s* and s* + δ < 1.
+
+    Note: Requires the spectral condition `spectralConditionForBounds` as a hypothesis.
+    This condition is satisfied for typical 3-SAT instances but not all eigenstructures. -/
+theorem avoidedCrossing_bound {n M : Nat} (es : EigenStructure n M) (hM : M >= 2)
+    (hcond : spectralConditionForBounds es hM) :
     let sStar := avoidedCrossingPosition es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM)
     let deltaS := avoidedCrossingWindow es hM
-    deltaS < sStar ∧ sStar + deltaS < 1
+    deltaS < sStar ∧ sStar + deltaS < 1 := by
+  simp only [avoidedCrossingPosition, avoidedCrossingWindow, spectralConditionForBounds] at *
+  have hM0 : M > 0 := Nat.lt_of_lt_of_le Nat.zero_lt_two hM
+  have hA1gt1 : A1 es hM0 > 1 := hcond.1
+  have hA1pos : A1 es hM0 > 0 := by linarith
+  have hA1plus1_pos : A1 es hM0 + 1 > 0 := by linarith
+  have hsqrt_bound : Real.sqrt (↑(es.degeneracies ⟨0, hM0⟩) * A2 es hM0 / ↑(qubitDim n)) < (A1 es hM0 + 1) / 2 := hcond.2
+  -- The proof follows from the spectral condition
+  constructor
+  · -- deltaS < sStar
+    -- deltaS = 2/(A1+1)^2 * sqrt(d0*A2/N)
+    -- sStar = A1/(A1+1)
+    -- Need: 2/(A1+1)^2 * sqrt(...) < A1/(A1+1)
+    -- i.e., 2/(A1+1) * sqrt(...) < A1
+    -- i.e., sqrt(...) < A1*(A1+1)/2
+    -- This follows from hsqrt_bound: sqrt(...) < (A1+1)/2 < A1*(A1+1)/2 when A1 > 1
+    calc 2 / (A1 es hM0 + 1) ^ 2 * Real.sqrt (↑(es.degeneracies ⟨0, hM0⟩) * A2 es hM0 / ↑(qubitDim n))
+        < 2 / (A1 es hM0 + 1) ^ 2 * ((A1 es hM0 + 1) / 2) := by
+            apply mul_lt_mul_of_pos_left hsqrt_bound
+            apply div_pos (by norm_num : (2 : Real) > 0)
+            apply pow_pos hA1plus1_pos
+      _ = 1 / (A1 es hM0 + 1) := by field_simp
+      _ < A1 es hM0 / (A1 es hM0 + 1) := by
+            apply div_lt_div_of_pos_right _ hA1plus1_pos
+            linarith
+  · -- sStar + deltaS < 1
+    -- Need: A1/(A1+1) + 2/(A1+1)^2 * sqrt(...) < 1
+    -- From hsqrt_bound: sqrt(...) < (A1+1)/2
+    -- So: 2/(A1+1)^2 * sqrt(...) < 2/(A1+1)^2 * (A1+1)/2 = 1/(A1+1)
+    -- Thus: A1/(A1+1) + deltaS < A1/(A1+1) + 1/(A1+1) = 1
+    have hdeltaS_bound : 2 / (A1 es hM0 + 1) ^ 2 * Real.sqrt (↑(es.degeneracies ⟨0, hM0⟩) * A2 es hM0 / ↑(qubitDim n)) < 1 / (A1 es hM0 + 1) := by
+      calc 2 / (A1 es hM0 + 1) ^ 2 * Real.sqrt (↑(es.degeneracies ⟨0, hM0⟩) * A2 es hM0 / ↑(qubitDim n))
+          < 2 / (A1 es hM0 + 1) ^ 2 * ((A1 es hM0 + 1) / 2) := by
+              apply mul_lt_mul_of_pos_left hsqrt_bound
+              apply div_pos (by norm_num : (2 : Real) > 0)
+              apply pow_pos hA1plus1_pos
+        _ = 1 / (A1 es hM0 + 1) := by field_simp
+    calc A1 es hM0 / (A1 es hM0 + 1) + 2 / (A1 es hM0 + 1) ^ 2 * Real.sqrt (↑(es.degeneracies ⟨0, hM0⟩) * A2 es hM0 / ↑(qubitDim n))
+        < A1 es hM0 / (A1 es hM0 + 1) + 1 / (A1 es hM0 + 1) := by linarith
+      _ = (A1 es hM0 + 1) / (A1 es hM0 + 1) := by ring
+      _ = 1 := by field_simp
+
+/-- Helper: Linear function with positive slope is strictly monotone -/
+private lemma linear_monotone (a b : Real) (ha : a > 0) (hb : b > 0) (t₁ t₂ : Real)
+    (ht : t₁ < t₂) : a * t₁ / b < a * t₂ / b := by
+  apply div_lt_div_of_pos_right _ hb
+  exact mul_lt_mul_of_pos_left ht ha
 
 /-- Piecewise linear schedules are monotonically increasing.
     Each segment has positive slope:
     - Left region: slope = (s* - δ) / T_left > 0
     - Crossing region: slope = 2δ / T_cross > 0
     - Right region: slope = (1 - s* - δ) / T_right > 0
-    The positivity follows from spectral parameters and the avoided crossing structure. -/
-axiom piecewiseSchedule_monotone {n M : Nat} (es : EigenStructure n M) (hM : M >= 2)
+
+    Note: Requires the spectral condition to ensure s* - δ > 0 and 1 - s* - δ > 0. -/
+theorem piecewiseSchedule_monotone {n M : Nat} (es : EigenStructure n M) (hM : M >= 2)
+    (hcond : spectralConditionForBounds es hM)
     (T : Real) (hT : T > 0)
     (T_left T_cross T_right : Real)
     (times_pos : T_left > 0 ∧ T_cross > 0 ∧ T_right > 0)
@@ -107,7 +179,136 @@ axiom piecewiseSchedule_monotone {n M : Nat} (es : EigenStructure n M) (hM : M >
       else if t <= T_left + T_cross then
         (sStar - deltaS) + 2 * deltaS * (t - T_left) / T_cross
       else (sStar + deltaS) + (1 - sStar - deltaS) * (t - T_left - T_cross) / T_right
-    s t₁ < s t₂
+    s t₁ < s t₂ := by
+  -- Setup: extract the key bounds from spectralConditionForBounds
+  simp only
+  set sStar := avoidedCrossingPosition es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM)
+  set deltaS := avoidedCrossingWindow es hM
+  have hbounds := avoidedCrossing_bound es hM hcond
+  have hdelta_lt_sStar : deltaS < sStar := hbounds.1
+  have hsStar_deltaS_lt_one : sStar + deltaS < 1 := hbounds.2
+  have hdeltaS_pos : deltaS > 0 := avoidedCrossingWindow_pos es hM
+  have hsStar_minus_deltaS_pos : sStar - deltaS > 0 := by linarith
+  have hone_minus_sStar_minus_deltaS_pos : 1 - sStar - deltaS > 0 := by linarith
+  have hTl := times_pos.1
+  have hTc := times_pos.2.1
+  have hTr := times_pos.2.2
+  -- Define the schedule function
+  let s := fun t =>
+    if t <= T_left then (sStar - deltaS) * t / T_left
+    else if t <= T_left + T_cross then
+      (sStar - deltaS) + 2 * deltaS * (t - T_left) / T_cross
+    else (sStar + deltaS) + (1 - sStar - deltaS) * (t - T_left - T_cross) / T_right
+  -- Case analysis on which regions t₁ and t₂ fall into
+  by_cases h1 : t₁ <= T_left
+  · -- t₁ is in the left region
+    by_cases h2 : t₂ <= T_left
+    · -- Case 1: Both in left region
+      simp only [s, h1, h2, ↓reduceIte]
+      exact linear_monotone (sStar - deltaS) T_left hsStar_minus_deltaS_pos hTl t₁ t₂ ht₁_lt_t₂
+    · -- t₂ is not in left region
+      have h2' : T_left < t₂ := not_le.mp h2
+      by_cases h2c : t₂ <= T_left + T_cross
+      · -- Case 2: t₁ in left, t₂ in crossing
+        have hh2 : ¬(t₂ <= T_left) := h2
+        simp only [s, h1, if_neg hh2, h2c, ↓reduceIte]
+        -- s(t₁) = (sStar - deltaS) * t₁ / T_left
+        -- s(t₂) = (sStar - deltaS) + 2 * deltaS * (t₂ - T_left) / T_cross
+        have ht1_le_Tl : t₁ <= T_left := h1
+        have ht2_gt_Tl : t₂ > T_left := h2'
+        -- At T_left, s(T_left) = sStar - deltaS
+        -- So s(t₁) <= sStar - deltaS < s(t₂)
+        have hst1_le : (sStar - deltaS) * t₁ / T_left <= sStar - deltaS := by
+          rw [div_le_iff₀ hTl]
+          calc (sStar - deltaS) * t₁ <= (sStar - deltaS) * T_left := by
+                 apply mul_le_mul_of_nonneg_left ht1_le_Tl (le_of_lt hsStar_minus_deltaS_pos)
+             _ = (sStar - deltaS) * T_left := rfl
+        have hsStar_lt_st2 : sStar - deltaS < (sStar - deltaS) + 2 * deltaS * (t₂ - T_left) / T_cross := by
+          have hpos : 2 * deltaS * (t₂ - T_left) / T_cross > 0 := by
+            apply div_pos _ hTc
+            apply mul_pos (mul_pos (by norm_num : (2:Real) > 0) hdeltaS_pos)
+            linarith
+          linarith
+        linarith
+      · -- Case 3: t₁ in left, t₂ in right
+        have h2c' : T_left + T_cross < t₂ := not_le.mp h2c
+        have hh2 : ¬(t₂ <= T_left) := h2
+        have hh2c : ¬(t₂ <= T_left + T_cross) := h2c
+        simp only [s, h1, if_neg hh2, if_neg hh2c, ↓reduceIte]
+        -- s(t₁) <= sStar - deltaS < sStar + deltaS <= s(t₂)
+        have hst1_le : (sStar - deltaS) * t₁ / T_left <= sStar - deltaS := by
+          rw [div_le_iff₀ hTl]
+          calc (sStar - deltaS) * t₁ <= (sStar - deltaS) * T_left := by
+                 apply mul_le_mul_of_nonneg_left h1 (le_of_lt hsStar_minus_deltaS_pos)
+             _ = (sStar - deltaS) * T_left := rfl
+        have hsStar_plus_le : sStar + deltaS <= (sStar + deltaS) + (1 - sStar - deltaS) * (t₂ - T_left - T_cross) / T_right := by
+          have hge : (1 - sStar - deltaS) * (t₂ - T_left - T_cross) / T_right >= 0 := by
+            apply div_nonneg _ (le_of_lt hTr)
+            apply mul_nonneg (le_of_lt hone_minus_sStar_minus_deltaS_pos)
+            linarith
+          linarith
+        calc (sStar - deltaS) * t₁ / T_left <= sStar - deltaS := hst1_le
+           _ < sStar + deltaS := by linarith
+           _ <= (sStar + deltaS) + (1 - sStar - deltaS) * (t₂ - T_left - T_cross) / T_right := hsStar_plus_le
+  · -- t₁ is not in left region
+    have h1' : T_left < t₁ := not_le.mp h1
+    have hh1 : ¬(t₁ <= T_left) := h1
+    by_cases h1c : t₁ <= T_left + T_cross
+    · -- t₁ is in crossing region
+      by_cases h2c : t₂ <= T_left + T_cross
+      · -- Case 4: Both in crossing region
+        have hh2 : ¬(t₂ <= T_left) := fun h => by linarith
+        simp only [s, if_neg hh1, h1c, if_neg hh2, h2c, ↓reduceIte]
+        -- s(t₁) = (sStar - deltaS) + 2 * deltaS * (t₁ - T_left) / T_cross
+        -- s(t₂) = (sStar - deltaS) + 2 * deltaS * (t₂ - T_left) / T_cross
+        have hlt : (t₁ - T_left) < (t₂ - T_left) := by linarith
+        have hmono : 2 * deltaS * (t₁ - T_left) / T_cross < 2 * deltaS * (t₂ - T_left) / T_cross := by
+          apply div_lt_div_of_pos_right _ hTc
+          apply mul_lt_mul_of_pos_left hlt
+          apply mul_pos (by norm_num : (2:Real) > 0) hdeltaS_pos
+        linarith
+      · -- Case 5: t₁ in crossing, t₂ in right
+        have h2c' : T_left + T_cross < t₂ := not_le.mp h2c
+        have hh2 : ¬(t₂ <= T_left) := fun h => by linarith
+        have hh2c : ¬(t₂ <= T_left + T_cross) := h2c
+        simp only [s, if_neg hh1, h1c, if_neg hh2, if_neg hh2c, ↓reduceIte]
+        -- s(t₁) <= sStar + deltaS < s(t₂)
+        -- Key: t₂ > T_left + T_cross, so t₂ - T_left - T_cross > 0
+        have ht2_gt : t₂ - T_left - T_cross > 0 := by linarith
+        have ht1_bound : t₁ - T_left <= T_cross := by linarith
+        have hst1_le : (sStar - deltaS) + 2 * deltaS * (t₁ - T_left) / T_cross <=
+                       (sStar - deltaS) + 2 * deltaS := by
+          have hterm_le : 2 * deltaS * (t₁ - T_left) / T_cross <= 2 * deltaS := by
+            rw [div_le_iff₀ hTc]
+            calc 2 * deltaS * (t₁ - T_left) <= 2 * deltaS * T_cross := by
+                   apply mul_le_mul_of_nonneg_left ht1_bound
+                   apply mul_nonneg (by norm_num : (2:Real) >= 0) (le_of_lt hdeltaS_pos)
+               _ = 2 * deltaS * T_cross := rfl
+          linarith
+        have hsStar_plus_lt : sStar + deltaS < (sStar + deltaS) + (1 - sStar - deltaS) * (t₂ - T_left - T_cross) / T_right := by
+          have hgt : (1 - sStar - deltaS) * (t₂ - T_left - T_cross) / T_right > 0 := by
+            apply div_pos _ hTr
+            apply mul_pos hone_minus_sStar_minus_deltaS_pos ht2_gt
+          linarith
+        have heq : (sStar - deltaS) + 2 * deltaS = sStar + deltaS := by ring
+        calc (sStar - deltaS) + 2 * deltaS * (t₁ - T_left) / T_cross
+           <= (sStar - deltaS) + 2 * deltaS := hst1_le
+         _ = sStar + deltaS := heq
+         _ < (sStar + deltaS) + (1 - sStar - deltaS) * (t₂ - T_left - T_cross) / T_right := hsStar_plus_lt
+    · -- Case 6: Both in right region
+      have h1c' : T_left + T_cross < t₁ := not_le.mp h1c
+      have hh1c : ¬(t₁ <= T_left + T_cross) := h1c
+      have hh2 : ¬(t₂ <= T_left) := fun h => by linarith
+      have hh2c : ¬(t₂ <= T_left + T_cross) := fun h => by linarith
+      simp only [s, if_neg hh1, if_neg hh1c, if_neg hh2, if_neg hh2c, ↓reduceIte]
+      -- s(t₁) = (sStar + deltaS) + (1 - sStar - deltaS) * (t₁ - T_left - T_cross) / T_right
+      -- s(t₂) = (sStar + deltaS) + (1 - sStar - deltaS) * (t₂ - T_left - T_cross) / T_right
+      have hlt : (t₁ - T_left - T_cross) < (t₂ - T_left - T_cross) := by linarith
+      have hmono : (1 - sStar - deltaS) * (t₁ - T_left - T_cross) / T_right <
+                   (1 - sStar - deltaS) * (t₂ - T_left - T_cross) / T_right := by
+        apply div_lt_div_of_pos_right _ hTr
+        apply mul_lt_mul_of_pos_left hlt hone_minus_sStar_minus_deltaS_pos
+      linarith
 
 /-- A piecewise linear schedule with three segments -/
 structure PiecewiseSchedule (n M : Nat) (es : EigenStructure n M) (hM : M >= 2)
@@ -125,7 +326,7 @@ structure PiecewiseSchedule (n M : Nat) (es : EigenStructure n M) (hM : M >= 2)
 
 /-- Build a piecewise schedule from time allocations -/
 noncomputable def buildPiecewiseSchedule {n M : Nat} (es : EigenStructure n M)
-    (hM : M >= 2) (T : Real) (hT : T > 0)
+    (hM : M >= 2) (hcond : spectralConditionForBounds es hM) (T : Real) (hT : T > 0)
     (pw : PiecewiseSchedule n M es hM T hT) : AdiabaticSchedule T hT where
   s := fun t =>
     let sStar := avoidedCrossingPosition es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM)
@@ -161,7 +362,7 @@ noncomputable def buildPiecewiseSchedule {n M : Nat} (es : EigenStructure n M)
     ring
   monotone := by
     intro t₁ t₂ ht₁_ge ht₁_lt_t₂ ht₂_le
-    exact piecewiseSchedule_monotone es hM T hT pw.T_left pw.T_cross pw.T_right
+    exact piecewiseSchedule_monotone es hM hcond T hT pw.T_left pw.T_cross pw.T_right
       pw.times_pos pw.times_sum t₁ t₂ ht₁_ge ht₁_lt_t₂ ht₂_le
   differentiable := by
     intro t _ht_pos _ht_lt_T

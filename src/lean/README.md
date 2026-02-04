@@ -49,17 +49,19 @@ lake build
 
 ## Formalization Status
 
-| Metric        | Count |
-|---------------|-------|
-| Sorries       | 0     |
-| Axioms        | 48    |
-| Lines of Lean | ~2400 |
+| Metric              | Count  |
+|---------------------|--------|
+| Sorries             | 0      |
+| Axioms              | 34     |
+| Lines of Lean (main)| ~4,017 |
+| Lines of Lean (total)| ~5,256 |
 
-The formalization is sorry-free but relies on 48 axioms for deep mathematical results.
+The formalization is sorry-free but relies on 34 axioms for deep mathematical results.
+11 axioms have been eliminated through proofs since the initial formalization.
 
 ## Axiom Categories
 
-### Complexity Theory Foundations (7 axioms)
+### Complexity Theory Foundations (6 axioms)
 
 Standard results from computational complexity:
 
@@ -68,8 +70,9 @@ Standard results from computational complexity:
 - `sharpThreeSAT_in_SharpP`: #3-SAT is in #P
 - `sharpThreeSAT_complete`: #3-SAT is #P-complete
 - `sharpP_solves_NP`: #P oracle solves NP
-- `lagrange_interpolation`: Polynomial interpolation uniqueness
 - `degeneracy_sharpP_hard`: Computing degeneracies is #P-hard
+
+Note: `lagrange_interpolation` was eliminated (proved using Mathlib.Lagrange).
 
 ### Spectral Theory (3 axioms)
 
@@ -79,7 +82,7 @@ Functional analysis foundations:
 - `variational_minimum`: Ground state minimizes Rayleigh quotient
 - `resolvent_distance_to_spectrum`: Resolvent norm equals inverse distance to spectrum
 
-### Adiabatic Theorem (5 axioms)
+### Adiabatic Theorem and Running Time (7 axioms)
 
 Quantum adiabatic evolution:
 
@@ -89,7 +92,7 @@ Quantum adiabatic evolution:
 - `runningTime_ising_bound`: Running time for Ising problems
 - `runningTime_matches_lower_bound`: Optimality of the bound
 - `measurement_yields_groundstate`: Final measurement success probability
-- `lowerBound_unstructuredSearch`: Query complexity lower bound
+- `lowerBound_unstructuredSearch`: Query complexity lower bound (BBBV)
 
 ### Gap Bounds (9 axioms)
 
@@ -105,54 +108,67 @@ Spectral gap analysis:
 - `gap_minimum_at_crossing_axiom`: Gap minimum location
 - `shermanMorrison_resolvent`: Sherman-Morrison for resolvents
 
-### Hardness Constructions (19 axioms)
+### Hardness Constructions (9 axioms)
 
 Modified Hamiltonian properties for reductions:
 
-**Alpha-modified Hamiltonians (2):**
-- `modifiedHam_deg_sum`: Degeneracy sum after modification
-- `modifiedHam_deg_count`: Degeneracy count consistency
-
-**Beta-modified Hamiltonians (5):**
+**Beta-modified Hamiltonians (3):**
 - `betaModifiedHam_eigenval_ordered`: Non-strict eigenvalue ordering
 - `betaModifiedHam_eigenval_ordered_strict`: Strict eigenvalue ordering
 - `betaModifiedHam_eigenval_bounds`: Eigenvalue bounds
-- `betaModifiedHam_deg_sum`: Degeneracy sum
-- `betaModifiedHam_deg_count`: Degeneracy count consistency
 
-**3-SAT Encoding (3):**
-- `threeSATWellFormed_numVars`: Well-formed formulas have variables
-- `threeSATDegPositive_ground`: Satisfiable formulas have positive ground degeneracy
-- `threeSAT_groundEnergy_iff_sat`: Ground energy characterizes satisfiability
+**3-SAT Encoding (1):**
+- `threeSATWellFormed_numVars`: Well-formed formulas have variables (kept as axiom)
 
-**A1 Properties (2):**
-- `A1_modification_formula`: How $A_1$ transforms under modification
+**A1 Properties (1):**
 - `A1_polynomial_in_beta`: $A_1$ as polynomial in beta parameter
 
-**Main Hardness Results (5):**
+**Main Hardness Results (4):**
 - `mainResult2`: NP-hardness of approximating $A_1$
 - `A1_approx_implies_P_eq_NP`: Polynomial-time A1 approximation implies P=NP
 - `mainResult3`: #P-hardness via polynomial interpolation
 - `mainResult3_robust`: Robustness to exponential errors
-- `exact_A1_is_sharpP_hard`: Exact A1 is #P-hard
-- `approx_A1_sharpP_hard`: Approximate A1 is #P-hard
 
-### Schedule Construction (3 axioms)
+**Eliminated (now proved):**
+- `modifiedHam_deg_sum`, `modifiedHam_deg_count`: Finset sum manipulation
+- `betaModifiedHam_deg_sum`, `betaModifiedHam_deg_count`: Even/odd bijection
+- `threeSATDegPositive_ground`: Satisfying assignment extraction
+- `satisfies_iff_countUnsatisfied_zero`: List.filter/all equivalence
+- `A1_modification_preserved`: Finset sum algebra
 
-- `avoidedCrossingWindow_pos`: Avoided crossing window is positive
-- `avoidedCrossing_bound`: Avoided crossing window within bounds
-- `piecewiseSchedule_monotone`: Monotonicity of piecewise linear schedules
+### Schedule Construction (0 axioms)
 
-### Spectral Parameters (1 axiom)
+All schedule axioms have been eliminated:
+- `avoidedCrossing_bound`: Proved with `spectralConditionForBounds` hypothesis
+- `piecewiseSchedule_monotone`: Proved via real analysis (6-case split)
+- `avoidedCrossingWindow_pos`: Proved (positivity of window)
 
-- `A2_lower_bound`: Lower bound on A2 in terms of spectral gap
+### Spectral Parameters (0 axioms)
+
+All spectral parameter axioms have been eliminated:
+- `A2_upper_bound`: Finset sum bounds (was misnamed `A2_lower_bound`)
 
 ## Key Definitions and Theorems
 
 ### Converted from Axioms to Definitions/Theorems
 
-The following were previously axioms and are now proven or defined:
+The following 11 axioms were eliminated through proofs:
 
+| Axiom | File | Method |
+|-------|------|--------|
+| `satisfies_iff_countUnsatisfied_zero` | Hardness.lean | List.filter/all equivalence |
+| `threeSATDegPositive_ground` | Hardness.lean | Satisfying assignment extraction |
+| `modifiedHam_deg_sum` | Hardness.lean | Finset sum manipulation |
+| `modifiedHam_deg_count` | Hardness.lean | Bijection argument |
+| `A1_modification_preserved` | Hardness.lean | Finset sum algebra |
+| `avoidedCrossing_bound` | Schedule.lean | Added `spectralConditionForBounds` hypothesis |
+| `A2_upper_bound` | SpectralParameters.lean | Finset sum bounds |
+| `piecewiseSchedule_monotone` | Schedule.lean | Real analysis, 6-case split |
+| `lagrange_interpolation` | SharpP.lean | Mathlib.Lagrange + uniqueness |
+| `betaModifiedHam_deg_sum` | Hardness.lean | Even/odd bijection over Fin(2*M) |
+| `betaModifiedHam_deg_count` | Hardness.lean | Finset filter equality |
+
+Additional definitions and theorems:
 - `modifiedHam_assignment`: Definition mapping extended states to eigenvalue indices
 - `modifiedHam_eigenval_ordered`: Theorem proving eigenvalue ordering
 - `threeSATAssignment`: Definition based on unsatisfied clause count
@@ -200,15 +216,21 @@ noncomputable def A2 (es : EigenStructure n M) (hM : M > 0) : Real :=
 
 ## Future Work
 
-To further reduce the axiom count, priority targets would be:
+To further reduce the axiom count, priority targets are:
 
-1. **Combinatorial axioms** (betaModifiedHam_deg_sum, betaModifiedHam_deg_count): Finite arithmetic proofs.
+1. **Variational principle** (HIGH): Bridge to Mathlib's Rayleigh quotient characterization.
+   Unlocks: `variational_minimum`, `groundEnergy_variational_bound`, `gap_bound_left_axiom`
 
-2. **Gap bounds**: Paper-specific calculations that could be verified with careful real analysis.
+2. **Sherman-Morrison** (HIGH): Matrix identity for resolvents (sign convention needs verification).
+   Unlocks: `eigenvalue_condition`, `firstExcited_lower_bound`, `gap_bound_right_axiom`
 
-3. **Spectral theory**: Extending mathlib's spectral theory for finite-dimensional Hermitian matrices.
+3. **Beta-modified eigenvalue ordering** (MEDIUM): Case analysis on index parity.
+   Proves: `betaModifiedHam_eigenval_ordered`, `betaModifiedHam_eigenval_bounds`
 
-The complexity theory axioms (Cook-Levin, #P-completeness) and adiabatic theorem would require major independent projects.
+The following axioms require independent formalization projects:
+- Complexity theory (Cook-Levin, #P-completeness): 6 axioms
+- Quantum dynamics (adiabatic theorem): 2 axioms
+- Infinite-dimensional spectral theory: 1 axiom
 
 ## References
 

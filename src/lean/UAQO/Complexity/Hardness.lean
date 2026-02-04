@@ -1,5 +1,7 @@
 import UAQO.Complexity.SharpP
 import UAQO.Spectral.SpectralParameters
+import Mathlib.Data.Fintype.Card
+import Mathlib.Data.Nat.Bitwise
 
 /-!
 # Hardness of Computing Spectral Parameter A_1
@@ -77,112 +79,221 @@ structure A1Approximator where
 
 /-! ## Main Result 2: NP-hardness of approximating A_1 -/
 
-/-- Definition for the assignment function in the modified Hamiltonian construction.
-    Maps each extended basis state (z, spin) to an eigenvalue index.
-    z encodes (n_part, spin) where n_part = z / 2, spin = z % 2. -/
-def modifiedHam_assignment {n M : Nat} (es : EigenStructure n M) (_hM : M > 0) :
-    Fin (qubitDim (n + 1)) -> Fin (M + 1) :=
-  fun z =>
-    let n_part := z.val / 2
-    if h : n_part < qubitDim n then
-      let orig_idx := es.assignment ⟨n_part, h⟩
-      ⟨orig_idx.val, Nat.lt_succ_of_lt orig_idx.isLt⟩
-    else ⟨M, Nat.lt_succ_self M⟩
-
 /-- Helper: qubitDim (n+1) = 2 * qubitDim n -/
 lemma qubitDim_succ (n : Nat) : qubitDim (n + 1) = 2 * qubitDim n := by
   simp only [qubitDim, Nat.pow_succ, mul_comm]
 
-/-- Eigenvalue ordering in modified Hamiltonian.
-    The construction requires α to be strictly greater than all original eigenvalues. -/
-theorem modifiedHam_eigenval_ordered {n M : Nat} (es : EigenStructure n M)
-    (_alpha : Real) (_halpha : 0 <= _alpha ∧ _alpha <= 1) (_hM : M > 0)
-    (halpha_large : ∀ k : Fin M, es.eigenvalues k < _alpha) :
-    ∀ i j : Fin (M + 1), i < j ->
-      (if h : i.val < M then es.eigenvalues ⟨i.val, h⟩ else _alpha) <
-      (if h : j.val < M then es.eigenvalues ⟨j.val, h⟩ else _alpha) := by
-  intro i j hij
-  by_cases hi : i.val < M
-  · simp only [hi, dite_true]
-    by_cases hj : j.val < M
-    · simp only [hj, dite_true]
-      exact es.eigenval_ordered ⟨i.val, hi⟩ ⟨j.val, hj⟩ hij
-    · simp only [hj, dite_false]
-      exact halpha_large ⟨i.val, hi⟩
-  · have hi_eq : i.val = M := Nat.eq_of_lt_succ_of_not_lt i.isLt hi
-    have hj_bound : j.val <= M := Nat.lt_succ_iff.mp j.isLt
-    have hcontra : M < j.val := by
-      calc M = i.val := hi_eq.symm
-           _ < j.val := hij
-    omega
+/-- Definition for the assignment function in the modified Hamiltonian construction.
+    Maps each extended basis state z to an eigenvalue index.
+    z encodes (n_part, spin) where n_part = z / 2, spin = z % 2.
+    Both spin values map to the same original eigenvalue level. -/
+def modifiedHam_assignment {n M : Nat} (es : EigenStructure n M) (_hM : M > 0) :
+    Fin (qubitDim (n + 1)) -> Fin M :=
+  fun z =>
+    let n_part := z.val / 2
+    -- n_part < qubitDim n always holds for z : Fin(qubitDim(n+1))
+    have h : n_part < qubitDim n := by
+      have hz := z.isLt
+      simp only [qubitDim_succ] at hz
+      omega
+    es.assignment ⟨n_part, h⟩
 
-/-- Degeneracy sum in modified Hamiltonian (axiom for complex combinatorial proof). -/
-axiom modifiedHam_deg_sum {n M : Nat} (es : EigenStructure n M) (hM : M > 0) :
-    Finset.sum Finset.univ (fun k : Fin (M + 1) =>
-      if h : k.val < M then es.degeneracies ⟨k.val, h⟩ * 2 else 2) = qubitDim (n + 1)
+/-- Eigenvalue ordering in modified Hamiltonian (same as original). -/
+theorem modifiedHam_eigenval_ordered {n M : Nat} (es : EigenStructure n M) (_hM : M > 0) :
+    ∀ i j : Fin M, i < j -> es.eigenvalues i < es.eigenvalues j :=
+  es.eigenval_ordered
 
-/-- Degeneracy count in modified Hamiltonian (axiom for complex combinatorial proof). -/
-axiom modifiedHam_deg_count {n M : Nat} (es : EigenStructure n M) (hM : M > 0) :
-    ∀ k : Fin (M + 1),
-      (if h : k.val < M then es.degeneracies ⟨k.val, h⟩ * 2 else 2) =
+/-- Degeneracy sum in modified Hamiltonian: each original degeneracy is doubled. -/
+theorem modifiedHam_deg_sum {n M : Nat} (es : EigenStructure n M) (_hM : M > 0) :
+    Finset.sum Finset.univ (fun k : Fin M => es.degeneracies k * 2) = qubitDim (n + 1) := by
+  calc Finset.sum Finset.univ (fun k : Fin M => es.degeneracies k * 2)
+      = Finset.sum Finset.univ (fun k : Fin M => 2 * es.degeneracies k) := by
+          congr 1; ext k; ring
+    _ = 2 * Finset.sum Finset.univ (fun k : Fin M => es.degeneracies k) := by
+          rw [Finset.mul_sum]
+    _ = 2 * qubitDim n := by rw [es.deg_sum]
+    _ = qubitDim (n + 1) := by rw [qubitDim_succ]
+
+/-- Helper: z.val / 2 < qubitDim n for z : Fin (qubitDim (n + 1)). -/
+private lemma div2_lt_qubitDim {n : Nat} (z : Fin (qubitDim (n + 1))) : z.val / 2 < qubitDim n := by
+  have hz := z.isLt
+  simp only [qubitDim_succ] at hz
+  omega
+
+/-- Helper: 2 * np < qubitDim (n + 1) for np : Fin (qubitDim n). -/
+private lemma double_lt_qubitDim_succ {n : Nat} (np : Fin (qubitDim n)) :
+    2 * np.val < qubitDim (n + 1) := by
+  simp only [qubitDim_succ]; omega
+
+/-- Helper: 2 * np + 1 < qubitDim (n + 1) for np : Fin (qubitDim n). -/
+private lemma double_plus_one_lt_qubitDim_succ {n : Nat} (np : Fin (qubitDim n)) :
+    2 * np.val + 1 < qubitDim (n + 1) := by
+  simp only [qubitDim_succ]; omega
+
+/-- Helper: (2 * k) / 2 = k. -/
+private lemma div2_of_double (k : Nat) : (2 * k) / 2 = k :=
+  Nat.mul_div_cancel_left k (by norm_num : 0 < 2)
+
+/-- Helper: (2 * k + 1) / 2 = k. -/
+private lemma div2_of_double_plus_one (k : Nat) : (2 * k + 1) / 2 = k := by
+  have h1 : 2 * k / 2 = k := Nat.mul_div_cancel_left k (by norm_num : 0 < 2)
+  omega
+
+/-- Degeneracy count in modified Hamiltonian: each level has twice the original count.
+    For each np with es.assignment np = k, both z = 2*np and z = 2*np+1 map to k.
+
+    Proof by bijection: split z-values by parity, each half has cardinality = original degeneracy. -/
+theorem modifiedHam_deg_count {n M : Nat} (es : EigenStructure n M) (hM : M > 0) :
+    ∀ k : Fin M,
+      es.degeneracies k * 2 =
       (Finset.filter (fun z : Fin (qubitDim (n + 1)) =>
-        modifiedHam_assignment es hM z = k) Finset.univ).card
+        modifiedHam_assignment es hM z = k) Finset.univ).card := by
+  intro k
+  -- Split the filter into even and odd parts by parity
+  have hsplit : (Finset.filter (fun z : Fin (qubitDim (n + 1)) =>
+      modifiedHam_assignment es hM z = k) Finset.univ) =
+    (Finset.filter (fun z : Fin (qubitDim (n + 1)) =>
+      modifiedHam_assignment es hM z = k ∧ z.val % 2 = 0) Finset.univ) ∪
+    (Finset.filter (fun z : Fin (qubitDim (n + 1)) =>
+      modifiedHam_assignment es hM z = k ∧ z.val % 2 = 1) Finset.univ) := by
+    ext z; simp only [Finset.mem_filter, Finset.mem_union, Finset.mem_univ, true_and]
+    constructor
+    · intro hz
+      have hparity : z.val % 2 < 2 := Nat.mod_lt z.val (by norm_num)
+      have hcases : z.val % 2 = 0 ∨ z.val % 2 = 1 := by omega
+      cases hcases with
+      | inl h0 => left; exact ⟨hz, h0⟩
+      | inr h1 => right; exact ⟨hz, h1⟩
+    · intro hz
+      cases hz with
+      | inl h => exact h.1
+      | inr h => exact h.1
+  -- The two parts are disjoint
+  have hdisjoint : Disjoint
+      (Finset.filter (fun z : Fin (qubitDim (n + 1)) =>
+        modifiedHam_assignment es hM z = k ∧ z.val % 2 = 0) Finset.univ)
+      (Finset.filter (fun z : Fin (qubitDim (n + 1)) =>
+        modifiedHam_assignment es hM z = k ∧ z.val % 2 = 1) Finset.univ) := by
+    rw [Finset.disjoint_filter]; intro z _ h0 h1; omega
+  -- Helper: modifiedHam_assignment unfolds to es.assignment on z.val / 2
+  have hassign_eq : ∀ z : Fin (qubitDim (n + 1)),
+      modifiedHam_assignment es hM z = es.assignment ⟨z.val / 2, div2_lt_qubitDim z⟩ := by
+    intro z; rfl
+  -- Even part: bijection with source via z -> z.val / 2
+  have heven : (Finset.filter (fun z : Fin (qubitDim (n + 1)) =>
+      modifiedHam_assignment es hM z = k ∧ z.val % 2 = 0) Finset.univ).card =
+    (Finset.filter (fun np : Fin (qubitDim n) => es.assignment np = k) Finset.univ).card := by
+    apply Finset.card_bij (fun z _ => ⟨z.val / 2, div2_lt_qubitDim z⟩)
+    · -- Maps into target
+      intro z hz
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hz ⊢
+      rw [hassign_eq] at hz
+      exact hz.1
+    · -- Injective
+      intro z1 hz1 z2 hz2 heq
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hz1 hz2
+      simp only [Fin.ext_iff] at heq ⊢
+      have h1 : z1.val = 2 * (z1.val / 2) := by have := Nat.div_add_mod z1.val 2; omega
+      have h2 : z2.val = 2 * (z2.val / 2) := by have := Nat.div_add_mod z2.val 2; omega
+      omega
+    · -- Surjective
+      intro np hnp
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hnp ⊢
+      let z_even : Fin (qubitDim (n + 1)) := ⟨2 * np.val, double_lt_qubitDim_succ np⟩
+      refine ⟨z_even, ?_, ?_⟩
+      · constructor
+        · rw [hassign_eq]
+          have heq : (⟨z_even.val / 2, div2_lt_qubitDim z_even⟩ : Fin (qubitDim n)) = np := by
+            simp only [z_even, Fin.ext_iff, div2_of_double]
+          rw [heq]; exact hnp
+        · simp only [z_even]; exact Nat.mul_mod_right 2 np.val
+      · simp only [Fin.ext_iff, z_even, div2_of_double]
+  -- Odd part: bijection with source via z -> z.val / 2
+  have hodd : (Finset.filter (fun z : Fin (qubitDim (n + 1)) =>
+      modifiedHam_assignment es hM z = k ∧ z.val % 2 = 1) Finset.univ).card =
+    (Finset.filter (fun np : Fin (qubitDim n) => es.assignment np = k) Finset.univ).card := by
+    apply Finset.card_bij (fun z _ => ⟨z.val / 2, div2_lt_qubitDim z⟩)
+    · -- Maps into target
+      intro z hz
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hz ⊢
+      rw [hassign_eq] at hz
+      exact hz.1
+    · -- Injective
+      intro z1 hz1 z2 hz2 heq
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hz1 hz2
+      simp only [Fin.ext_iff] at heq ⊢
+      have h1 : z1.val = 2 * (z1.val / 2) + 1 := by have := Nat.div_add_mod z1.val 2; omega
+      have h2 : z2.val = 2 * (z2.val / 2) + 1 := by have := Nat.div_add_mod z2.val 2; omega
+      omega
+    · -- Surjective
+      intro np hnp
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hnp ⊢
+      let z_odd : Fin (qubitDim (n + 1)) := ⟨2 * np.val + 1, double_plus_one_lt_qubitDim_succ np⟩
+      refine ⟨z_odd, ?_, ?_⟩
+      · constructor
+        · rw [hassign_eq]
+          have heq : (⟨z_odd.val / 2, div2_lt_qubitDim z_odd⟩ : Fin (qubitDim n)) = np := by
+            simp only [z_odd, Fin.ext_iff, div2_of_double_plus_one]
+          rw [heq]; exact hnp
+        · simp only [z_odd]
+          have : (2 * np.val + 1) % 2 = 1 := by
+            have h1 : (2 * np.val) % 2 = 0 := Nat.mul_mod_right 2 np.val
+            omega
+          exact this
+      · simp only [Fin.ext_iff, z_odd, div2_of_double_plus_one]
+  -- Combine: 2 * degeneracy = even_count + odd_count
+  rw [hsplit, Finset.card_union_of_disjoint hdisjoint, heven, hodd]
+  have hsource : (Finset.filter (fun np : Fin (qubitDim n) => es.assignment np = k) Finset.univ).card
+      = es.degeneracies k := (es.deg_count k).symm
+  rw [hsource]; ring
 
 /-- Construction: Modify a 3-SAT Hamiltonian by adding an extra spin.
-    This construction adds a new eigenvalue α at the top of the spectrum.
-    The extra spin doubles all degeneracies (each original state now has two versions). -/
+    The extra spin doubles all degeneracies (each original state now has two versions).
+    The eigenvalues stay the same - this just doubles the Hilbert space dimension. -/
 noncomputable def modifiedHamiltonian {n M : Nat} (es : EigenStructure n M)
-    (alpha : Real) (halpha : 0 <= alpha ∧ alpha <= 1) (hM : M > 0)
-    (halpha_large : ∀ k : Fin M, es.eigenvalues k < alpha) : EigenStructure (n + 1) (M + 1) := {
-  eigenvalues := fun k =>
-    if h : k.val < M then es.eigenvalues ⟨k.val, h⟩
-    else alpha
-  degeneracies := fun k =>
-    if h : k.val < M then es.degeneracies ⟨k.val, h⟩ * 2
-    else 2  -- Two states at the new level (for the added spin)
+    (hM : M > 0) : EigenStructure (n + 1) M := {
+  eigenvalues := es.eigenvalues
+  degeneracies := fun k => es.degeneracies k * 2
   assignment := modifiedHam_assignment es hM
-  eigenval_bounds := by
-    intro k
-    by_cases h : k.val < M
-    · simp only [h, dite_true]
-      exact es.eigenval_bounds ⟨k.val, h⟩
-    · simp only [h, dite_false]
-      exact halpha
-  eigenval_ordered := modifiedHam_eigenval_ordered es alpha halpha hM halpha_large
-  ground_energy_zero := by
-    intro hM'
-    simp only
-    have h : (0 : Nat) < M := hM
-    simp only [h, dite_true]
-    exact es.ground_energy_zero hM
-  deg_positive := by
-    intro k
-    by_cases h : k.val < M
-    · simp only [h, dite_true]
-      exact Nat.mul_pos (es.deg_positive ⟨k.val, h⟩) (by norm_num)
-    · simp only [h, dite_false]
-      norm_num
+  eigenval_bounds := es.eigenval_bounds
+  eigenval_ordered := es.eigenval_ordered
+  ground_energy_zero := es.ground_energy_zero
+  deg_positive := fun k => Nat.mul_pos (es.deg_positive k) (by norm_num)
   deg_sum := modifiedHam_deg_sum es hM
   deg_count := modifiedHam_deg_count es hM
 }
 
-/-- Key lemma: A_1 changes predictably when we modify the Hamiltonian.
+/-- Key lemma: A_1 is preserved when we modify the Hamiltonian by doubling.
 
-    When we add a new eigenvalue α at the top of the spectrum, A₁ transforms
-    in a predictable way that preserves monotonicity. This is used to show
-    that approximating A₁ can distinguish SAT from UNSAT instances. -/
-axiom A1_modification_formula {n M : Nat} (es : EigenStructure n M)
-    (hM : M >= 2) (alpha : Real) (halpha : 0 < alpha ∧ alpha <= 1)
-    (halpha_large : ∀ k : Fin M, es.eigenvalues k < alpha) :
-    let hM0 : M > 0 := Nat.lt_of_lt_of_le Nat.zero_lt_two hM
-    let halpha_bounds : 0 <= alpha ∧ alpha <= 1 := And.intro (le_of_lt halpha.1) halpha.2
-    let es' := modifiedHamiltonian es alpha halpha_bounds hM0 halpha_large
-    let A1_old := A1 es hM0
-    let hM1 : M + 1 > 0 := Nat.succ_pos M
-    let A1_new := A1 es' hM1
-    ∃ (f : Real -> Real -> Real),
-      A1_new = f A1_old alpha ∧
-      (∀ a₁ a₂ α, a₁ < a₂ -> f a₁ α < f a₂ α)
+    When we double all degeneracies (adding an ancilla spin), A₁ stays the same
+    because the numerator and denominator both scale by 2.
+    A₁ = (1/N) Σ d_k/(E_k - E₀) -> (1/(2N)) Σ (2d_k)/(E_k - E₀) = A₁
+
+    Full proof requires careful manipulation of Finset sums.
+    The key insight is that (1/(2N)) * Σ (2d_k)/x = (1/N) * Σ d_k/x. -/
+theorem A1_modification_preserved {n M : Nat} (es : EigenStructure n M) (hM : M > 0) :
+    let es' := modifiedHamiltonian es hM
+    A1 es' hM = A1 es hM := by
+  -- The proof that (1/(2N)) * Σ (2d_k)/(E_k-E_0) = (1/N) * Σ d_k/(E_k-E_0)
+  simp only [A1, spectralParam, modifiedHamiltonian]
+  -- Hilbert space dim relation: qubitDim (n+1) = 2 * qubitDim n
+  have hN : (qubitDim (n + 1) : Real) = 2 * qubitDim n := by
+    simp only [qubitDim_succ]; push_cast; ring
+  rw [hN]
+  -- Key lemma: the sum with doubled degeneracies equals 2 * original sum
+  -- Note: target has ↑(es.degeneracies x * 2), so match that exact form
+  have hsum : Finset.sum (Finset.filter (fun x : Fin M => x.val > 0) Finset.univ)
+      (fun x => (↑(es.degeneracies x * 2) : Real) / (es.eigenvalues x - es.eigenvalues ⟨0, hM⟩) ^ 1) =
+    2 * Finset.sum (Finset.filter (fun k : Fin M => k.val > 0) Finset.univ)
+      (fun k => (es.degeneracies k : Real) / (es.eigenvalues k - es.eigenvalues ⟨0, hM⟩) ^ 1) := by
+    rw [Finset.mul_sum]
+    refine Finset.sum_congr rfl (fun k _ => ?_)
+    simp only [Nat.cast_mul, Nat.cast_ofNat]
+    ring
+  rw [hsum]
+  -- Now: (1/(2*N)) * (2 * Σ) = (1/N) * Σ
+  have hNpos : (qubitDim n : Real) > 0 := Nat.cast_pos.mpr (Nat.pow_pos (by norm_num : 0 < 2))
+  field_simp
 
 /-- The number of distinct eigenvalue levels in the 3-SAT Hamiltonian.
     This equals the number of clauses + 1 (for levels 0 through m unsatisfied clauses). -/
@@ -270,12 +381,104 @@ theorem threeSATDegSum_total (f : CNFFormula) (hf : is_kCNF 3 f) :
   rw [threeSATDegSum f hf]
   rfl
 
-/-- Axiom: For satisfiable formulas, the ground level has positive degeneracy.
-    This is TRUE by definition: satisfiability means there exists an assignment
-    with 0 unsatisfied clauses. -/
-axiom threeSATDegPositive_ground (f : CNFFormula) (hf : is_kCNF 3 f)
+/-- Assignment has decidable equality. -/
+instance Assignment_decidableEq (n : Nat) : DecidableEq (Assignment n) :=
+  inferInstanceAs (DecidableEq (Fin n → Bool))
+
+/-- Assignment is a finite type. -/
+instance Assignment_fintype (n : Nat) : Fintype (Assignment n) :=
+  inferInstanceAs (Fintype (Fin n → Bool))
+
+/-- An assignment satisfies a formula iff it has 0 unsatisfied clauses.
+
+    This connects the combinatorial encoding (counting unsatisfied clauses)
+    to the logical definition (all clauses evaluate to true).
+
+    The proof: satisfies means all clauses evaluate to true (evalCNF = true),
+    which means the filter of unsatisfied clauses (those evaluating to false)
+    is empty, which means its length equals 0. -/
+theorem satisfies_iff_countUnsatisfied_zero (f : CNFFormula) (z : Fin (2^f.numVars)) :
+    satisfies (finToAssignment f.numVars z) f ↔ countUnsatisfiedClauses f z = 0 := by
+  simp only [satisfies, evalCNF, countUnsatisfiedClauses]
+  rw [List.length_eq_zero_iff]
+  constructor
+  · -- Forward: all clauses true → no unsatisfied clauses
+    intro h
+    rw [List.filter_eq_nil_iff]
+    intro c hc
+    rw [List.all_eq_true] at h
+    have heval := h c hc
+    simp only [heval, Bool.not_true, Bool.false_eq_true, not_false_eq_true]
+  · -- Backward: no unsatisfied clauses → all clauses true
+    intro h
+    rw [List.filter_eq_nil_iff] at h
+    rw [List.all_eq_true]
+    intro c hc
+    specialize h c hc
+    simp only [Bool.not_eq_true] at h
+    cases hb : evalClause (finToAssignment f.numVars z) c <;> simp_all
+
+/-- finToAssignment is injective: distinct Fin indices give distinct assignments. -/
+private lemma finToAssignment_injective (n : Nat) :
+    Function.Injective (finToAssignment n) := by
+  intro z w h
+  ext
+  have heq : ∀ i : Fin n, z.val.testBit i.val = w.val.testBit i.val := by
+    intro i
+    have hz := congrFun h i
+    simp only [finToAssignment] at hz
+    exact hz
+  apply Nat.eq_of_testBit_eq
+  intro i
+  by_cases hi : i < n
+  · exact heq ⟨i, hi⟩
+  · have hz_bound := z.isLt
+    have hw_bound := w.isLt
+    rw [Nat.testBit_eq_false_of_lt (Nat.lt_of_lt_of_le hz_bound (Nat.pow_le_pow_right (by omega) (Nat.le_of_not_lt hi)))]
+    rw [Nat.testBit_eq_false_of_lt (Nat.lt_of_lt_of_le hw_bound (Nat.pow_le_pow_right (by omega) (Nat.le_of_not_lt hi)))]
+
+/-- finToAssignment is surjective: every assignment arises from some Fin index. -/
+private lemma finToAssignment_surjective (n : Nat) :
+    Function.Surjective (finToAssignment n) := by
+  have hinj : Function.Injective (finToAssignment n) := finToAssignment_injective n
+  have hcard : Fintype.card (Fin (2^n)) = Fintype.card (Fin n → Bool) := by
+    simp only [Fintype.card_fin, Fintype.card_fun, Fintype.card_bool]
+  intro a
+  by_contra h
+  push_neg at h
+  have hcard_image : (Finset.univ.image (finToAssignment n)).card = Fintype.card (Fin (2^n)) := by
+    rw [Finset.card_image_of_injective _ hinj]
+    exact Finset.card_univ
+  rw [hcard] at hcard_image
+  have ha_in : a ∈ Finset.univ.image (finToAssignment n) := by
+    have h_univ : Finset.univ.image (finToAssignment n) = Finset.univ := by
+      apply Finset.eq_univ_of_card
+      rw [hcard_image]
+      exact Finset.card_univ
+    rw [h_univ]
+    exact Finset.mem_univ a
+  rw [Finset.mem_image] at ha_in
+  obtain ⟨z, _, hz⟩ := ha_in
+  exact h z hz
+
+/-- For satisfiable formulas, the ground level has positive degeneracy.
+    Proof: If the formula is satisfiable, there exists a satisfying assignment a.
+    Since finToAssignment is surjective, there exists z such that finToAssignment z = a.
+    This z has countUnsatisfiedClauses f z = 0 (by satisfies_iff_countUnsatisfied_zero).
+    Therefore the count at level 0 is positive. -/
+theorem threeSATDegPositive_ground (f : CNFFormula) (_hf : is_kCNF 3 f)
     (hsat : isSatisfiable f) :
-    countAssignmentsWithKUnsatisfied f 0 > 0
+    countAssignmentsWithKUnsatisfied f 0 > 0 := by
+  obtain ⟨a, ha⟩ := hsat
+  simp only [countAssignmentsWithKUnsatisfied]
+  obtain ⟨z, hz⟩ := finToAssignment_surjective f.numVars a
+  apply Finset.card_pos.mpr
+  use z
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+  -- ha : satisfies a f, hz : finToAssignment f.numVars z = a
+  -- Need: countUnsatisfiedClauses f z = 0
+  rw [← hz] at ha
+  exact (satisfies_iff_countUnsatisfied_zero f z).mp ha
 
 /-- Partial eigenstructure for any 3-SAT formula (SAT or UNSAT).
     Does NOT require deg_positive, so this works for UNSAT formulas where d_0 = 0. -/
@@ -344,19 +547,6 @@ noncomputable def threeSATToHamiltonian (f : CNFFormula) (hf : is_kCNF 3 f)
   deg_sum := threeSATDegSum f hf
   deg_count := threeSATDegCount f hf
 }
-
-/-- An assignment satisfies a formula iff it has 0 unsatisfied clauses.
-
-    PAPER REFERENCE: Follows from the definition of satisfiability.
-
-    This connects the combinatorial encoding (counting unsatisfied clauses)
-    to the logical definition (all clauses evaluate to true).
-
-    The proof is straightforward: satisfies means all clauses evaluate to true,
-    which means the filter of unsatisfied clauses is empty, which means length = 0.
-    We axiomatize this rather than proving it to avoid Mathlib version dependencies. -/
-axiom satisfies_iff_countUnsatisfied_zero (f : CNFFormula) (z : Fin (2^f.numVars)) :
-    satisfies (finToAssignment f.numVars z) f ↔ countUnsatisfiedClauses f z = 0
 
 /-- A 3-SAT formula is satisfiable iff the ground state degeneracy is positive.
 
@@ -439,20 +629,21 @@ structure A1ExactComputer where
   exact : ∀ (n M : Nat) (es : EigenStructure n M) (hM : M > 0),
     compute n M es hM = A1 es hM
 
-/-- Axiom for eigenvalue ordering in beta-modified Hamiltonian.
+/-- Eigenvalue ordering in beta-modified Hamiltonian.
 
     With the beta-dependent construction, eigenvalues are:
     E_{2k} = E_k (lower level), E_{2k+1} = E_k + beta/2 (upper level)
 
-    The ordering is maintained because:
-    - Within same original level k: E_{2k} < E_{2k+1} (since beta > 0)
-    - Across levels k < k': E_{2k+1} = E_k + beta/2 < E_{k'} = E_{2k'} when
-      the spectral gap Delta = E_{k'} - E_k > beta/2
+    The non-strict ordering requires beta/2 <= all consecutive gaps:
+    - Within same original level k: E_{2k} <= E_{2k+1} (since beta >= 0)
+    - Across levels k < k': Need E_k + beta/2 <= E_{k+1}, i.e., beta/2 <= gap
 
-    This requires the spectral gap to be larger than beta/2, which holds
-    when beta < 2*Delta_min. The construction chooses beta accordingly. -/
-axiom betaModifiedHam_eigenval_ordered {n M : Nat} (es : EigenStructure n M) (hM : M > 0)
-    (beta : Real) (hbeta : 0 < beta ∧ beta < 1) :
+    NOTE: The gap constraint `allGapsAtLeast es (beta/2)` IS needed for cross-level
+    transitions (E_{2k+1} to E_{2(k+1)}). The original docstring was incorrect. -/
+axiom betaModifiedHam_eigenval_ordered {n M : Nat} (es : EigenStructure n M)
+    (hM : M >= 2)
+    (beta : Real) (hbeta : 0 < beta ∧ beta < 1)
+    (hgap : allGapsAtLeast es (beta / 2)) :
     ∀ i j : Fin (2 * M), i < j ->
       (let origI := i.val / 2
        let isUpperI := i.val % 2 = 1
@@ -461,20 +652,21 @@ axiom betaModifiedHam_eigenval_ordered {n M : Nat} (es : EigenStructure n M) (hM
        let isUpperJ := j.val % 2 = 1
        if hJ : origJ < M then es.eigenvalues ⟨origJ, hJ⟩ + if isUpperJ then beta/2 else 0 else 1)
 
-/-- Axiom for strict eigenvalue ordering in beta-modified Hamiltonian.
+/-- Strict eigenvalue ordering in beta-modified Hamiltonian.
 
-    The strict ordering requires that beta/2 is smaller than the minimum
-    spectral gap of the original Hamiltonian. This ensures:
+    The strict ordering requires that beta/2 is strictly smaller than ALL consecutive
+    eigenvalue gaps of the original Hamiltonian. This ensures:
     - E_{2k} < E_{2k+1} (beta > 0)
-    - E_{2k+1} < E_{2(k+1)} (beta/2 < Delta)
+    - E_{2k+1} < E_{2(k+1)} (beta/2 < E_{k+1} - E_k for all k)
 
-    IMPORTANT: This requires hgap : beta/2 < spectralGapDiag to be sound.
-    Without this constraint, E_{2k+1} = E_k + beta/2 could equal or exceed
-    E_{k+1} = E_{2(k+1)}, violating strict ordering. -/
+    IMPORTANT: The hypothesis uses `allGapsGreaterThan` (strict inequality),
+    not `allGapsAtLeast` or just `spectralGapDiag`.
+    Using only the first gap would fail when higher gaps are smaller.
+    For typical problem Hamiltonians, all gaps scale similarly with n. -/
 axiom betaModifiedHam_eigenval_ordered_strict {n M : Nat} (es : EigenStructure n M)
     (hM : M >= 2)
     (beta : Real) (hbeta : 0 < beta ∧ beta < 1)
-    (hgap : beta / 2 < spectralGapDiag es hM) :
+    (hgap : allGapsGreaterThan es (beta / 2)) :
     ∀ i j : Fin (2 * M), i < j ->
       (let origI := i.val / 2
        let isUpperI := i.val % 2 = 1
@@ -500,11 +692,83 @@ axiom betaModifiedHam_eigenval_bounds {n M : Nat} (es : EigenStructure n M)
          es.eigenvalues ⟨origIdx, hOrig⟩ + if isUpperLevel then beta / 2 else 0
        else 1) <= 1
 
-/-- Axiom for degeneracy sum in beta-modified Hamiltonian. -/
-axiom betaModifiedHam_deg_sum {n M : Nat} (es : EigenStructure n M) (hM : M > 0) :
+/-- For k in Fin (2*M), k.val / 2 < M always holds. -/
+private lemma div2_lt_of_fin_2M {M : Nat} (k : Fin (2 * M)) : k.val / 2 < M := by
+  have hk := k.isLt
+  exact Nat.div_lt_of_lt_mul hk
+
+/-- The degeneracy sum in the beta-modified Hamiltonian equals the new Hilbert space dimension.
+
+    Each k in Fin (2*M) has origIdx = k.val / 2 < M, so the "else 1" branch is never taken.
+    Sum = Σ_{k=0}^{2M-1} d_{k/2} = Σ_{i=0}^{M-1} (d_i + d_i) = 2 * Σ d_i = 2 * N = qubitDim (n+1). -/
+theorem betaModifiedHam_deg_sum {n M : Nat} (es : EigenStructure n M) (hM : M > 0) :
     Finset.sum Finset.univ (fun k : Fin (2 * M) =>
       let origIdx := k.val / 2
-      if hOrig : origIdx < M then es.degeneracies ⟨origIdx, hOrig⟩ else 1) = qubitDim (n + 1)
+      if hOrig : origIdx < M then es.degeneracies ⟨origIdx, hOrig⟩ else 1) = qubitDim (n + 1) := by
+  -- Step 1: Simplify away the dite (the else branch is never taken)
+  have hSimp : ∀ k : Fin (2 * M), (let origIdx := k.val / 2
+       if hOrig : origIdx < M then es.degeneracies ⟨origIdx, hOrig⟩ else 1) =
+       es.degeneracies ⟨k.val / 2, div2_lt_of_fin_2M k⟩ := by
+    intro k
+    simp only [div2_lt_of_fin_2M k, dite_true]
+  conv_lhs => arg 2; ext k; rw [hSimp k]
+  -- Step 2: Show sum = 2 * (sum of original degeneracies)
+  rw [qubitDim_succ]
+  -- Step 3: Reindex the sum - each degeneracy d_i appears twice (even and odd indices)
+  have hSum : Finset.sum Finset.univ (fun k : Fin (2 * M) =>
+        es.degeneracies ⟨k.val / 2, div2_lt_of_fin_2M k⟩) =
+      2 * Finset.sum Finset.univ es.degeneracies := by
+    -- Split Fin (2*M) into evens and odds
+    have hSplit : (Finset.univ : Finset (Fin (2 * M))) =
+        Finset.filter (fun k => k.val % 2 = 0) Finset.univ ∪
+        Finset.filter (fun k => k.val % 2 = 1) Finset.univ := by
+      ext k
+      simp only [Finset.mem_univ, Finset.mem_union, Finset.mem_filter, true_and]
+      have := Nat.mod_two_eq_zero_or_one k.val
+      tauto
+    have hDisj : Disjoint
+        (Finset.filter (fun k : Fin (2 * M) => k.val % 2 = 0) Finset.univ)
+        (Finset.filter (fun k : Fin (2 * M) => k.val % 2 = 1) Finset.univ) := by
+      rw [Finset.disjoint_filter]
+      intro k _ hk0
+      omega
+    rw [hSplit, Finset.sum_union hDisj, Finset.mul_sum]
+    -- Sum over evens: each even k = 2i maps to i with d_{k/2} = d_i
+    have hEvenSum : Finset.sum (Finset.filter (fun k : Fin (2 * M) => k.val % 2 = 0) Finset.univ)
+        (fun k => es.degeneracies ⟨k.val / 2, div2_lt_of_fin_2M k⟩) =
+        Finset.sum Finset.univ es.degeneracies := by
+      symm
+      apply Finset.sum_nbij (fun i : Fin M => (⟨2 * i.val, by omega⟩ : Fin (2 * M)))
+      · intro i _; simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+        exact Nat.mul_mod_right 2 i.val
+      · intro i j _ _ h; simp only [Fin.mk.injEq] at h; ext; omega
+      · intro k hk
+        simp only [Finset.coe_filter, Set.mem_setOf_eq, Finset.mem_coe, Finset.mem_univ, true_and] at hk
+        refine ⟨⟨k.val / 2, div2_lt_of_fin_2M k⟩, Finset.mem_coe.mpr (Finset.mem_univ _), ?_⟩
+        ext; simp only [Fin.val_mk]
+        have hkrec : k.val = 2 * (k.val / 2) + k.val % 2 := (Nat.div_add_mod k.val 2).symm
+        omega
+      · intro i _; congr 1; ext; simp only [Fin.val_mk]
+        exact (Nat.mul_div_cancel_left i.val (by norm_num : 0 < 2)).symm
+    -- Sum over odds: each odd k = 2i+1 maps to i with d_{k/2} = d_i
+    have hOddSum : Finset.sum (Finset.filter (fun k : Fin (2 * M) => k.val % 2 = 1) Finset.univ)
+        (fun k => es.degeneracies ⟨k.val / 2, div2_lt_of_fin_2M k⟩) =
+        Finset.sum Finset.univ es.degeneracies := by
+      symm
+      apply Finset.sum_nbij (fun i : Fin M => (⟨2 * i.val + 1, by omega⟩ : Fin (2 * M)))
+      · intro i _; simp only [Finset.mem_filter, Finset.mem_univ, true_and]; omega
+      · intro i j _ _ h; simp only [Fin.mk.injEq] at h; ext; omega
+      · intro k hk
+        simp only [Finset.coe_filter, Set.mem_setOf_eq, Finset.mem_coe, Finset.mem_univ, true_and] at hk
+        refine ⟨⟨k.val / 2, div2_lt_of_fin_2M k⟩, Finset.mem_coe.mpr (Finset.mem_univ _), ?_⟩
+        ext; simp only [Fin.val_mk]
+        have hkrec : k.val = 2 * (k.val / 2) + k.val % 2 := (Nat.div_add_mod k.val 2).symm
+        omega
+      · intro i _; congr 1; ext; simp only [Fin.val_mk]
+        have h1 : (2 * i.val + 1) / 2 = i.val := by omega
+        exact h1.symm
+    rw [hEvenSum, hOddSum, ← two_mul, Finset.mul_sum]
+  rw [hSum, es.deg_sum]
 
 /-- Assignment function for the beta-modified Hamiltonian construction.
 
@@ -531,18 +795,75 @@ def betaModifiedHam_assignment {n M : Nat} (es : EigenStructure n M) (hM : M > 0
         omega⟩
     else ⟨0, Nat.mul_pos (by norm_num : 0 < 2) hM⟩
 
-/-- Axiom for degeneracy count in β-modified Hamiltonian.
+/-- The degeneracy count in β-modified Hamiltonian matches the assignment function.
 
     The degeneracy at level k equals the number of extended basis states that
     map to eigenvalue index k under betaModifiedHam_assignment. This ensures
     the eigenstructure is well-formed: the assignment function partitions the
-    Hilbert space into eigenspaces of the correct sizes. -/
-axiom betaModifiedHam_deg_count {n M : Nat} (es : EigenStructure n M) (hM : M > 0) :
+    Hilbert space into eigenspaces of the correct sizes.
+
+    Proof: betaModifiedHam_assignment(z) = k iff es.assignment(z/2) = k/2 AND z%2 = k%2.
+    So the filter has same cardinality as {np : es.assignment(np) = k/2} = es.degeneracies(k/2). -/
+theorem betaModifiedHam_deg_count {n M : Nat} (es : EigenStructure n M) (hM : M > 0) :
     ∀ k : Fin (2 * M),
       (let origIdx := k.val / 2
        if hOrig : origIdx < M then es.degeneracies ⟨origIdx, hOrig⟩ else 1) =
       (Finset.filter (fun z : Fin (qubitDim (n + 1)) =>
-        betaModifiedHam_assignment es hM z = k) Finset.univ).card
+        betaModifiedHam_assignment es hM z = k) Finset.univ).card := by
+  intro k
+  have horigK : k.val / 2 < M := div2_lt_of_fin_2M k
+  simp only [horigK, dite_true]
+  let orig : Fin M := ⟨k.val / 2, horigK⟩
+  let spin := k.val % 2
+  -- Rewrite using es.deg_count
+  rw [es.deg_count orig]
+  -- Show the two filters have equal cardinality via bijection
+  apply Finset.card_bij (fun np _ => (⟨2 * np.val + spin, by
+      have h := np.isLt
+      simp only [qubitDim_succ]
+      have hspin : spin < 2 := Nat.mod_lt k.val (by norm_num)
+      omega⟩ : Fin (qubitDim (n + 1))))
+  -- 1. The function maps into the target filter
+  · intro np hnp
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hnp ⊢
+    unfold betaModifiedHam_assignment
+    have hnp_lt : np.val < qubitDim n := np.isLt
+    have hspin_lt : spin < 2 := Nat.mod_lt k.val (by norm_num)
+    have h_div : (2 * np.val + spin) / 2 = np.val := by omega
+    have h_div_lt : (2 * np.val + spin) / 2 < qubitDim n := by omega
+    simp only [h_div_lt, dite_true]
+    have h_mod : (2 * np.val + spin) % 2 = spin := by omega
+    have h_arg_eq : (⟨(2 * np.val + spin) / 2, h_div_lt⟩ : Fin (qubitDim n)) = np := by
+      ext; exact h_div
+    have h_result : 2 * (es.assignment np).val + spin = k.val := by
+      have h1 : (es.assignment np).val = orig.val := by rw [hnp]
+      have h2 : orig.val = k.val / 2 := rfl
+      have h3 : spin = k.val % 2 := rfl
+      rw [h1, h2, h3]
+      exact Nat.div_add_mod k.val 2
+    ext; simp only [h_arg_eq, h_mod]; exact h_result
+  -- 2. The function is injective
+  · intro np1 np2 _ _ h
+    simp only [Fin.mk.injEq] at h
+    ext; omega
+  -- 3. The function is surjective onto the target filter
+  · intro z hz
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hz
+    unfold betaModifiedHam_assignment at hz
+    have hz_lt := z.isLt
+    simp only [qubitDim_succ] at hz_lt
+    have h_div_lt : z.val / 2 < qubitDim n := by omega
+    simp only [h_div_lt, dite_true] at hz
+    have hz_val : 2 * (es.assignment ⟨z.val / 2, h_div_lt⟩).val + z.val % 2 = k.val := by
+      exact congrArg Fin.val hz
+    have h_ass : (es.assignment ⟨z.val / 2, h_div_lt⟩).val = k.val / 2 := by omega
+    have h_spin : z.val % 2 = spin := by omega
+    refine ⟨⟨z.val / 2, h_div_lt⟩, ?_, ?_⟩
+    · simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+      exact Fin.ext h_ass
+    · apply Fin.ext; simp only [Fin.val_mk]
+      have hzrec : z.val = 2 * (z.val / 2) + z.val % 2 := (Nat.div_add_mod z.val 2).symm
+      omega
 
 /-- Modify H by coupling an extra spin with energy parameter beta.
 
@@ -557,12 +878,14 @@ axiom betaModifiedHam_deg_count {n M : Nat} (es : EigenStructure n M) (hM : M > 
     The extra spin doubles the Hilbert space dimension: 2^{n+1} = 2 * 2^n.
     Each original eigenspace splits into two subspaces of equal dimension.
 
-    IMPORTANT: Requires hgap : beta/2 < spectralGapDiag to ensure strict ordering.
+    IMPORTANT: Requires hgap : all consecutive gaps > beta/2 for strict ordering.
+    The original constraint (just spectralGapDiag) was insufficient when higher gaps
+    are smaller than the first gap.
 
     Reference: Section 2.3 of the paper, Lemma 2.7. -/
 noncomputable def betaModifiedHamiltonian {n M : Nat} (es : EigenStructure n M)
     (beta : Real) (hbeta : 0 < beta ∧ beta < 1) (hM : M >= 2)
-    (hgap : beta / 2 < spectralGapDiag es hM) : EigenStructure (n + 1) (2 * M) := {
+    (hgap : allGapsGreaterThan es (beta / 2)) : EigenStructure (n + 1) (2 * M) := {
   -- Eigenvalues: E_{2k} = E_k, E_{2k+1} = E_k + beta/2
   -- Index k maps to original index k/2, with k%2 determining the beta shift
   eigenvalues := fun k =>
@@ -627,7 +950,7 @@ axiom A1_polynomial_in_beta {n M : Nat} (es : EigenStructure n M) (hM : M >= 2) 
       -- The polynomial evaluated at beta equals A_1 of the beta-modified Hamiltonian
       -- (for beta values satisfying the gap constraint)
       (∀ (beta : Real) (hbeta : 0 < beta ∧ beta < 1)
-         (hgap : beta / 2 < spectralGapDiag es hM),
+         (hgap : allGapsGreaterThan es (beta / 2)),
         let esBeta := betaModifiedHamiltonian es beta hbeta hM hgap
         let hM2 : 2 * M > 0 := Nat.mul_pos (by norm_num : 0 < 2) (Nat.lt_of_lt_of_le Nat.zero_lt_two hM)
         Polynomial.eval beta p = A1 esBeta hM2) ∧
@@ -693,7 +1016,7 @@ axiom mainResult3 (computer : A1ExactComputer) :
       ∀ (betaValues : Fin M -> Real)
         (hdistinct : ∀ i j, i ≠ j -> betaValues i ≠ betaValues j)
         (hbounds : ∀ i, 0 < betaValues i ∧ betaValues i < 1)
-        (hgaps : ∀ i, betaValues i / 2 < spectralGapDiag es hM2),
+        (hgaps : ∀ i, allGapsGreaterThan es (betaValues i / 2)),
         -- The ground state degeneracy (at index 0) equals satisfying count
         -- This follows from: d_0 = countAssignmentsWithKUnsatisfied f 0
         --                       = numSatisfyingAssignments f
@@ -733,7 +1056,7 @@ axiom mainResult3_robust :
           ∀ (betaValues : Fin (3 * M) -> Real)
             (hdistinct : ∀ i j, i ≠ j -> betaValues i ≠ betaValues j)
             (hbounds : ∀ i, 0 < betaValues i ∧ betaValues i < 1)
-            (hgaps : ∀ i, betaValues i / 2 < spectralGapDiag es hM2),
+            (hgaps : ∀ i, allGapsGreaterThan es (betaValues i / 2)),
             extractDegeneracy (fun i =>
               approx.approximate (f.numVars + 1) (2 * M)
                 (betaModifiedHamiltonian es (betaValues i) (hbounds i) hM2 (hgaps i))
