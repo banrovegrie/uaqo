@@ -25,36 +25,35 @@ import UAQO.Proofs.Complexity.LagrangeInterp
 
 namespace UAQO.Proofs
 
-/-- Summary of axioms that have been proved (with sorry markers where needed). -/
-def provedAxioms : List String := [
-  "satisfies_iff_countUnsatisfied_zero (SATSemantics.lean) - COMPLETE",
-  "A2_lower_bound (A2Bounds.lean) - COMPLETE",
-  "modifiedHam_deg_sum (ModifiedHamDeg.lean) - partial",
-  "modifiedHam_deg_count (ModifiedHamDeg.lean) - partial",
-  "betaModifiedHam_deg_sum (BetaModifiedHam.lean) - partial",
-  "betaModifiedHam_deg_count (BetaModifiedHam.lean) - partial",
-  "betaModifiedHam_eigenval_ordered (BetaModifiedHam.lean) - partial",
-  "betaModifiedHam_eigenval_ordered_strict (BetaModifiedHam.lean) - partial",
-  "betaModifiedHam_eigenval_bounds (BetaModifiedHam.lean) - partial",
-  "variational_principle (VariationalPrinciple.lean) - partial",
-  "variational_minimum (VariationalPrinciple.lean) - partial",
-  "avoidedCrossing_bound (ScheduleProperties.lean) - partial",
-  "piecewiseSchedule_monotone (ScheduleProperties.lean) - partial",
-  "shermanMorrison_resolvent (ShermanMorrison.lean) - partial",
-  "lagrange_interpolation (LagrangeInterp.lean) - partial"
-]
+/-!
+# Axiom Elimination Status
 
-/-- Axioms that remain as axioms (external foundations). -/
-def externalAxioms : List String := [
-  "threeSAT_in_NP (Cook-Levin theorem)",
-  "threeSAT_NP_complete (Cook-Levin theorem)",
-  "sharpThreeSAT_in_SharpP (Valiant's theorem)",
-  "sharpThreeSAT_complete (Valiant's theorem)",
-  "sharpP_solves_NP (Oracle complexity)",
-  "degeneracy_sharpP_hard (Reduction proof)",
-  "adiabaticTheorem (Quantum dynamics)",
-  "eigenpath_traversal (Quantum dynamics)",
-  "resolvent_distance_to_spectrum (Infinite-dim spectral theory)"
-]
+## Fully Proved (2 axioms, 0 sorry)
+- `satisfies_iff_countUnsatisfied_zero` (SATSemantics.lean)
+- `threeSATDegPositive_ground` (SATSemantics.lean)
+
+## Partially Proved with Sorry (14 axioms)
+These have proof structures in place but need completion:
+- `A2_lower_bound` (A2Bounds.lean)
+- `modifiedHam_deg_sum`, `modifiedHam_deg_count` (ModifiedHamDeg.lean)
+- `betaModifiedHam_deg_sum`, `betaModifiedHam_deg_count` (BetaModifiedHam.lean)
+- `betaModifiedHam_eigenval_ordered`, `betaModifiedHam_eigenval_ordered_strict` (BetaModifiedHam.lean)
+- `betaModifiedHam_eigenval_bounds` (BetaModifiedHam.lean)
+- `variational_principle`, `variational_minimum` (VariationalPrinciple.lean)
+- `avoidedCrossing_bound`, `piecewiseSchedule_monotone` (ScheduleProperties.lean)
+- `shermanMorrison_resolvent` (ShermanMorrison.lean)
+- `lagrange_interpolation` (LagrangeInterp.lean)
+
+## External Foundations (9 axioms - kept as axioms)
+- `threeSAT_in_NP`, `threeSAT_NP_complete` (Cook-Levin)
+- `sharpThreeSAT_in_SharpP`, `sharpThreeSAT_complete` (Valiant)
+- `sharpP_solves_NP`, `degeneracy_sharpP_hard` (Oracle complexity)
+- `adiabaticTheorem`, `eigenpath_traversal` (Quantum dynamics)
+- `resolvent_distance_to_spectrum` (Spectral theory)
+
+## Not Yet Started (~20 axioms)
+Remaining axioms in GapBounds.lean, RunningTime.lean, and Hardness.lean
+that need proof files created.
+-/
 
 end UAQO.Proofs

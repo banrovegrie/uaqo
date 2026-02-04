@@ -1,48 +1,93 @@
-# Task Plan: Formatting Compliance for src/*.md Files
+# Task Plan: Master's Thesis Implementation
 
 ## Objective
-Make all markdown files in `src/` compliant with `src/tests/check-format.md` standards.
+Write 10-chapter thesis on Adiabatic Quantum Optimization based on arXiv:2411.05736.
+
+## Chapter Structure
+
+| Ch | Title | Pages | Status |
+|----|-------|-------|--------|
+| 1 | Introduction | ~15 | Pending |
+| 2 | Physics and Computation | ~25 | Pending |
+| 3 | Quantum Computation | ~25 | Pending |
+| 4 | Adiabatic Quantum Computation | ~25 | Pending |
+| 5 | Adiabatic Quantum Optimization | ~20 | Pending |
+| 6 | Spectral Analysis | ~30 | Pending |
+| 7 | The Optimal Schedule | ~25 | Pending (Alapan's contribution) |
+| 8 | Hardness of Optimality | ~25 | Pending |
+| 9 | Exploring the Hardness Barrier | ~35 | Pending (Thesis extensions) |
+| 10 | Conclusion | ~10 | Pending |
 
 ## Phases
 
-### Phase 1: Repository Study
-- [ ] Understand repository structure
-- [ ] Review check-format.md criteria in detail
-- [ ] Identify all .md files in src/
+### Phase 0: Setup (COMPLETE)
+- [x] Update main.tex with 10-chapter structure
+- [x] Create chapter files 5-9
+- [x] Update chapter file headers
 
-### Phase 2: File Inventory
-- [ ] List all .md files to check
-- [ ] Categorize by location (chapters/, experiments/, tests/, frontmatter/)
+### Phase 1: Foundations (Chapters 2, 3, 4)
+- [ ] Chapter 2: Physics and Computation
+- [ ] Chapter 3: Quantum Computation
+- [ ] Chapter 4: Adiabatic Quantum Computation
 
-### Phase 3: Compliance Checks
-- [ ] Check 1: ASCII-only characters
-- [ ] Check 2: No horizontal rule separators
-- [ ] Check 3: Math delimiters in markdown
-- [ ] Check 4: LaTeX basics (delimiter balance, bare underscores, etc.)
+### Phase 2: Core Technical (Chapters 5, 6, 7, 8)
+- [ ] Chapter 5: Adiabatic Quantum Optimization
+- [ ] Chapter 6: Spectral Analysis
+- [ ] Chapter 7: The Optimal Schedule (Alapan's contribution)
+- [ ] Chapter 8: Hardness of Optimality
 
-### Phase 4: Fixes
-- [ ] Fix non-ASCII characters
-- [ ] Remove horizontal rules
-- [ ] Add math delimiters where needed
-- [ ] Fix LaTeX issues
+### Phase 3: Extensions (Chapter 9)
+- [ ] Section 9.1: Separation Theorem (experiment 04)
+- [ ] Section 9.2: Robust Schedules (experiment 02)
+- [ ] Section 9.3: Partial Information (experiment 07)
+- [ ] Section 9.4: Adaptive Schedules (experiment 05)
+- [ ] Section 9.5: Measure Condition (experiment 06)
+- [ ] Section 9.6: Synthesis
 
-### Phase 5: Verification
-- [ ] Re-run all checks
-- [ ] Document results
+### Phase 4: Bookends (Chapters 1, 10)
+- [ ] Chapter 1: Introduction (write last, informed by content)
+- [ ] Chapter 10: Conclusion
+
+### Throughout: Lean Formalization
+- [ ] Document axiom status (refer to src/lean/)
+- [ ] Attempt combinatorial axiom reductions
+- [ ] Update Lean README with design decisions
+
+## Critical Sources
+
+### Paper (truth for all math)
+- paper/v3-quantum.tex
+
+### Experiments (thesis extensions)
+- src/experiments/02_robust_schedules/
+- src/experiments/04_separation_theorem/
+- src/experiments/05_adaptive_schedules/
+- src/experiments/06_measure_condition/
+- src/experiments/07_partial_information/
+
+### Lean Formalization
+- src/lean/UAQO/ (refer directly, not cached metrics)
+
+### Quality Control
+- src/tests/check-format.md
+- src/tests/check-math.md
+- src/tests/check-taste.md
+
+## Writing Approach
+
+Per chapter:
+1. Draft from paper/experiment sources
+2. Run check-math.md (notation consistency)
+3. Run check-taste.md (no filler, scaffolding)
+4. Run check-format.md (ASCII, LaTeX)
+5. Iterate until all tests pass
 
 ## Decisions Log
 | Decision | Rationale | Date |
 |----------|-----------|------|
-| Use run/ folder for planning | User requested dedicated planning space | 2026-02-04 |
+| 10 chapters | Comprehensive coverage of paper + extensions | 2026-02-04 |
+| Write bookends last | Introduction and conclusion informed by content | 2026-02-04 |
+| Reference src/lean/ directly | Avoid stale metrics in plan | 2026-02-04 |
 
 ## Current Status
-**COMPLETE** - All phases finished
-
-### Final Verification Summary
-- Total files scanned: 51 (in src/, excluding .lake/)
-- Files with issues: 11
-- Files fixed: 11
-- Check 1 (ASCII): PASS
-- Check 2 (Horizontal rules): PASS (none found)
-- Check 3 (Math delimiters): PASS (fixed during Check 1)
-- Check 4 (LaTeX basics): PASS
+**Phase 0 Complete** - Chapter structure set up. Ready for Phase 1.
