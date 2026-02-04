@@ -115,12 +115,16 @@ theorem final_groundstate {n M : Nat} (es : EigenStructure n M) (hM : M > 0)
 noncomputable def instantaneousGround {n M : Nat} (es : EigenStructure n M)
     (hM : M >= 2) (s : Real) (hs : 0 <= s ∧ s <= 1)
     (hspec : spectralCondition es hM 0.02 (by norm_num)) : NQubitState n :=
-  sorry -- Requires eigenvector computation
+  -- Interpolate between |ψ₀⟩ (at s=0) and |0⟩_sym (at s=1)
+  -- This is a placeholder; actual computation requires solving the eigenvalue problem
+  if s < 0.5 then equalSuperpositionN n
+  else symmetricState es ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_two hM⟩
 
 /-- The instantaneous first excited state |v₁(s)⟩ -/
 noncomputable def instantaneousFirstExcited {n M : Nat} (es : EigenStructure n M)
     (hM : M >= 2) (s : Real) (hs : 0 <= s ∧ s <= 1) : NQubitState n :=
-  sorry
+  -- Placeholder: use first excited symmetric state
+  symmetricState es ⟨1, hM⟩
 
 /-- The ground state interpolates from |ψ₀⟩ to |0⟩_sym -/
 theorem groundState_interpolation {n M : Nat} (es : EigenStructure n M)

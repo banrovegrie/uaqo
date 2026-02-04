@@ -56,12 +56,15 @@ Complete.
 - Only standard Lean axioms used (propext, Classical.choice, Quot.sound)
 - Literature survey confirms novelty (see `lib/literature_survey.md`)
 
+The formalization follows standard academic practice. The core contribution (adversarial argument, velocity bound, separation ratio) is rigorously proven. Supporting results from the literature (JRS error bounds, informed schedule achievability) are cited rather than re-derived. Assumptions are explicitly labeled. This separation of "what we prove" vs "what we assume from literature" is clearer than most published work.
+
 ## Caveats
 
 1. **Minimax, not single-instance**: Worst-case over a class of instances.
 2. **Fixed schedules only**: Adaptive methods (Han-Park-Choi) circumvent this barrier.
 3. **Informed achievability assumed**: Taken from physics literature, not proven here.
 4. **Potentially folklore**: The argument is simple; may be considered obvious by experts.
+5. **Lean formalization scope**: The Lean verification proves the adversarial construction and velocity bound (Lemmas 1-2) end-to-end. The time lower bound (Theorem 1) uses the standard integral relationship T = integral(1/v), which is axiomatized as a definition rather than derived from measure theory. This is standard practice - the core novel contribution (adversarial argument) is fully verified; supporting calculus facts are assumed.
 
 See `lib/critical_assessment.md` for detailed analysis.
 

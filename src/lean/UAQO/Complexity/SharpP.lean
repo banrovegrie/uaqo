@@ -100,7 +100,9 @@ theorem berlekamp_welch (d e : Nat) (points : Fin (d + 2 * e + 1) -> Real)
       (∃ (good : Finset (Fin (d + 2 * e + 1))),
         good.card >= d + e + 1 ∧
         ∀ i ∈ good, Polynomial.eval (points i) p = values i) := by
-  sorry
+  -- The conclusion follows directly from the hypothesis
+  rcases herrors with ⟨good, hcard, p, hdeg, heval⟩
+  exact ⟨p, hdeg, good, hcard, heval⟩
 
 /-! ## Counting degeneracies -/
 
