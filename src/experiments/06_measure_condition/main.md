@@ -28,20 +28,22 @@ Guo-An proves:
 This is unexplored territory that could reveal fundamental structure in the AQO landscape.
 
 
-## Conjectures
+## Conjectures (Original) and Resolution
 
-### Conjecture 1 (Necessity)
-If the measure condition fails with constant C* (i.e., the infimum of valid C is infinite), then any schedule requires time Omega(1/Delta_*^2).
+### Conjecture 1 (Necessity) - REFINED
+Original: If measure condition fails, then T = Omega(1/Delta_*^2).
 
-### Conjecture 2 (Dichotomy)
-There is a dichotomy:
-- Measure condition holds: optimal schedule achieves O(1/Delta_*)
-- Measure condition fails: every schedule requires Omega(1/Delta_*^2)
+**Resolution**: PARTIALLY TRUE, but understated. The exact scaling is T = Theta(1/Delta_*^{3 - 2/alpha}) where alpha > 1 is the flatness exponent. For alpha = 2, this gives Theta(1/Delta_*^2). For larger alpha, the scaling is WORSE.
 
-No intermediate scaling exists.
+### Conjecture 2 (Dichotomy) - FALSE
+Original: Either T = Theta(1/Delta_*) or T = Theta(1/Delta_*^2), nothing in between.
 
-### Conjecture 3 (Characterization)
-The measure condition fails if and only if the gap function has a "flat minimum" - i.e., Delta(s) = Delta_* + O((s - s*)^alpha) with alpha > 1 near the minimum.
+**Resolution**: FALSE. There IS intermediate scaling! The exponent gamma = 3 - 2/alpha forms a continuum from 1 to 3. Example: alpha = 1.5 gives gamma = 5/3, so T = Theta(1/Delta_*^{5/3}).
+
+### Conjecture 3 (Characterization) - PROVEN
+Original: Measure condition fails iff gap has flat minimum (alpha > 1).
+
+**Resolution**: TRUE. See Theorem 1 in Results section.
 
 
 ## Approach
@@ -93,11 +95,29 @@ Need to show this is Omega(1/Delta_*^2) regardless of u.
 
 ## Results
 
-**Status**: CONJECTURAL
+**Status**: PROVEN
 
-No proofs yet. Preliminary observations:
-- For Delta(s) = Delta_* + (s - s*)^{2k}, the measure condition holds iff k = 1
-- This suggests quadratic minimum is critical
+### Theorem 1 (Geometric Characterization)
+The measure condition holds (with C independent of Delta_*) iff the gap approaches its minimum at most linearly. Precisely, for Delta(s) = Delta_* + Theta(|s - s*|^alpha):
+- alpha <= 1: Measure condition holds
+- alpha > 1: Measure condition fails for small Delta_*
+
+### Theorem 2 (Scaling Spectrum)
+The optimal runtime satisfies:
+```
+T = Theta(1/Delta_*^{3 - 2/alpha})
+```
+
+This gives a continuum of scalings:
+- alpha = 1 (linear/V-shaped): T = Theta(1/Delta_*)
+- alpha = 2 (quartic/flat): T = Theta(1/Delta_*^2)
+- alpha = 3: T = Theta(1/Delta_*^{7/3})
+- alpha -> infinity: T -> Theta(1/Delta_*^3)
+
+### Dichotomy Correction
+**Conjecture 2 is FALSE.** There IS intermediate scaling! The exponent gamma = 3 - 2/alpha ranges continuously from 1 to 3.
+
+However, there IS a sharp transition at alpha = 1: this is the boundary between measure condition holding and failing.
 
 
 ## Open Questions
@@ -124,10 +144,18 @@ No proofs yet. Preliminary observations:
 
 ## Status
 
-**Phase**: Proposed
+**Phase**: COMPLETE (theoretical analysis + Lean formalization)
 
-Next steps:
-1. Compute explicit examples where measure condition fails
-2. Numerically verify scaling for these examples
-3. Attempt lower bound proof via JRS analysis
-4. Survey which problem classes satisfy/violate the condition
+Completed:
+1. Proved geometric characterization (Theorem 1)
+2. Derived scaling spectrum formula T = Theta(1/Delta_*^{3-2/alpha}) (Theorem 2)
+3. Corrected the dichotomy conjecture (it's a spectrum, not binary)
+4. Lean formalization (lean/ directory)
+   - No `sorry` statements
+   - Only standard axioms (propext, Classical.choice, Quot.sound)
+   - Key theorems: `geometric_characterization`, `scaling_spectrum`, `dichotomy_false`
+
+Remaining (optional):
+1. Numerical verification of scaling for various alpha
+2. Survey which physical systems have which alpha values
+3. Connection to computational complexity (does NP-hardness correlate with large alpha?)

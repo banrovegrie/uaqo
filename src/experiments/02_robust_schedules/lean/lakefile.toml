@@ -1,0 +1,11 @@
+name = "HedgingTheorem"
+version = "0.1.0"
+defaultTargets = ["HedgingTheorem"]
+keywords = ["quantum", "optimization", "adiabatic"]
+
+[[lean_lib]]
+name = "HedgingTheorem"
+
+[[lean_exe]]
+name = "hedgingtheorem"
+root = "Main"

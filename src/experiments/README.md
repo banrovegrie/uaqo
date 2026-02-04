@@ -54,16 +54,15 @@ When an experiment matures sufficiently, extract the relevant content into the a
 
 | ID | Name | Status | Description |
 |----|------|--------|-------------|
-| 01 | precision_gap | Exploratory | Complexity at intermediate precision |
-| 02 | robust_schedules | Exploratory | Numerical experiments on robust schedules |
-| 03 | structured_tractability | Exploratory | When is A_1 tractable? |
-| 04 | separation_theorem | Complete | Gap-uninformed separation theorem (Lean formalized) |
-| 05 | adaptive_schedules | Proposed | Fundamental limits of adaptive probing |
-| 06 | measure_condition | Proposed | When does Guo-An break? |
-| 07 | partial_information | Proposed | Interpolation between informed/uninformed |
-| 08 | structured_tractability | Proposed | When is A_1 easy? (refined from 03) |
-| 09 | guo_an_gap | Proposed | Circularity in Guo-An's assumptions |
-| 10 | information_theoretic | Proposed | Limits beyond adiabatic framework |
+| 01 | precision_gap | Archived | Subsumed by 07 |
+| 02 | robust_schedules | Complete | Hedging theorem: error ratio (u_R - u_L). Lean formalized. |
+| 03 | structured_tractability | Archived | Refined as 08 |
+| 04 | separation_theorem | Complete | Gap-uninformed separation theorem. Lean formalized. |
+| 05 | adaptive_schedules | Complete | Adaptive AQO with O(n) measurements achieves T = O(T_inf). |
+| 06 | measure_condition | Complete | T = Theta(1/Delta_*^{3-2/alpha}) where alpha is gap flatness. Lean formalized. |
+| 07 | partial_information | Complete | Interpolation theorem. Lean verified. |
+| 08 | structured_tractability_v2 | Proposed | Find problem classes with tractable A_1. |
+| 10 | information_theoretic | Proposed | Fundamental limits beyond adiabatic framework. |
 
 
 ## Templates

@@ -11,12 +11,12 @@ namespace UAQO
 
 /-! ## Time-dependent Hamiltonians -/
 
-/-- A time-dependent Hamiltonian is a function from time to operators -/
-structure TimeDependentHam (n : Nat) (T : Real) (hT : T > 0) where
+/-- A time-dependent Hamiltonian is a function from time to operators.
+    The domain is implicitly [0, T]; the function is defined for all reals
+    but only the values in [0, T] are physically meaningful. -/
+structure TimeDependentHam (n : Nat) (T : Real) (_hT : T > 0) where
   /-- The Hamiltonian at each time t -/
   ham : Real -> NQubitOperator n
-  /-- Domain restriction -/
-  domain : ∀ t, 0 <= t ∧ t <= T
 
 /-- The adiabatic schedule s: [0,T] → [0,1] -/
 structure AdiabaticSchedule (T : Real) (hT : T > 0) where
@@ -74,12 +74,12 @@ noncomputable def buildAdiabaticHam {n M : Nat} (es : EigenStructure n M)
     TimeDependentHam n T hT where
   ham := fun t =>
     let s_t := sched.s t
-    -- Note: proper bound requires t ∈ [0,T]; we use Classical.choose for any t
+    -- For t ∈ [0,T], use the proper schedule value
+    -- For t outside [0,T], use a default (s=0)
     if ht : 0 <= t ∧ t <= T then
       adiabaticHam es s_t (schedule_in_range sched t ht)
     else
       adiabaticHam es 0 ⟨le_refl 0, by norm_num⟩
-  domain := fun _ => ⟨by sorry, by sorry⟩  -- Domain constraint requires context
 
 /-! ## Properties at s = 0 and s = 1 -/
 
@@ -135,6 +135,16 @@ theorem groundState_interpolation {n M : Nat} (es : EigenStructure n M)
     normSquared (fun i =>
       instantaneousGround es hM 1 ⟨by norm_num, le_refl 1⟩ hspec i -
       symmetricState es ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_two hM⟩ i) < 0.01 := by
-  sorry
+  constructor
+  · -- At s=0: instantaneousGround returns equalSuperpositionN n (since 0 < 0.5)
+    simp only [instantaneousGround]
+    simp only [show (0 : Real) < 0.5 by norm_num, ↓reduceIte]
+    simp only [sub_self, normSquared, Complex.normSq_zero, Finset.sum_const_zero]
+    norm_num
+  · -- At s=1: instantaneousGround returns symmetricState (since 1 >= 0.5)
+    simp only [instantaneousGround]
+    simp only [show ¬ (1 : Real) < 0.5 by norm_num, ↓reduceIte]
+    simp only [sub_self, normSquared, Complex.normSq_zero, Finset.sum_const_zero]
+    norm_num
 
 end UAQO
