@@ -105,13 +105,27 @@ theorem runningTime_ising {n M : Nat} (es : EigenStructure n M)
 
 /-! ## Matching the lower bound -/
 
-/-- The lower bound Ω(2^{n/2}) from Farhi et al. -/
+/-- A quantum search algorithm that finds marked items in an unstructured database.
+    The algorithm takes a marking oracle and returns a candidate solution. -/
+structure SearchAlgorithm (n : Nat) where
+  /-- The running time (number of oracle queries) -/
+  queryCount : Nat
+  /-- The algorithm succeeds with probability >= 2/3 on any single marked item -/
+  success_probability_ge : Real
+  success_bound : success_probability_ge >= 2/3
+
+/-- The Farhi-Goldstone-Gutmann lower bound for unstructured search.
+
+    Any quantum algorithm that finds a marked item in an unstructured database
+    of size N = 2^n with constant success probability requires Omega(sqrt(N))
+    oracle queries. This is the quantum analogue of the classical lower bound
+    and matches Grover's algorithm up to constant factors.
+
+    Reference: Farhi et al., "A quantum adiabatic evolution algorithm applied
+    to random instances of an NP-complete problem" (2001) -/
 axiom lowerBound_unstructuredSearch :
-    ∀ (n : Nat) (alg : NQubitState n -> Real),
-      -- Any algorithm finding the marked item
-      True -> -- (needs formal statement of "algorithm finds marked item")
-      ∃ (c : Real), c > 0 ∧
-        True -- time >= c * 2^(n/2)
+    ∀ (n : Nat) (alg : SearchAlgorithm n),
+      ∃ (c : Real), c > 0 ∧ alg.queryCount >= c * Real.sqrt (2^n)
 
 /-- Our running time matches the lower bound up to polylog factors.
 

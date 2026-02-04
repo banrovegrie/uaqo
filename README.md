@@ -100,17 +100,3 @@ This chapter synthesizes results, presents explorations beyond the paper, and id
 | 7.5 The Standard AQO Setting | H_0 = -sum sigma_x^j. Multiple crossings. Different spectral structure. |
 | 7.6 Open Problems | Tractable classes. Catalyst qubits. QAOA connections. Noise effects. |
 | 7.7 Closing Remarks | The deeper question: what do these barriers tell us about quantum speedups? |
-
-### Bibliography
-
-## Narrative Arc
-
-| Chapter | Function | Reader's State |
-|---------|----------|----------------|
-| Introduction | Hook | "This is an interesting question" |
-| Quantum Computation | Preparation | "I understand quantum computation" |
-| Adiabatic Quantum Computation | Context | "I see how adiabatic computation works" |
-| Spectral Analysis | Technical heart | "The spectrum is tractable" |
-| Optimal Algorithm | Victory | "We achieved optimal speedup!" |
-| Hardness | Twist | "Oh. There's a catch." |
-| Conclusion | Resolution | "The question is deeper than expected" |

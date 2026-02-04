@@ -229,15 +229,9 @@ The AQO paper (2411.05736) is directly relevant to the thesis topic. It demonstr
 
 ## Synthesis: Principles for Thesis Writing
 
-### The Three Voices
+The patterns below should be internalized and embodied, not signaled. The reader should never see the scaffolding. Writing "from a philosophical standpoint" or "the key insight here is" reveals technique rather than executing it. Good craft is invisible.
 
-From studying these authors, three distinct "voices" emerge that can be combined:
-
-1. **The Philosopher (Aaronson)**: Why does this matter? What's at stake?
-2. **The Engineer (Harrow)**: Precisely what do we achieve? With what cost?
-3. **The Teacher (de Wolf)**: How do we understand this? Let me show you step by step.
-
-A good thesis uses all three: philosophical framing in introductions, engineering precision in results, pedagogical care throughout.
+What the authors above share: they make the reader care about a question before answering it. They state results with precision and acknowledge limitations honestly. They guide the reader through unfamiliar territory with patience, building intuition through examples that recur and accumulate meaning. The goal is a thesis where each idea arrives exactly when needed, where definitions feel necessary before they appear, where the reader finishes with new perspective rather than just new facts.
 
 ### Structural Blueprint for Chapters
 
@@ -317,27 +311,3 @@ Before finalizing any section, ask:
 7. **The citation-free claim**: Making strong statements without supporting references
 8. **The emotional hedge**: "We believe that..." instead of stating precisely what's proven
 
-### For the AQO Thesis Specifically
-
-Based on the domain-specific analysis of Chakraborty's papers:
-
-**Notation to use consistently**:
-- H(s) for time-dependent Hamiltonian
-- g(s) for spectral gap
-- Delta for gap of problem Hamiltonian
-- kappa for condition number
-- T for total runtime
-- epsilon for error parameter
-
-**Structure suggestions**:
-- Chapter 1: Introduction with philosophical framing (Aaronson style)
-- Chapter 2: Preliminaries - quantum computing, complexity classes (de Wolf style)
-- Chapter 3: Adiabatic quantum computation - models, adiabatic theorem (de Wolf style)
-- Chapter 4-5: Main technical results (Harrow style precision)
-- Chapter 6: Hardness results and limitations (Chakraborty style)
-- Chapter 7: Discussion and open problems
-
-**Key results to state precisely**:
-- Runtime bounds: T = O(f(n, epsilon, kappa, ...))
-- Gap bounds: g(s) >= lower bound for all s in [a,b]
-- Complexity statements: "Computing X is NP-hard" with reduction proof

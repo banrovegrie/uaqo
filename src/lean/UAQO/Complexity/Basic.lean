@@ -61,6 +61,28 @@ def satisfies {n : Nat} (a : Assignment n) (f : CNFFormula) : Prop :=
 def isSatisfiable (f : CNFFormula) : Prop :=
   ∃ (a : Assignment f.numVars), satisfies a f
 
+/-- Convert a Fin index to an Assignment by reading bits from the index value. -/
+def finToAssignment (n : Nat) (z : Fin (2^n)) : Assignment n :=
+  fun i => z.val.testBit i.val
+
+/-- Count the number of satisfying assignments for a CNF formula.
+    This is the central quantity in #3-SAT. -/
+noncomputable def numSatisfyingAssignments (f : CNFFormula) : Nat :=
+  (Finset.filter (fun a : Fin (2^f.numVars) =>
+    evalCNF (finToAssignment f.numVars a) f) Finset.univ).card
+
+/-- Count unsatisfied clauses for a given assignment (as a Fin index).
+    Returns the number of clauses that evaluate to false under the assignment. -/
+noncomputable def countUnsatisfiedClauses (f : CNFFormula) (z : Fin (2^f.numVars)) : Nat :=
+  (f.clauses.filter (fun c =>
+    !evalClause (finToAssignment f.numVars z) c)).length
+
+/-- Count assignments with exactly k unsatisfied clauses.
+    This gives the degeneracy d_k in the 3-SAT Hamiltonian encoding. -/
+noncomputable def countAssignmentsWithKUnsatisfied (f : CNFFormula) (k : Nat) : Nat :=
+  (Finset.filter (fun z : Fin (2^f.numVars) =>
+    countUnsatisfiedClauses f z = k) Finset.univ).card
+
 /-! ## Polynomial time -/
 
 /-- A function is polynomial-time computable (informal) -/

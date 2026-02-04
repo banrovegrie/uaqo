@@ -85,17 +85,15 @@ All important content lives in `src/`.
 
 ### Taste and Style
 
-Good technical writing makes the reader feel that each idea arrives exactly when needed. Before any definition appears, the reader already wants it. Before any theorem is stated, the reader understands what gap it fills. This is not achieved by announcing "we now motivate X" but by genuinely building the intellectual tension that makes X necessary.
+Good technical writing makes the reader feel that each idea arrives exactly when needed. Before any definition appears, the reader already wants it. Before any theorem is stated, the reader understands what gap it fills. This is achieved by genuinely building the intellectual tension that makes each concept necessary.
 
-The best thesis writing combines three voices. The Philosopher asks why this matters, what is at stake, what question the reader already cares about. The Engineer states precisely what is achieved and at what cost, with explicit bounds and dependencies. The Teacher guides the reader through unfamiliar territory with patience, using concrete examples that recur throughout. Use all three: philosophical framing in introductions, engineering precision in results, pedagogical care everywhere.
+The writing should make the reader care about the question before answering it. It should state results with precision: explicit bounds, clear dependencies, honest limitations. It should guide the reader through unfamiliar territory with patience, using concrete examples that recur and accumulate meaning. These qualities must be embodied, not named. The reader should never see the scaffolding. Phrases like "from a philosophical standpoint" or "to provide intuition" reveal technique rather than executing it. Good craft is invisible: the reader experiences clarity without noticing method.
 
-A common failure mode is to name these qualities rather than embody them. Writing "from a philosophical standpoint" or "to provide intuition" signals awareness of good practice while missing the substance. The goal is invisible craft: the reader experiences clarity without noticing technique.
-
-When writing with AI assistance, there is a specific danger. LLMs are trained on text that often fills space rather than carrying meaning. The output will tend toward vague generalities, hedged claims, and filler sentences unless actively counteracted. Every sentence must earn its place. If a sentence can be removed without information loss, remove it.
+When writing with AI assistance, there is a specific danger. LLMs are trained on text that fills space rather than carrying meaning. The output tends toward vague generalities, hedged claims, and filler sentences unless actively counteracted. Every sentence must earn its place. If a sentence can be removed without information loss, remove it.
 
 The thesis concerns adiabatic quantum optimization. Use consistent notation throughout. Import mathematical statements directly from the published paper where possible. Notation and mathematical details are where LLMs fail most invisibly. Shantanav will catch errors here.
 
-For elaboration on specific authors and detailed patterns, see `taste/README.md`.
+For detailed analysis of specific authors and their patterns, see `taste/README.md`.
 
 ### Testing
 

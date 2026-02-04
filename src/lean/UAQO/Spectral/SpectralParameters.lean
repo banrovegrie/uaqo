@@ -33,6 +33,30 @@ noncomputable def A1 {n M : Nat} (es : EigenStructure n M) (hM : M > 0) : Real :
 noncomputable def A2 {n M : Nat} (es : EigenStructure n M) (hM : M > 0) : Real :=
   spectralParam es hM 2
 
+/-! ## Spectral parameters for partial eigenstructures -/
+
+/-- A_1 for partial eigenstructures. Terms with d_k = 0 contribute 0.
+    This is well-defined even for UNSAT formulas where d_0 = 0. -/
+noncomputable def A1_partial {n M : Nat} (pes : PartialEigenStructure n M)
+    (hM : M > 0) : Real :=
+  let E0 := pes.eigenvalues ⟨0, hM⟩
+  let N := qubitDim n
+  (1 / N) * Finset.sum (Finset.filter (fun k : Fin M => k.val > 0) Finset.univ)
+    (fun k => (pes.degeneracies k : Real) / (pes.eigenvalues k - E0))
+
+/-- A_p for partial eigenstructures (generalized) -/
+noncomputable def spectralParam_partial {n M : Nat} (pes : PartialEigenStructure n M)
+    (hM : M > 0) (p : Nat) : Real :=
+  let E0 := pes.eigenvalues ⟨0, hM⟩
+  let N := qubitDim n
+  (1 / N) * Finset.sum (Finset.filter (fun k : Fin M => k.val > 0) Finset.univ)
+    (fun k => (pes.degeneracies k : Real) / (pes.eigenvalues k - E0)^p)
+
+/-- A1_partial agrees with A1 when all degeneracies are positive -/
+theorem A1_partial_eq_A1 {n M : Nat} (es : EigenStructure n M) (hM : M > 0) :
+    A1_partial es.toPartial hM = A1 es hM := by
+  simp only [A1_partial, A1, spectralParam, EigenStructure.toPartial]
+
 /-! ## Key properties of spectral parameters -/
 
 /-- A_p is positive for p ≥ 1 when M ≥ 2 -/

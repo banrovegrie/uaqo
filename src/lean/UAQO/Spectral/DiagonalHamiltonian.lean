@@ -59,6 +59,40 @@ structure EigenStructure (n : Nat) (M : Nat) where
   deg_count : ∀ k, degeneracies k =
     (Finset.filter (fun z => assignment z = k) Finset.univ).card
 
+/-- A partial eigenstructure where some degeneracies may be zero.
+    Needed for hardness reductions where UNSAT formulas have d_0 = 0. -/
+structure PartialEigenStructure (n : Nat) (M : Nat) where
+  /-- The M distinct eigenvalues, ordered: 0 ≤ E₀ < E₁ < ... < E_{M-1} ≤ 1 -/
+  eigenvalues : Fin M -> Real
+  /-- The degeneracy of each eigenvalue (may be zero) -/
+  degeneracies : Fin M -> Nat
+  /-- Which eigenvalue each basis state maps to -/
+  assignment : Fin (qubitDim n) -> Fin M
+  /-- Eigenvalues are in [0, 1] -/
+  eigenval_bounds : ∀ k, 0 <= eigenvalues k ∧ eigenvalues k <= 1
+  /-- Eigenvalues are strictly ordered -/
+  eigenval_ordered : ∀ i j, i < j -> eigenvalues i < eigenvalues j
+  /-- Ground energy is 0 (normalized) -/
+  ground_energy_zero : (hM : M > 0) -> eigenvalues ⟨0, hM⟩ = 0
+  /-- Degeneracies sum to N -/
+  deg_sum : Finset.sum Finset.univ degeneracies = qubitDim n
+  /-- Degeneracy equals count of states with that eigenvalue -/
+  deg_count : ∀ k, degeneracies k =
+    (Finset.filter (fun z => assignment z = k) Finset.univ).card
+
+/-- Any EigenStructure is a PartialEigenStructure -/
+def EigenStructure.toPartial {n M : Nat} (es : EigenStructure n M) :
+    PartialEigenStructure n M := {
+  eigenvalues := es.eigenvalues
+  degeneracies := es.degeneracies
+  assignment := es.assignment
+  eigenval_bounds := es.eigenval_bounds
+  eigenval_ordered := es.eigenval_ordered
+  ground_energy_zero := es.ground_energy_zero
+  deg_sum := es.deg_sum
+  deg_count := es.deg_count
+}
+
 /-- Convert an EigenStructure to a DiagonalHamiltonian -/
 noncomputable def EigenStructure.toHamiltonian {n M : Nat}
     (es : EigenStructure n M) : DiagonalHamiltonian n where
