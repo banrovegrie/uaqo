@@ -74,12 +74,14 @@ namespace UAQO.Proofs
 - `expectation_ge_min_eigenvalue` - FULL PROOF: expectation ≥ min eigenvalue
 - `groundEnergy_variational_bound_proof` - FULL PROOF: E0 ≤ ⟨phi|H|phi⟩
 
-## Axioms with Formulation Issues (4 axioms)
+## Axioms with Formulation Issues (3 axioms)
 These appear to have bugs or are unprovable as stated:
 - `A2_lower_bound` (A2Bounds.lean) - bound direction reversed
 - `avoidedCrossing_bound`, `piecewiseSchedule_monotone` (ScheduleProperties.lean) - missing hypothesis
-- `threeSATWellFormed_numVars` (Hardness.lean) - unprovable: empty formula counterexample
-  (formula with no clauses is valid 3-CNF, satisfiable, and can have numVars=0)
+
+## Fixed Formulation Issues
+- `threeSATWellFormed_numVars` (Hardness.lean) - FIXED: added precondition `f.clauses.length > 0`
+  (empty formula counterexample is now excluded by the precondition)
 
 ## External Foundations (9 axioms - kept as axioms)
 Standard complexity theory and physics axioms:
@@ -112,7 +114,7 @@ Standard complexity theory and physics axioms:
 - `A1_polynomial_in_beta` - A1 is polynomial in β
 - `mainResult3` - #P-hardness of exact computation
 - `mainResult3_robust` - robustness to exponential errors
-- `threeSATWellFormed_numVars` - formulation issue (unprovable)
+- `threeSATWellFormed_numVars` - FIXED: precondition added (unused axiom)
 
 ## Bridge Files (no axioms eliminated, provide Mathlib connections)
 - `MatrixDetLemma.lean` - connects outerProd/innerProd to Mathlib equivalents

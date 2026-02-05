@@ -14,12 +14,17 @@ This formalization captures the mathematical structure of adiabatic quantum opti
 
 | Metric | Count |
 |--------|-------|
-| Axioms | 25 |
+| Axioms | 26 |
 | Theorems | 76+ |
 | Sorries | 0 |
 | Lines of Lean | ~5,800 |
 
-The formalization has 0 sorries. All proofs are complete.
+The formalization has 0 sorries. All proofs compile successfully.
+9 axioms are external foundations (Cook-Levin, Valiant, adiabatic theorem).
+16 axioms remain for spectral gap bounds, running time, and complexity results.
+1 axiom (`adiabatic_emax_nonneg`) is a spectral bound that requires Mathlib's
+spectral theorem connection (IsEigenvalue ↔ hHerm.eigenvalues membership).
+
 24+ core theorems have been fully proved including:
 - Variational principle and spectral bounds (Parseval identity, weighted sum bounds)
 - Eigenvalue condition for adiabatic Hamiltonian

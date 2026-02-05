@@ -20,8 +20,6 @@ This thesis aims to be a single coherent path from first principles to the main 
 - Chapter 10: Formalization
 - Chapter 11: Conclusion
 
-## Implementation Order
-
 The chapters should be written in this order:
 
 ```
@@ -49,23 +47,23 @@ The chapters should be written in this order:
 
 - **Section: The Puzzle**
   - Ground states as computational answers: physical systems seek low-energy configurations
-  - Encode computational problem in Hamiltonian H; ground state encodes solution
+  - Encode computational problem in Hamiltonian $H$; ground state encodes solution
   - "Let nature compute" - attractive idea
   - The question: Can physical systems solve hard problems efficiently? Can quantum beat classical for optimization?
   - TODO: Build tension before resolution; don't answer too quickly
   - REVIEWER: presentation_quality - Hook the reader
 
 - **Section: Unstructured Search as Canonical Target**
-  - The search problem: find marked item among N items, no structure (oracle model)
-  - Classical: O(N) queries required (must check every item)
-  - Quantum: O(sqrt(N)) queries via Grover, provably optimal (BBBV)
+  - The search problem: find marked item among $N$ items, no structure (oracle model)
+  - Classical: $O(N)$ queries required (must check every item)
+  - Quantum: $O(\sqrt{N})$ queries via Grover, provably optimal (BBBV)
   - Why this is the right benchmark: clean problem, clear lower bound, quadratic speedup achieved by circuits
   - Question: can AQO match this?
   - FORWARD: Chapters 3 (Grover), 7 (AQO matches it)
 
 - **Section: Adiabatic Quantum Optimization**
-  - AQC idea: encode problem in H_z, start with easy H_0, interpolate H(s) = (1-s)H_0 + sH_z, evolve slowly
-  - AQO = AQC with restrictions: H_z diagonal, H_0 is projector, only schedule s(t) adjustable
+  - AQC idea: encode problem in $H_z$, start with easy $H_0$, interpolate $H(s) = (1-s)H_0 + sH_z$, evolve slowly
+  - AQO = AQC with restrictions: $H_z$ diagonal, $H_0$ is projector, only schedule $s(t)$ adjustable
   - The appeal: "Nature computes for you", no explicit gates, potentially robust
   - The catch (preview): schedule requires gap knowledge, gap info is expensive
   - TODO: Make AQO appealing before showing limitations
@@ -73,9 +71,9 @@ The chapters should be written in this order:
 
 - **Section: The Trilogy - Main Results Frontloaded**
   - SOURCE: paper/v3-quantum.tex Theorems 1-3
-  - (i) Optimality exists: T = O~(sqrt(N/d_0)), matches Grover (Chapter 7)
-  - (ii) Computing schedule parameters is NP-hard: A_1 to 1/poly(n) reduces 3-SAT (Chapter 8)
-  - (iii) Exact parameter values are #P-hard: polynomial interpolation attack (Chapter 8)
+  - (i) Optimality exists: $T = \tilde{O}(\sqrt{N/d_0})$, matches Grover (Chapter 7)
+  - (ii) Computing schedule parameters is NP-hard: $A_1$ to $1/\text{poly}(n)$ reduces 3-SAT (Chapter 8)
+  - (iii) Exact parameter values are $\#P$-hard: polynomial interpolation attack (Chapter 8)
   - The tension: optimal speedup exists but requires solving NP-hard problem first
   - "Optimality with limitations"
   - TODO: State results crisply, create tension
@@ -84,7 +82,7 @@ The chapters should be written in this order:
 - **Section: The Central Question**
   - When does "nature computes for you" actually work?
   - Naive view: set up Hamiltonian, wait, measure
-  - Reality: must choose schedule s(t), optimal requires gap info, gap info is NP-hard
+  - Reality: must choose schedule $s(t)$, optimal requires gap info, gap info is NP-hard
   - Reframing: not "can AQO achieve speedup?" but "when is gap information tractable?"
   - This thesis: proves optimality/hardness (5-8), characterizes tradeoff (9), machine-checks (10)
   - FORWARD: Chapter 9 (information gap)
@@ -92,6 +90,7 @@ The chapters should be written in this order:
 - **Section: Thesis Contributions**
   - Exposition of published work: deep explanation (Chapters 5-8), pedagogical, broader context
   - Original extensions (Chapter 9): separation theorem, partial information, robust/adaptive schedules
+  - Chapter 9 context: extends Guo-An 2025's gap-informed baseline to uninformed/partial/adaptive regimes
   - Formalization (Chapter 10): Lean 4, machine-checked, errors caught
   - Goal: best single source, clear enough to teach, rigorous enough to build on
   - REVIEWER: originality - Clear about contributions
@@ -132,14 +131,14 @@ The chapters should be written in this order:
   - Computability: decidable vs undecidable, halting problem
   - Complexity: P (polynomial time), NP (verifiable solutions), NP-complete (hardest in NP, SAT/3-SAT), NP-hard
   - TODO: Define reduction precisely; SAT and 3-SAT as canonical examples
-  - FORWARD: Chapter 8 uses NP-hardness for A_1 estimation
+  - FORWARD: Chapter 8 uses NP-hardness for $A_1$ estimation
   - REVIEWER: technical_soundness - Standard definitions
 
-- **Section: The #P Complexity Class**
+- **Section: The $\#P$ Complexity Class**
   - SOURCE: paper/v3-quantum.tex lines 208-209, Valiant (1979)
-  - #P: counting problems ("how many?" vs "does solution exist?")
-  - #P-complete: #SAT is #P-complete
-  - Relation to thesis: d_0 = counting ground states, A_1 exactly is #P-hard
+  - $\#P$: counting problems ("how many?" vs "does solution exist?")
+  - $\#P$-complete: $\#$SAT is $\#P$-complete
+  - Relation to thesis: $d_0$ = counting ground states, $A_1$ exactly is $\#P$-hard
   - TODO: Define formally; explain why counting harder than decision
   - FORWARD: Chapter 8 uses #P-hardness
   - REVIEWER: technical_soundness - Definition needed for hardness
@@ -148,22 +147,22 @@ The chapters should be written in this order:
   - Linearity is powerful: superposition, tractable systems, perturbation theory
   - Quantum mechanics is exactly linear: Schrodinger equation, superposition of solutions
   - Nonlinearity and hardness: chaos, phase transitions, computational hardness
-  - For thesis: H(s) linear in |psi> but ground state changes nonlinearly in s
+  - For thesis: $H(s)$ linear in $|\psi\rangle$ but ground state changes nonlinearly in $s$
   - TODO: Connect linearity of QM to computational structure
   - FORWARD: Chapters 5-6 show gap as nonlinear behavior
 
 - **Section: Adiabaticity**
   - SOURCE: Griffiths QM
   - Thermodynamic adiabatic: slow, reversible, no heat exchange
-  - Quantum adiabatic: slow H(t) evolution, system stays in ground state
-  - Key condition: "slow" means d/dt << gap^2
-  - Landau-Zener transitions: probability of jumping, exponential suppression ~ 1/gap^2
+  - Quantum adiabatic: slow $H(t)$ evolution, system stays in ground state
+  - Key condition: "slow" means $d/dt \ll \text{gap}^2$
+  - Landau-Zener transitions: probability of jumping, exponential suppression $\sim 1/\text{gap}^2$
   - TODO: Distinguish thermodynamic vs quantum; give gap-slowness intuition
   - FORWARD: Chapter 4 formalizes adiabatic theorem
   - REVIEWER: presentation_quality - Physical intuition first
 
 - **Section: Energy Landscapes and Optimization**
-  - Ground states as optimization solutions: minimize H, ground state = optimal
+  - Ground states as optimization solutions: minimize $H$, ground state = optimal
   - Complex landscapes: spin glasses, local minima, NP-hard = rugged
   - Classical methods: simulated annealing, gradient descent, limitations
   - Quantum approach: tunneling, adiabatic tracking, but gap determines speed
@@ -195,42 +194,42 @@ The chapters should be written in this order:
   - States: vectors in Hilbert space, superposition
   - Measurement: Born rule, collapse, probabilistic outcomes
   - Unitary evolution: Schrodinger equation, reversibility
-  - Key concepts: |psi> in complex Hilbert space, |<phi|psi>|^2 probabilities, U(t)|psi(0)>
+  - Key concepts: $|\psi\rangle$ in complex Hilbert space, $|\langle\phi|\psi\rangle|^2$ probabilities, $U(t)|\psi(0)\rangle$
   - TODO: Decide level of detail (physics vs CS audience)
   - REVIEWER: presentation_quality - Accessible to CS reader
 
 - **Section: Hilbert Spaces and the Computational Basis**
   - SOURCE: Nielsen-Chuang Chapter 2
-  - Qubit: C^2, basis {|0>, |1>}
-  - n-qubit system: (C^2)^{tensor n} = C^{2^n}, dimension N = 2^n
-  - Computational basis: |x> for x in {0,1}^n
+  - Qubit: $\mathbb{C}^2$, basis $\{|0\rangle, |1\rangle\}$
+  - $n$-qubit system: $(\mathbb{C}^2)^{\otimes n} = \mathbb{C}^{2^n}$, dimension $N = 2^n$
+  - Computational basis: $|x\rangle$ for $x \in \{0,1\}^n$
   - Inner product, norm, superposition with normalization
-  - For thesis: N = 2^n exponential, computational basis where H_z diagonal
+  - For thesis: $N = 2^n$ exponential, computational basis where $H_z$ diagonal
   - TODO: Define notation (bra-ket), tensor product
   - FORWARD: Chapter 5 uses N = 2^n, computational basis
 
 - **Section: Hamiltonians as Energy**
   - SOURCE: Standard QM, Nielsen-Chuang
-  - Hermitian operator: H = H^dagger, real eigenvalues E_k, eigenvectors |k>
-  - Spectral decomposition: H = sum_k E_k |k><k| (non-degenerate), H = sum_k E_k P_k (degenerate)
-  - Ground state: lowest eigenvalue E_0, encodes solution for optimization
-  - Spectral gap: g = E_1 - E_0, central to adiabatic computation
-  - TODO: Handle degeneracy (d_k-fold); emphasize spectral gap
+  - Hermitian operator: $H = H^\dagger$, real eigenvalues $E_k$, eigenvectors $|k\rangle$
+  - Spectral decomposition: $H = \sum_k E_k |k\rangle\langle k|$ (non-degenerate), $H = \sum_k E_k P_k$ (degenerate)
+  - Ground state: lowest eigenvalue $E_0$, encodes solution for optimization
+  - Spectral gap: $g = E_1 - E_0$, central to adiabatic computation
+  - TODO: Handle degeneracy ($d_k$-fold); emphasize spectral gap
   - NOTE: "Spectral gap" defined here; Chapter 4 discusses computational role
-  - FORWARD: Chapters 5-6 analyze spectral gap of H(s)
+  - FORWARD: Chapters 5-6 analyze spectral gap of $H(s)$
   - REVIEWER: technical_soundness - Definitions must be precise
 
 - **Section: Time Evolution**
   - SOURCE: Nielsen-Chuang Chapter 2
-  - Schrodinger equation (time-independent): i d|psi>/dt = H|psi>
-  - Solution: |psi(t)> = e^{-iHt}|psi(0)> = U(t)|psi(0)>, unitary
-  - Time-dependent H(t): more complex, time-ordered exponential, relevant for AQC
-  - TODO: Clarify units (hbar = 1); time-dependent case
-  - FORWARD: Chapter 4 uses time-dependent H(s)
+  - Schrodinger equation (time-independent): $i \, d|\psi\rangle/dt = H|\psi\rangle$
+  - Solution: $|\psi(t)\rangle = e^{-iHt}|\psi(0)\rangle = U(t)|\psi(0)\rangle$, unitary
+  - Time-dependent $H(t)$: more complex, time-ordered exponential, relevant for AQC
+  - TODO: Clarify units ($\hbar = 1$); time-dependent case
+  - FORWARD: Chapter 4 uses time-dependent $H(s)$
   - REVIEWER: technical_soundness - Units and conventions
 
 - **Section: Why Quantum Helps**
-  - Superposition: N = 2^n amplitudes in n qubits (NOT parallel computation)
+  - Superposition: $N = 2^n$ amplitudes in $n$ qubits (NOT parallel computation)
   - Interference: amplitudes add, cancel wrong, amplify correct - key to speedups
   - Tunneling: traverse classically forbidden regions (debated for optimization)
   - Entanglement: non-classical correlations (less central to AQO)
@@ -240,30 +239,30 @@ The chapters should be written in this order:
 - **Section: Circuits and Query Complexity**
   - SOURCE: Nielsen-Chuang, Arora-Barak
   - Gate model: universal gates, circuit depth/width, polynomial = BQP
-  - BQP: polynomial-time quantum, probability >= 2/3, P subset BQP subset PSPACE
-  - Oracle model: black-box f, quantum oracle |x,y> -> |x, y XOR f(x)>, query count
-  - For thesis: Grover O(sqrt(N)) optimal, AQO doesn't use oracles but H_z encodes f
+  - BQP: polynomial-time quantum, probability $\geq 2/3$, $P \subseteq BQP \subseteq PSPACE$
+  - Oracle model: black-box $f$, quantum oracle $|x,y\rangle \to |x, y \oplus f(x)\rangle$, query count
+  - For thesis: Grover $O(\sqrt{N})$ optimal, AQO doesn't use oracles but $H_z$ encodes $f$
   - TODO: Define BQP precisely; oracle vs non-oracle
   - FORWARD: Chapters 7/8 compare AQO to circuit model
   - REVIEWER: literature - Standard definitions
 
 - **Section: Grover as Geometry**
   - SOURCE: Grover (1996), Nielsen-Chuang
-  - Search problem: find marked w among N, oracle f(x) = 1 iff x = w
-  - Geometric picture: 2D subspace span{|w>, |s>}, rotation by theta ~ 1/sqrt(N)
-  - Runtime: pi/(4*theta) ~ sqrt(N) iterations
+  - Search problem: find marked $w$ among $N$, oracle $f(x) = 1$ iff $x = w$
+  - Geometric picture: 2D subspace $\text{span}\{|w\rangle, |s\rangle\}$, rotation by $\theta \sim 1/\sqrt{N}$
+  - Runtime: $\pi/(4\theta) \sim \sqrt{N}$ iterations
   - Why geometric view matters: optimality transparent, connects to AQO two-level structure
   - TODO: Draw rotation picture; connect to Roland-Cerf
-  - FORWARD: Chapter 5 has similar two-level structure near s*
+  - FORWARD: Chapter 5 has similar two-level structure near $s^*$
   - REVIEWER: presentation_quality - Geometry before algebra
 
 - **Section: Why Grover is Optimal**
   - SOURCE: Bennett-Bernstein-Brassard-Vazirani (1997)
-  - BBBV: Omega(sqrt(N)) queries needed for constant probability
+  - BBBV: $\Omega(\sqrt{N})$ queries needed for constant probability
   - Proof idea: query complexity limited by amplitude movement, polynomial method
   - Implication: quadratic speedup fundamental, AQO matching is optimal
   - TODO: Sketch proof or intuition; connect to AQO runtime
-  - FORWARD: Chapter 7 achieves O~(sqrt(N/d_0))
+  - FORWARD: Chapter 7 achieves $\tilde{O}(\sqrt{N/d_0})$
   - REVIEWER: technical_soundness - Lower bound important
 
 - **Section: The Decoherence Challenge**
@@ -281,7 +280,7 @@ The chapters should be written in this order:
 
 **Needs:** Chapter 3 (Hamiltonians, eigenvalues, time evolution, Grover), Chapter 2 (complexity, optimization)
 
-**Forward:** Chapter 5 (AQO with diagonal H_z), Chapter 7 (Roland-Cerf schedule)
+**Forward:** Chapter 5 (AQO with diagonal $H_z$), Chapter 7 (Roland-Cerf schedule)
 
 **Definitions introduced:** adiabatic theorem, spectral gap as computational resource, avoided crossing, local schedule
 
@@ -295,19 +294,19 @@ The chapters should be written in this order:
 
 - **Section: The Computational Idea**
   - SOURCE: Farhi et al. (2001)
-  - Encode problem in H_z (ground state = solution), start with easy H_0
-  - Interpolate: H(s) = (1-s)H_0 + sH_z for s in [0,1]
-  - Read answer: measure at s=1
-  - Chapter 5 specializes: H_0 = -|psi_0><psi_0|, H_z diagonal
+  - Encode problem in $H_z$ (ground state = solution), start with easy $H_0$
+  - Interpolate: $H(s) = (1-s)H_0 + sH_z$ for $s \in [0,1]$
+  - Read answer: measure at $s=1$
+  - Chapter 5 specializes: $H_0 = -|\psi_0\rangle\langle\psi_0|$, $H_z$ diagonal
   - TODO: Explain encoding of optimization problems
-  - FORWARD: Chapter 5 uses H(s) = -(1-s)|psi_0><psi_0| + sH_z
+  - FORWARD: Chapter 5 uses $H(s) = -(1-s)|\psi_0\rangle\langle\psi_0| + sH_z$
 
 - **Section: The Adiabatic Theorem**
   - SOURCE: Born-Fock (1928), Kato (1950), Jansen-Ruskai-Seiler (2007)
   - Statement: if slow enough, stay in instantaneous ground state
-  - Quantitative: Error <= C * max|dH/ds| / min g(s)^2
-  - Implications: runtime ~ 1/g_min^2 worst case
-  - Note: Chapter 7 uses refined version with local schedule
+  - Quantitative: Error $\leq C \cdot \max|dH/ds| / \min g(s)^2$
+  - Implications: runtime $\sim 1/g_{\min}^2$ worst case
+  - Note: Chapter 7 uses a NEW simplified version with local gap bounds (not just Jansen-Ruskai-Seiler)
   - TODO: State precisely with conditions; distinguish from original qualitative theorem
   - FORWARD: Chapter 7 uses this for runtime
   - REVIEWER: technical_soundness - State conditions carefully
@@ -316,7 +315,7 @@ The chapters should be written in this order:
   - Gap connects physics to complexity
   - Physics: large gap = robust, fast; small gap = fragile, slow
   - Computational: large = easy, small = hard/slow
-  - Gap as bottleneck: T ~ 1/g_min^2, QMA-hardness from gap estimation
+  - Gap as bottleneck: $T \sim 1/g_{\min}^2$, QMA-hardness from gap estimation
   - TODO: Connect to QMA and local Hamiltonian problem
   - FORWARD: Chapters 5-6 analyze gap structure
   - REVIEWER: significance - Gap is central object of thesis
@@ -324,25 +323,25 @@ The chapters should be written in this order:
 - **Section: Avoided Crossings**
   - SOURCE: Landau (1932), Zener (1932)
   - Definition: energy levels approach but don't cross (repel due to coupling)
-  - Landau-Zener: P ~ exp(-pi g_min^2 / (2v)), must slow near crossings
+  - Landau-Zener: $P \sim \exp(-\pi g_{\min}^2 / (2v))$, must slow near crossings
   - Gap minimum typically at avoided crossing; single crossing simplifies (AQO case)
   - TODO: Derive Landau-Zener or give intuition; non-crossing theorem
-  - FORWARD: Chapter 5 has single crossing at s*, Chapter 6 bounds three regions
+  - FORWARD: Chapter 5 has single crossing at $s^*$, Chapter 6 bounds three regions
   - REVIEWER: presentation_quality - Intuition before formula
 
 - **Section: Schedules**
-  - Linear: s(t) = t/T, simple but not optimal, wastes time where gap large
-  - Adaptive: ds/dt ~ g(s)^2, slow where small, fast where large
-  - Gap-aware vs gap-unaware: knows g(s) or must work for all instances
+  - Linear: $s(t) = t/T$, simple but not optimal, wastes time where gap large
+  - Adaptive: $ds/dt \sim g(s)^2$, slow where small, fast where large
+  - Gap-aware vs gap-unaware: knows $g(s)$ or must work for all instances
   - TODO: Compare runtimes; set up gap-uninformed problem (Chapter 9)
   - FORWARD: Chapter 7 constructs optimal, Chapter 9 analyzes uninformed
 
 - **Section: Roland-Cerf Construction**
   - SOURCE: Roland-Cerf (2002)
   - First AQC achieving Grover speedup
-  - Setup: H_0 = -|s><s|, H_z = I - |w><w|, single marked item
-  - Key insight: slow only where gap small, adapt ds/dt ~ g(s)^2
-  - Result: T = O(sqrt(N)), matches circuit Grover
+  - Setup: $H_0 = -|s\rangle\langle s|$, $H_z = I - |w\rangle\langle w|$, single marked item
+  - Key insight: slow only where gap small, adapt $ds/dt \sim g(s)^2$
+  - Result: $T = O(\sqrt{N})$, matches circuit Grover
   - Why matters: shows AQO can match Grover, Chapter 5 generalizes
   - TODO: Present as special case of AQO; emphasize single crossing
   - FORWARD: Chapter 5 generalizes
@@ -358,7 +357,7 @@ The chapters should be written in this order:
 
 - **Section: Why AQO is More Restricted**
   - SOURCE: paper/v3-quantum.tex
-  - AQO restrictions: H_z diagonal, no entanglement in H_z, H_0 projector, only schedule adjustable
+  - AQO restrictions: $H_z$ diagonal, no entanglement in $H_z$, $H_0$ projector, only schedule adjustable
   - General AQC: any Hamiltonians
   - Why study AQO? Natural for combinatorics, simpler spectral structure, clean analysis
   - TODO: Explain diagonal constraint; list encodable problems
@@ -368,14 +367,14 @@ The chapters should be written in this order:
   - Misconception: "Just let nature compute"
   - Reality: gap determines runtime, can't run uniformly slow, optimal schedule needs gap info, gap info is NP-hard
   - Tension: AQO achieves Grover (Ch 7) but requires solving hard problem (Ch 8)
-  - Preview: T = O~(sqrt(N/d_0)), needs s* to exponential precision, A_1 is NP-hard
+  - Preview: $T = \tilde{O}(\sqrt{N/d_0})$, needs $s^*$ to exponential precision, $A_1$ is NP-hard
   - TODO: Frame central tension; set up Chapters 5-9
   - FORWARD: Chapters 5-9 resolve this
   - REVIEWER: significance - Sets up thesis problem
 
 ### Chapter 5: Adiabatic Quantum Optimization
 
-**Overview:** Sets up the AQO framework that subsequent chapters analyze. Establishes H(s), spectral parameters A_p, avoided crossing structure.
+**Overview:** Sets up the AQO framework that subsequent chapters analyze. Establishes $H(s)$, spectral parameters $A_p$, avoided crossing structure.
 
 **Needs:** Chapter 3 (Hilbert spaces, eigenstates, spectral decomposition), Chapter 4 (adiabatic theorem concept)
 
@@ -383,39 +382,39 @@ The chapters should be written in this order:
 
 - **Section: The Setup**
   - SOURCE: paper/v3-quantum.tex lines 250-251, 277-281
-  - Diagonal H_z: classical energies on computational basis
-  - Problem Hamiltonian: H_z = sum_z E_z|z><z|
-  - Initial Hamiltonian: projector H_0 = -|psi_0><psi_0|
-  - Equal superposition: |psi_0> = (1/sqrt(N)) sum_z |z>
-  - Adiabatic Hamiltonian: H(s) = -(1-s)|psi_0><psi_0| + sH_z
+  - Diagonal $H_z$: classical energies on computational basis
+  - Problem Hamiltonian: $H_z = \sum_z E_z|z\rangle\langle z|$
+  - Initial Hamiltonian: projector $H_0 = -|\psi_0\rangle\langle\psi_0|$
+  - Equal superposition: $|\psi_0\rangle = (1/\sqrt{N}) \sum_z |z\rangle$
+  - Adiabatic Hamiltonian: $H(s) = -(1-s)|\psi_0\rangle\langle\psi_0| + sH_z$
   - TODO: Motivate why this form before stating; connect to Grover as special case
   - REVIEWER: presentation_quality - WHY before HOW
 
 - **Section: Problem Hamiltonian Structure**
   - SOURCE: paper/v3-quantum.tex lines 252-260, Definition 1 lines 268-275
-  - Spectrum: E_0 < E_1 < ... < E_{M-1} (M distinct levels)
-  - Degeneracies: d_k = number of states at energy E_k
-  - Ground states: d_0 states with energy E_0 (solutions)
-  - Total: sum_k d_k = N = 2^n
-  - Eigenvalue sets: Omega_k = {z : H_z|z> = E_k|z>}, |Omega_k| = d_k
-  - TODO: Concrete example early; explain M << N typically
+  - Spectrum: $E_0 < E_1 < \ldots < E_{M-1}$ ($M$ distinct levels)
+  - Degeneracies: $d_k$ = number of states at energy $E_k$
+  - Ground states: $d_0$ states with energy $E_0$ (solutions)
+  - Total: $\sum_k d_k = N = 2^n$
+  - Eigenvalue sets: $\Omega_k = \{z : H_z|z\rangle = E_k|z\rangle\}$, $|\Omega_k| = d_k$
+  - TODO: Concrete example early; explain $M \ll N$ typically
   - REVIEWER: technical_soundness - Match notation exactly
 
 - **Section: The Spectral Condition**
   - SOURCE: paper/v3-quantum.tex lines 270-275, 282
-  - Condition: (1/Delta) * sqrt(d_0/(A_2*N)) < c, where c ~ 0.02
+  - Condition: $(1/\Delta) \cdot \sqrt{d_0/(A_2 N)} < c$, where $c \approx 0.02$
   - Ensures avoided crossing is "clean" (not overlapping)
-  - Satisfied by any H_z with Delta > (1/c) * sqrt(d_0/N)
-  - Ising Hamiltonians with Delta >= 1/poly(n) satisfy this
-  - TODO: Intuition - what goes wrong without? c=0.02 from Appendix A.3
-  - OPTION: Defer to after A_2 defined, or state informally first
+  - Satisfied by any $H_z$ with $\Delta > (1/c) \cdot \sqrt{d_0/N}$
+  - Ising Hamiltonians with $\Delta \geq 1/\text{poly}(n)$ satisfy this
+  - TODO: Intuition - what goes wrong without? $c=0.02$ from Appendix A.3
+  - OPTION: Defer to after $A_2$ defined, or state informally first
   - REVIEWER: technical_soundness - State explicitly with all terms
 
 - **Section: The Interpolation**
   - SOURCE: paper/v3-quantum.tex lines 277-281, 297
-  - H(s) = -(1-s)|psi_0><psi_0| + sH_z
-  - At s=0: ground state is |psi_0>
-  - At s=1: ground state encodes solutions
+  - $H(s) = -(1-s)|\psi_0\rangle\langle\psi_0| + sH_z$
+  - At $s=0$: ground state is $|\psi_0\rangle$
+  - At $s=1$: ground state encodes solutions
   - Single avoided crossing (projector form ensures this)
   - TODO: Contrast with standard AQC; why projector gives single crossing
   - REVIEWER: significance - Key simplification enabling analysis
@@ -423,8 +422,10 @@ The chapters should be written in this order:
 - **Section: Why This Form**
   - SOURCE: paper/v3-quantum.tex lines 290, 297
   - Equal superposition: no bias toward any solution
-  - Projector form: single non-trivial eigenvalue at s=0
-  - Clean spectral structure: one avoided crossing
+  - Projector form: single non-trivial eigenvalue at $s=0$
+  - CRITICAL: Projector form ensures single avoided crossing (vs general AQC with multiple)
+  - Why single crossing matters: enables three-region analysis (Ch 6), tight gap bounds, optimal schedule
+  - General AQC may have multiple crossings, complicating analysis and potentially requiring different techniques
   - Symmetry under permutations of equal-energy states
   - TODO: "Clean" is vague - make precise; permutation symmetry -> dimension reduction
   - OPTION: Merge with "The Interpolation"
@@ -432,84 +433,84 @@ The chapters should be written in this order:
 
 - **Section: Spectral Parameters**
   - SOURCE: paper/v3-quantum.tex lines 257-260 (Eq. 8)
-  - A_p = (1/N) sum_{k=1}^{M-1} d_k/(E_k - E_0)^p, sum starts at k=1
-  - A_1: determines crossing position s* = A_1/(A_1+1)
-  - A_2: determines minimum gap g_min ~ sqrt(d_0/(N*A_2))
-  - Both are functions of spectrum {(E_k, d_k)}
+  - $A_p = (1/N) \sum_{k=1}^{M-1} d_k/(E_k - E_0)^p$, sum starts at $k=1$
+  - $A_1$: determines crossing position $s^* = A_1/(A_1+1)$
+  - $A_2$: determines minimum gap $g_{\min} \sim \sqrt{d_0/(N \cdot A_2)}$
+  - Both are functions of spectrum $\{(E_k, d_k)\}$
   - Roles: (i) crossing position, (ii) runtime, (iii) hardness
-  - TODO: Numerical example; bounds A_2 >= 1 - 1/N
+  - TODO: Numerical example; bounds $A_2 \geq 1 - 1/N$
   - REVIEWER: spectral_parameters - CRITICAL: match paper exactly
 
-- **Section: A_1 as the Key Parameter**
+- **Section: $A_1$ as the Key Parameter**
   - SOURCE: paper/v3-quantum.tex lines 300-303, 261
-  - Crossing position: s* = A_1/(A_1 + 1) (Eq. 10)
-  - For Ising with Delta > 1/poly(n): s* = 1/2 + O(2^{-n})
-  - A_1 encodes energy level distribution
-  - Sensitivity to degeneracy structure (changes d_k -> changes A_1)
-  - TODO: A_1 -> infinity implies s* -> 1; sensitivity leads to hardness
-  - REVIEWER: significance - A_1 central to main results
+  - Crossing position: $s^* = A_1/(A_1 + 1)$ (Eq. 10)
+  - For Ising with $\Delta > 1/\text{poly}(n)$: $s^* = 1/2 + O(2^{-n})$
+  - $A_1$ encodes energy level distribution
+  - Sensitivity to degeneracy structure (changes $d_k$ -> changes $A_1$)
+  - TODO: $A_1 \to \infty$ implies $s^* \to 1$; sensitivity leads to hardness
+  - REVIEWER: significance - $A_1$ central to main results
 
 - **Section: Symmetry Reduction**
   - SOURCE: paper/v3-quantum.tex lines 422-447, 494-498
   - Permutation symmetry: states at same energy equivalent
-  - Symmetric subspace H_S = span{|k>}, |k> = (1/sqrt(d_k)) sum_{z in Omega_k} |z>
-  - Effective dimension: M (not N)
-  - Complement H_S^perp has dimension N-M
-  - Key: |psi_0> in H_S, so evolution stays in H_S
-  - Reduces N x N to M x M analysis
-  - TODO: Why powerful (M = poly(n), N = 2^n); explicit basis construction
+  - Symmetric subspace $\mathcal{H}_S = \text{span}\{|k\rangle\}$, $|k\rangle = (1/\sqrt{d_k}) \sum_{z \in \Omega_k} |z\rangle$
+  - Effective dimension: $M$ (not $N$)
+  - Complement $\mathcal{H}_S^\perp$ has dimension $N-M$
+  - Key: $|\psi_0\rangle \in \mathcal{H}_S$, so evolution stays in $\mathcal{H}_S$
+  - Reduces $N \times N$ to $M \times M$ analysis
+  - TODO: Why powerful ($M = \text{poly}(n)$, $N = 2^n$); explicit basis construction
   - REVIEWER: technical_soundness - Reduction essential for tractability
 
 - **Section: The Eigenvalue Equation**
   - SOURCE: paper/v3-quantum.tex lines 449-490 (Lemma 1)
-  - Lemma 1: lambda(s) is eigenvalue of H(s) iff:
-    - (a) lambda(s) = sE_k for some k, or
-    - (b) 1/(1-s) = (1/N) sum_k d_k/(sE_k - lambda(s))
+  - Lemma 1: $\lambda(s)$ is eigenvalue of $H(s)$ iff:
+    - (a) $\lambda(s) = sE_k$ for some $k$, or
+    - (b) $1/(1-s) = (1/N) \sum_k d_k/(sE_k - \lambda(s))$
   - Implicit equation from rank-1 update (Golub 1973)
-  - RHS monotonically decreasing in each interval, guarantees M solutions in H_S
+  - RHS monotonically decreasing in each interval, guarantees $M$ solutions in $\mathcal{H}_S$
   - TODO: Include proof or defer; discuss monotonicity and pole structure
   - OPTION: State lemma, intuition, defer proof
   - REVIEWER: technical_soundness - Foundational lemma
 
 - **Section: The Avoided Crossing**
   - SOURCE: paper/v3-quantum.tex lines 300-313
-  - Position: s* = A_1/(A_1 + 1) (Eq. 10)
-  - Width: delta_s = 2/(A_1+1)^2 * sqrt(d_0*A_2/N) (Eq. 11)
-  - Minimum gap: g_min = 2*A_1/(A_1+1) * sqrt(d_0/(N*A_2)) (Eq. 12)
-  - Window: I_{s*} = [s* - delta_s, s* + delta_s]
-  - Derivation uses two-level approximation near s*
-  - TODO: Show where formulas come from (Chapter 6); compare to Grover g_min ~ 1/sqrt(N)
+  - Position: $s^* = A_1/(A_1 + 1)$ (Eq. 10)
+  - Width: $\delta_s = 2/(A_1+1)^2 \cdot \sqrt{d_0 A_2/N}$ (Eq. 11)
+  - Minimum gap: $g_{\min} = 2A_1/(A_1+1) \cdot \sqrt{d_0/(N \cdot A_2)}$ (Eq. 12)
+  - Window: $I_{s^*} = [s^* - \delta_s, s^* + \delta_s]$
+  - Derivation uses two-level approximation near $s^*$
+  - TODO: Show where formulas come from (Chapter 6); compare to Grover $g_{\min} \sim 1/\sqrt{N}$
   - REVIEWER: gap_bounds - CRITICAL: formulas must match paper
 
 - **Section: Gap Structure Summary**
   - SOURCE: paper/v3-quantum.tex lines 314-328
   - Three regions (detailed in Chapter 6):
-    1. Left I_{s<-} = [0, s* - delta_s): gap grows linearly
-    2. Window I_{s*} = [s* - delta_s, s* + delta_s]: gap ~ g_min
-    3. Right I_{s->} = (s* + delta_s, 1]: gap grows toward Delta
+    1. Left $I_{s<-} = [0, s^* - \delta_s)$: gap grows linearly
+    2. Window $I_{s^*} = [s^* - \delta_s, s^* + \delta_s]$: gap $\sim g_{\min}$
+    3. Right $I_{s->} = (s^* + \delta_s, 1]$: gap grows toward $\Delta$
   - Left: variational principle; Right: resolvent with Sherman-Morrison
   - TODO: Preview only - full analysis Chapter 6; include Figure 2 description
-  - FORWARD: Chapter 6 proves bounds, Chapter 7 integrates 1/g(s)^2
+  - FORWARD: Chapter 6 proves bounds, Chapter 7 integrates $1/g(s)^2$
 
 - **Section: The Central Questions**
-  - Questions enabled: (1) optimal runtime? (2) how to achieve? (3) how hard to compute s*? (4) what without s*?
+  - Questions enabled: (1) optimal runtime? (2) how to achieve? (3) how hard to compute $s^*$? (4) what without $s^*$?
   - TODO: Frame as tension between optimality and tractability
   - "Optimality with limitations" is paper's central message
   - REVIEWER: significance - Setup should motivate subsequent chapters
 
 ### Chapter 6: Spectral Analysis
 
-**Overview:** Bounds g(s) across [0,1] using three-region analysis. Central technical contribution: tight gap bounds enable runtime calculation.
+**Overview:** Bounds $g(s)$ across $[0,1]$ using three-region analysis. Central technical contribution: tight gap bounds enable runtime calculation.
 
-**Needs:** Chapter 5 (H(s), A_1, A_2, s*, delta_s, g_min), Chapter 3 (variational principle, spectral decomposition)
+**Needs:** Chapter 5 ($H(s)$, $A_1$, $A_2$, $s^*$, $\delta_s$, $g_{\min}$), Chapter 3 (variational principle, spectral decomposition)
 
 **Forward:** Chapter 7 (runtime integral), Chapter 9 (gap profile for information analysis)
 
 - **Section: The Challenge**
   - SOURCE: paper/v3-quantum.tex lines 297, 488-492
-  - Bound gap g(s) = lambda_1(s) - lambda_0(s) for all s in [0,1]
-  - Gap determines adiabatic runtime (T ~ integral 1/g(s)^2 ds)
-  - Non-uniform: gap varies significantly across s
+  - Bound gap $g(s) = \lambda_1(s) - \lambda_0(s)$ for all $s \in [0,1]$
+  - Gap determines adiabatic runtime ($T \sim \int 1/g(s)^2 \, ds$)
+  - Non-uniform: gap varies significantly across $s$
   - Eigenvalue equation gives intervals but not tight bounds
   - Need lower bounds for runtime upper bound
   - TODO: Motivate why hard (multiple upper crossings); reference Figure 1
@@ -518,87 +519,89 @@ The chapters should be written in this order:
 - **Section: The Three-Region Strategy**
   - SOURCE: paper/v3-quantum.tex lines 314-319, 596-597
   - Three regions with different techniques:
-    1. Left I_{s<-}: variational principle
-    2. Window I_{s*}: two-level approximation
-    3. Right I_{s->}: resolvent method
-  - Key insight: left/right gaps exceed window gap (crossing is localized)
+    1. Left $I_{s<-}$: variational principle
+    2. Window $I_{s^*}$: two-level approximation
+    3. Right $I_{s->}$: resolvent method
+  - Key insight: left/right gaps EXCEED window gap - crossing is localized, three-region works
+  - Why this works: outside window, gap is $O(s^* - s)$ or $O(s - s^*)$, both exceed $O(\delta_s) = O(g_{\min})$
   - TODO: Explain why different techniques; preview results
   - OPTION: Present left->window->right or window first
+  - OPTION: Use perturbation theory approach from rough/perturbation_theory.tex for deeper derivation
 
 - **Section: Window Region - Gap Near Minimum**
   - SOURCE: paper/v3-quantum.tex lines 540-595
-  - Main result: For s in I_{s*}, gap is Theta(g_min)
+  - Main result: For $s \in I_{s^*}$, gap is $\Theta(g_{\min})$
   - Gap formula (line 543): explicit square-root form
-  - Minimum at s = s*: g_min >= (1-2*eta) * 2A_1/(1+A_1) * sqrt(d_0/(N*A_2))
-  - Upper bound: g(s) <= kappa' * g_min
-  - Uses spectral condition: delta_s/(1-s*) <= 2c and delta_s/s* <= 2c
+  - Minimum at $s = s^*$: $g_{\min} \geq (1-2\eta) \cdot 2A_1/(1+A_1) \cdot \sqrt{d_0/(N \cdot A_2)}$
+  - Upper bound: $g(s) \leq \kappa' \cdot g_{\min}$
+  - Uses spectral condition: $\delta_s/(1-s^*) \leq 2c$ and $\delta_s/s^* \leq 2c$
   - TODO: Include proof or sketch; numerical kappa' for c=0.02
   - REVIEWER: gap_bounds - CRITICAL: formula must match
   - REVIEWER: technical_soundness - Spectral condition used essentially
 
 - **Section: Left Region - Variational Bound**
   - SOURCE: paper/v3-quantum.tex lines 598-635
-  - Main result: For s in I_{s<-}, g(s) >= A_1(A_1+1)/A_2 * (s* - s)
-  - Strategy: upper bound ground via variational, lower bound excited by sE_0
-  - Variational ansatz: |phi> = 1/sqrt(A_2*N) * sum_{k>=1} sqrt(d_k)/(E_k-E_0) |k>
-  - Calculation: lambda_0(s) <= sE_0 + A_1/A_2 * (s-s*)/(1-s*)
-  - Lower bound: lambda_1(s) >= sE_0
-  - Combining: g(s) >= A_1/A_2 * (s*-s)/(1-s*)
-  - Verification: gap > Theta(g_min) in I_{s<-}
+  - Main result: For $s \in I_{s<-}$, $g(s) \geq A_1(A_1+1)/A_2 \cdot (s^* - s)$
+  - Strategy: upper bound ground via variational, lower bound excited by $sE_0$
+  - Variational ansatz: $|\phi\rangle = 1/\sqrt{A_2 N} \cdot \sum_{k \geq 1} \sqrt{d_k}/(E_k-E_0) |k\rangle$
+  - Calculation: $\lambda_0(s) \leq sE_0 + A_1/A_2 \cdot (s-s^*)/(1-s^*)$
+  - Lower bound: $\lambda_1(s) \geq sE_0$
+  - Combining: $g(s) \geq A_1/A_2 \cdot (s^*-s)/(1-s^*)$
+  - Verification: gap $> \Theta(g_{\min})$ in $I_{s<-}$
   - TODO: Why this ansatz? Step-by-step calculation
   - REVIEWER: technical_soundness - Variational tight (see Figure 2)
 
 - **Section: Right Region - Resolvent Method**
   - SOURCE: paper/v3-quantum.tex lines 637-648+
   - Challenge: spectrum complicated, variational fails
-  - Main result: For s >= s*, g(s) >= Delta/30 * (s-s_0)/(1-s_0)
-  - Parameters: k = 1/4, a = 4k^2 * Delta/3, s_0 formula
-  - Strategy: choose line gamma(s) between two lowest, gap >= 2/||R_{H(s)}(gamma)||
+  - Main result: For $s \geq s^*$, $g(s) \geq \Delta/30 \cdot (s-s_0)/(1-s_0)$
+  - Parameters: $k = 1/4$, $a = 4k^2 \cdot \Delta/3$, $s_0$ formula
+  - Strategy: choose line $\gamma(s)$ between two lowest, gap $\geq 2/\|R_{H(s)}(\gamma)\|$
   - Bound resolvent using Sherman-Morrison
-  - Resolvent: R_A(gamma) = (gamma*I - A)^{-1}, ||R||^{-1} = distance to spectrum
+  - Resolvent: $R_A(\gamma) = (\gamma I - A)^{-1}$, $\|R\|^{-1}$ = distance to spectrum
   - TODO: Include Sherman-Morrison calculation; explain parameter choices
   - REVIEWER: technical_soundness - Most involved proof
 
 - **Section: Sherman-Morrison Formula**
   - SOURCE: paper/v3-quantum.tex lines 191-195
-  - For invertible A: (A + |u><v|)^{-1} = A^{-1} - (A^{-1}|u><v|A^{-1})/(1 + <v|A^{-1}|u>)
-  - Application: H(s) = sH_z - (1-s)|psi_0><psi_0| = A + |u><v|
-  - Resolvent of H(s) from resolvent of sH_z (diagonal, easy)
-  - Gives explicit ||R_{H(s)}(gamma)||
+  - For invertible $A$: $(A + |u\rangle\langle v|)^{-1} = A^{-1} - (A^{-1}|u\rangle\langle v|A^{-1})/(1 + \langle v|A^{-1}|u\rangle)$
+  - Application: $H(s) = sH_z - (1-s)|\psi_0\rangle\langle\psi_0| = A + |u\rangle\langle v|$
+  - Resolvent of $H(s)$ from resolvent of $sH_z$ (diagonal, easy)
+  - Gives explicit $\|R_{H(s)}(\gamma)\|$
   - TODO: Derive explicit bound; triangle inequality usage
   - REVIEWER: technical_soundness - Key for right region
 
 - **Section: The Minimum Gap Formula**
   - SOURCE: paper/v3-quantum.tex lines 545-548
-  - g_min = (2A_1/(A_1+1)) * sqrt(d_0/(N*A_2))
-  - From two-level approximation at s*, factor (1-2*eta) is approx error
-  - Interpretation: 2A_1/(A_1+1) = 2s*(1-s*), sqrt(d_0/N) Grover-like, 1/sqrt(A_2) spectral
-  - Grover case (M=2, d_0=1): A_1 = A_2 = (N-1)/Delta, g_min = Theta(1/sqrt(N))
-  - TODO: Work out Grover explicitly; d_0 > 1 increases gap
+  - $g_{\min} = (2A_1/(A_1+1)) \cdot \sqrt{d_0/(N \cdot A_2)}$
+  - From two-level approximation at $s^*$, factor $(1-2\eta)$ is approx error
+  - Interpretation: $2A_1/(A_1+1) = 2s^*(1-s^*)$, $\sqrt{d_0/N}$ Grover-like, $1/\sqrt{A_2}$ spectral
+  - Grover case ($M=2$, $d_0=1$): $A_1 = A_2 = (N-1)/\Delta$, $g_{\min} = \Theta(1/\sqrt{N})$
+  - TODO: Work out Grover explicitly; $d_0 > 1$ increases gap
   - REVIEWER: gap_bounds - CRITICAL: central formula
 
 - **Section: Complete Gap Profile**
   - SOURCE: paper/v3-quantum.tex lines 596, 633-635, Figure 2
-  - Summary for s in [0,1]:
-    - Left [0, s* - delta_s): g(s) >= A_1(A_1+1)/A_2 * (s* - s)
-    - Window [s* - delta_s, s* + delta_s]: g_min <= g(s) <= kappa' * g_min
-    - Right (s* + delta_s, 1]: g(s) >= Delta/30 * (s - s_0)/(1 - s_0)
-  - Piecewise feeds into runtime: left/right O(log), window dominates
+  - Summary for $s \in [0,1]$:
+    - Left $[0, s^* - \delta_s)$: $g(s) \geq A_1(A_1+1)/A_2 \cdot (s^* - s)$
+    - Window $[s^* - \delta_s, s^* + \delta_s]$: $g_{\min} \leq g(s) \leq \kappa' \cdot g_{\min}$
+    - Right $(s^* + \delta_s, 1]$: $g(s) \geq \Delta/30 \cdot (s - s_0)/(1 - s_0)$
+  - Piecewise feeds into runtime: left/right $O(\log)$, window dominates
   - TODO: Sketch gap profile; reference Figure 2
-  - FORWARD: Chapter 7 computes T = integral 1/g(s)^2 ds
+  - FORWARD: Chapter 7 computes $T = \int 1/g(s)^2 \, ds$
 
 - **Section: When Do These Bounds Hold?**
   - SOURCE: paper/v3-quantum.tex lines 270-275, 282
-  - Spectral condition: (1/Delta)*sqrt(d_0/(A_2*N)) < c, c ~ 0.02
-  - Equivalently: Delta > (1/c)*sqrt(d_0/N)
-  - Ising: Delta >= 1/poly(n), condition satisfied
-  - Without condition: delta_s may not be small, window overlaps, two-level breaks
+  - Spectral condition: $(1/\Delta) \cdot \sqrt{d_0/(A_2 N)} < c$, $c \approx 0.02$
+  - Equivalently: $\Delta > (1/c) \cdot \sqrt{d_0/N}$
+  - Ising: $\Delta \geq 1/\text{poly}(n)$, condition satisfied
+  - Without condition: $\delta_s$ may not be small, window overlaps, two-level breaks
   - TODO: Failure mode precisely; example where fails
   - OPTION: Move to Chapter 5
   - REVIEWER: technical_soundness - State when results apply
 
 - **Section: Proof Verification Notes**
-  - Key formulas to verify: g(s) window (543), g_min (548), left bound (603), right bound (645), ansatz (610)
+  - Key formulas to verify: $g(s)$ window (543), $g_{\min}$ (548), left bound (603), right bound (645), ansatz (610)
   - Lean status: formalized in src/lean/UAQO/Spectral/GapBounds.lean
   - Sherman-Morrison: sign correction noted
   - TODO: Check src/lean/ for discovered issues
@@ -606,62 +609,65 @@ The chapters should be written in this order:
 
 ### Chapter 7: Optimal Schedule
 
-**Overview:** Constructs optimal schedule and derives runtime. Central result: T = O~(sqrt(N/d_0)) matches Grover. Critical caveat: requires s* to exponential precision.
+**Overview:** Constructs optimal schedule and derives runtime. Central result: $T = \tilde{O}(\sqrt{N/d_0})$ matches Grover. Critical caveat: requires $s^*$ to exponential precision.
 
-**Needs:** Chapter 5 (H(s), A_1, A_2, s*, delta_s, g_min), Chapter 6 (gap bounds), Chapter 4 (adiabatic theorem)
+**Needs:** Chapter 5 ($H(s)$, $A_1$, $A_2$, $s^*$, $\delta_s$, $g_{\min}$), Chapter 6 (gap bounds), Chapter 4 (adiabatic theorem)
 
-**Forward:** Chapter 8 (computing s* is hard), Chapter 9 (what without precise s*)
+**Forward:** Chapter 8 (computing $s^*$ is hard), Chapter 9 (what without precise $s^*$)
 
 - **Section: The Adiabatic Theorem**
-  - SOURCE: paper/v3-quantum.tex lines 356, 710-712, Appendix A.4
-  - Statement: slow evolution stays near ground state, "slow" = |dH/ds * ds/dt| << g(s)^2
-  - Final fidelity >= 1-epsilon with ground state
+  - SOURCE: paper/v3-quantum.tex lines 356, 405, 710-712, Appendix A.4
+  - SOURCE: rough/AQCbound.tex for rigorous derivation
+  - NOTE: This is a NEW simplified adiabatic theorem (line 405), not just Jansen-Ruskai-Seiler refinement
+  - Statement: slow evolution stays near ground state, "slow" = $|dH/ds \cdot ds/dt| \ll g(s)^2$
+  - Final fidelity $\geq 1-\epsilon$ with ground state
+  - Key simplification: works directly with local gap lower bound $g(s)$, not global $g_{\min}$
   - Refs: Roland-Cerf (local adaptive), van Dam (necessity), Cunningham et al. (phase randomization)
-  - Generic result: works for any twice-differentiable H(s) with known gap lower bound
-  - TODO: State precise theorem; distinguish from Jansen-Ruskai-Seiler
+  - Generic result: works for any twice-differentiable $H(s)$ with known gap lower bound
+  - TODO: State precise theorem; emphasize novelty over Jansen-Ruskai-Seiler (local vs global)
   - REVIEWER: technical_soundness - Statement must be precise
 
 - **Section: Local Adaptive Schedule**
   - SOURCE: paper/v3-quantum.tex lines 356, 712, 722
-  - Key insight: slow down where gap small, ds/dt ~ g(s)
-  - Uniform gives T ~ 1/g_min^2 * L; local integrates 1/g(s)^2 ds
+  - Key insight: slow down where gap small, $ds/dt \sim g(s)$
+  - Uniform gives $T \sim 1/g_{\min}^2 \cdot L$; local integrates $1/g(s)^2 \, ds$
   - Roland-Cerf: originally for Grover, generalized here
   - TODO: Derive schedule explicitly; show uniform suboptimal
   - REVIEWER: presentation_quality - Motivate before formula
 
 - **Section: Runtime as Integral**
   - SOURCE: paper/v3-quantum.tex lines 712, Appendix
-  - Total runtime: T = C/epsilon * integral_0^1 (1/g(s)^2) ds
-  - Structure: dominated by region where g(s) smallest
+  - Total runtime: $T = C/\epsilon \cdot \int_0^1 (1/g(s)^2) \, ds$
+  - Structure: dominated by region where $g(s)$ smallest
   - Split into three regions for analysis
-  - TODO: Derive from adiabatic theorem; show epsilon dependence
+  - TODO: Derive from adiabatic theorem; show $\epsilon$ dependence
   - REVIEWER: technical_soundness - Integral formula standard but verify
 
 - **Section: Splitting the Integral**
   - SOURCE: paper/v3-quantum.tex lines 723-730
-  - Three regions: Left (c_L * (s* - s)), Window (g_min), Right (c_R * (s - s*))
+  - Three regions: Left ($c_L \cdot (s^* - s)$), Window ($g_{\min}$), Right ($c_R \cdot (s - s^*)$)
   - Gap bounds restated from Chapter 6
   - TODO: Show how bounds simplify calculation
   - REVIEWER: technical_soundness - Use exact bounds from paper
 
 - **Section: Left Region Contribution**
-  - Gap g(s) >= c_L * (s* - s), c_L = A_1(A_1+1)/A_2
-  - Integral <= 1/c_L^2 * (1/delta_s - 1/s*) ~ 1/c_L^2 * 1/delta_s
-  - Subdominant: A_1^2 in c_L^2 cancels, net O(polylog)
-  - TODO: Explicit scaling; show A_1, A_2 cancel to log
+  - Gap $g(s) \geq c_L \cdot (s^* - s)$, $c_L = A_1(A_1+1)/A_2$
+  - Integral $\leq 1/c_L^2 \cdot (1/\delta_s - 1/s^*) \sim 1/c_L^2 \cdot 1/\delta_s$
+  - Subdominant: $A_1^2$ in $c_L^2$ cancels, net $O(\text{polylog})$
+  - TODO: Explicit scaling; show $A_1$, $A_2$ cancel to log
   - OPTION: Merge left and right into "tails"
 
 - **Section: Window Region Contribution**
   - SOURCE: paper/v3-quantum.tex lines 731
-  - Gap >= g_min, integral <= 2*delta_s / g_min^2
+  - Gap $\geq g_{\min}$, integral $\leq 2\delta_s / g_{\min}^2$
   - This is DOMINANT contribution
-  - Substituting: delta_s / g_min^2 ~ sqrt(N/d_0) * spectral factors
-  - Key: sqrt(N/d_0) Grover-like, sqrt(A_2)/A_1^2 correction, 1/Delta^2 from g_min
+  - Substituting: $\delta_s / g_{\min}^2 \sim \sqrt{N/d_0}$ times spectral factors
+  - Key: $\sqrt{N/d_0}$ Grover-like, $\sqrt{A_2}/A_1^2$ correction, $1/\Delta^2$ from $g_{\min}$
   - TODO: Step-by-step; verify matches Theorem 1
   - REVIEWER: gap_bounds - CRITICAL: window dominates
 
 - **Section: Right Region Contribution**
-  - Gap >= c_R * (s - s*), integral ~ 1/c_R^2 * 1/delta_s
+  - Gap $\geq c_R \cdot (s - s^*)$, integral $\sim 1/c_R^2 \cdot 1/\delta_s$
   - Subdominant for same reasons as left
   - Note: correction term in lines 728-729
   - TODO: Account for correction
@@ -669,16 +675,16 @@ The chapters should be written in this order:
 
 - **Section: Main Runtime Theorem**
   - SOURCE: paper/v3-quantum.tex lines 358-372 (Theorem 1)
-  - Theorem 1: AQO achieves fidelity >= 1-epsilon with ground superposition |v(1)> = (1/sqrt(d_0)) sum |z>
-  - Runtime: T = O((1/epsilon) * (sqrt(A_2)/(A_1^2 * Delta^2)) * sqrt(2^n/d_0))
+  - Theorem 1: AQO achieves fidelity $\geq 1-\epsilon$ with ground superposition $|v(1)\rangle = (1/\sqrt{d_0}) \sum |z\rangle$
+  - Runtime: $T = O((1/\epsilon) \cdot (\sqrt{A_2}/(A_1^2 \cdot \Delta^2)) \cdot \sqrt{2^n/d_0})$
   - Conditions: equal superposition initial, spectral condition
   - TODO: Break down factors; verify from window contribution
   - REVIEWER: complexity_claims - CRITICAL: runtime must match
 
 - **Section: Grover Matching**
   - SOURCE: paper/v3-quantum.tex lines 374, 720-721
-  - Ising with Delta >= 1/poly(n): A_1, A_2 = Theta(1) to poly(n)
-  - Therefore: T = O~(sqrt(2^n/d_0))
+  - Ising with $\Delta \geq 1/\text{poly}(n)$: $A_1$, $A_2 = \Theta(1)$ to $\text{poly}(n)$
+  - Therefore: $T = \tilde{O}(\sqrt{2^n/d_0})$
   - Matches Grover lower bound (Farhi-Goldstone-Gutmann)
   - Optimal for unstructured search, quadratic over classical
   - TODO: Cite lower bound; discuss polylog overhead
@@ -686,124 +692,129 @@ The chapters should be written in this order:
 
 - **Section: The Hidden Assumption**
   - SOURCE: paper/v3-quantum.tex lines 722-737
-  - CRITICAL: schedule requires knowing s*
-  - Precision needed: s* to O(delta_s) = O(2^{-n/2})
-  - Equivalently: A_1 to O(delta_s)
-  - Why: gap bounds depend on (s - s*), wrong s* misses crossing
-  - What can approximate: A_2 (constant), d_0 = 1 (lower bound)
-  - What cannot: A_1 determines s* sensitively
-  - TODO: Show runtime degradation; preview hardness
+  - CRITICAL: schedule requires knowing $s^*$
+  - Precision needed: $s^*$ to $O(\delta_s) = O(2^{-n/2})$
+  - $A_1$ precision determines $s^*$ precision: need $A_1$ such that $|s^* - s^*_{\text{true}}| < O(\delta_s)$
+  - Since $s^* = A_1/(A_1+1)$, error propagates as: $\delta_{s^*} \sim \delta_{A_1}/(A_1+1)^2$
+  - Why: gap bounds depend on $(s - s^*)$, wrong $s^*$ misses crossing window
+  - What can approximate: $A_2$ (constant for Ising), $d_0 = 1$ (lower bound)
+  - What cannot: $A_1$ determines $s^*$ sensitively (exponential precision needed)
+  - TODO: Show runtime degradation with $s^*$ error; derive error propagation formula
   - FORWARD: Chapter 9 quantifies precision tradeoff
 
 - **Section: The Information Cost**
   - SOURCE: paper/v3-quantum.tex lines 737-739, 376-378
-  - Key question: "How hard to compute A_1 to desired precision?"
+  - Key question: "How hard to compute $A_1$ to desired precision?"
   - Setting: classical pre-computation (no gate-based QC)
-  - Preview: NP-hard at 1/poly(n), #P-hard at exponential
-  - Asymmetry (line 399): Grover circuit achieves same without pre-computing s*
+  - Preview: NP-hard at $1/\text{poly}(n)$, $\#P$-hard at exponential
+  - Asymmetry (line 399): Grover circuit achieves same without pre-computing $s^*$
   - "Optimality with limitations" - optimal IF solve NP-hard first
   - TODO: Set up precise hardness question; explain circuit asymmetry
-  - FORWARD: Chapter 8 proves hardness, Chapter 9 asks what without s*
+  - FORWARD: Chapter 8 proves hardness, Chapter 9 asks what without $s^*$
 
 - **Section: Summary**
-  - Positive: T = O~(sqrt(N/d_0)), matches Grover, local schedule achieves
-  - Catch: needs s* to exponential precision, s* = A_1/(A_1+1), A_1 is bottleneck
+  - Positive: $T = \tilde{O}(\sqrt{N/d_0})$, matches Grover, local schedule achieves
+  - Catch: needs $s^*$ to exponential precision, $s^* = A_1/(A_1+1)$, $A_1$ is bottleneck
   - Tension: theoretically achievable but requires hard problem
   - REVIEWER: significance - Convey both achievement and limitation
 
 ### Chapter 8: Hardness of Optimality
 
-**Overview:** Proves computing A_1 is NP-hard at polynomial precision, #P-hard at exponential. Central result: "Optimality with limitations."
+**Overview:** Proves computing $A_1$ is NP-hard at polynomial precision, $\#P$-hard at exponential. Central result: "Optimality with limitations."
 
-**Needs:** Chapter 5 (A_1 definition), Chapter 7 (why precision matters), Chapter 2/3 (NP, #P)
+**Needs:** Chapter 5 ($A_1$ definition), Chapter 7 (why precision matters), Chapter 2/3 (NP, $\#P$)
 
 **Forward:** Chapter 9 (partial/no information)
 
 - **Section: The Hidden Requirement Made Explicit**
   - SOURCE: paper/v3-quantum.tex lines 376-378, 737
-  - Recap: need s* to O(delta_s) = O(2^{-n/2}), s* = A_1/(A_1 + 1)
-  - Question: "How hard to compute A_1 to desired additive precision?"
-  - Formal access: input = H description, output = A_1 estimate, precision epsilon
+  - Recap: need $s^*$ to $O(\delta_s) = O(2^{-n/2})$, $s^* = A_1/(A_1 + 1)$
+  - Question: "How hard to compute $A_1$ to desired additive precision?"
+  - Formal access: input = $H$ description, output = $A_1$ estimate, precision $\epsilon$
   - TODO: State as computational problem; connect to local Hamiltonian
   - REVIEWER: complexity_claims - CRITICAL
 
 - **Section: The Formal Access Model**
   - SOURCE: paper/v3-quantum.tex lines 743-747
-  - A_1(H) = (1/2^n) * sum_{k>=1} d_k/(E_k - E_0)
-  - Problem: given <H>, compute A_1 to precision epsilon
-  - Two results: NP-hard for epsilon < 1/(72(n-1)), #P-hard for O(2^{-poly(n)})
-  - Gap: needed O(2^{-n/2}), NP-hard at 1/poly(n) - exponential gap
-  - TODO: Explain "description of H"
+  - $A_1(H) = (1/2^n) \cdot \sum_{k \geq 1} d_k/(E_k - E_0)$
+  - Problem: given $\langle H \rangle$, compute $A_1$ to precision $\epsilon$
+  - Two results: NP-hard for $\epsilon < 1/(72(n-1))$, $\#P$-hard for $O(2^{-\text{poly}(n)})$
+  - Gap: needed $O(2^{-n/2})$, NP-hard at $1/\text{poly}(n)$ - exponential gap
+  - TODO: Explain "description of $H$"
   - REVIEWER: complexity_claims - Thresholds exact
 
 - **Section: NP-Hardness Overview**
   - SOURCE: paper/v3-quantum.tex lines 749-756, Theorem 2 lines 379-389
-  - Theorem 2: If C_epsilon outputs A_1 to epsilon, 3-SAT solvable with TWO calls
-  - Required: epsilon < 1/(72(n-1))
-  - Strategy: distinguish E_0 = 0 vs E_0 >= mu_1 (promise), reduce 3-SAT
+  - Theorem 2: If $C_\epsilon$ outputs $A_1$ to $\epsilon$, 3-SAT solvable with TWO calls
+  - Required: $\epsilon < 1/(72(n-1))$
+  - Strategy: distinguish $E_0 = 0$ vs $E_0 \geq \mu_1$ (promise), reduce 3-SAT
   - TODO: Introduce promise formulation; connect to local Hamiltonian
   - REVIEWER: complexity_claims - Reduction clearly NP-hard
 
 - **Section: The Reduction Construction**
-  - SOURCE: paper/v3-quantum.tex lines 758-817 (Lemma 6)
-  - Lemma 6: Given promise (i) E_0 = 0 or (ii) mu_1 <= E_0 <= 1-mu_2, distinguish with two queries
-  - Construction: H' = H tensor ((1 + sigma_z)/2)
-  - Case E_0 = 0: A_1(H) - 2*A_1(H') = 0
-  - Case E_0 != 0: A_1(H) - 2*A_1(H') >= threshold
-  - Distinguishing: compare to 3*epsilon
+  - SOURCE: paper/v3-quantum.tex lines 758-817 (Distinguishing Lemma)
+  - Distinguishing Lemma (lines 758-768): Given promise (i) $E_0 = 0$ or (ii) $\mu_1 \leq E_0 \leq 1-\mu_2$, distinguish with two queries
+  - Construction: $H' = H \otimes ((1 + \sigma_z)/2)$
+  - Case $E_0 = 0$: $A_1(H) - 2 A_1(H') = 0$
+  - Case $E_0 \neq 0$: $A_1(H) - 2 A_1(H') \geq$ threshold
+  - Distinguishing: compare to $3\epsilon$
   - TODO: Explain tensor product shift; walk through calculation
   - REVIEWER: technical_soundness - Verify against paper
+  - OPTION: Include MaxCut reduction from rough/A1hardness.tex as second example
 
 - **Section: 3-SAT Reduction**
   - SOURCE: paper/v3-quantum.tex lines 819-859
-  - Theorem: A_1 to precision 1/(72(n-1)) for 3-local is NP-hard
+  - Theorem: $A_1$ to precision $1/(72(n-1))$ for 3-local is NP-hard
   - Reduction: 3-SAT to MAX-2-SAT (Garey et al.)
-  - Hamiltonian H_k for clause k: penalty 3 if satisfied, 4 if not
-  - Applying Lemma 6: mu_1 = 1/(6m), mu_2 = 1/2
+  - Hamiltonian $H_k$ for clause $k$: penalty 3 if satisfied, 4 if not
+  - Applying Distinguishing Lemma: $\mu_1 = 1/(6m)$, $\mu_2 = 1/2$
   - TODO: Construction intuition; verify 3-local
   - REVIEWER: complexity_claims - Match 3-SAT NP-completeness
 
 - **Section: The Precision Gap**
   - SOURCE: paper/v3-quantum.tex lines 752, 859-861
-  - NP-hard: 1/poly(n); Needed: O(2^{-n/2})
+  - NP-hard: $1/\text{poly}(n)$; Needed: $O(2^{-n/2})$
   - Exponential gap: much coarser already NP-hard
-  - Note: reduction uses 3-local, #P uses 2-local Ising (stronger)
+  - Note: reduction uses 3-local, $\#P$ uses 2-local Ising (stronger)
   - TODO: Emphasize gap
   - REVIEWER: significance - Gap is crux of limitation
 
-- **Section: #P-Hardness Overview**
+- **Section: $\#P$-Hardness Overview**
   - SOURCE: paper/v3-quantum.tex lines 863-878, Theorem 3 lines 394-397
-  - Theorem 3: Exact or O(2^{-poly(n)}) A_1 allows extracting all d_k
-  - Why #P: d_0 = counting ground states, for 3-SAT = #satisfying, #3-SAT is #P-complete
-  - Alternative: d_k gives IQP probabilities, also #P-hard
-  - TODO: Define #P if not in Ch 2/3; why counting harder
+  - Theorem 3: Exact or $O(2^{-\text{poly}(n)})$ $A_1$ allows extracting all $d_k$
+  - Why $\#P$: $d_0$ = counting ground states, for 3-SAT = $\#$satisfying, $\#$3-SAT is $\#P$-complete
+  - Alternative: $d_k$ gives IQP probabilities, also $\#P$-hard
+  - TODO: Define $\#P$ if not in Ch 2/3; why counting harder
   - REVIEWER: complexity_claims - Standard reduction
 
 - **Section: The Interpolation Attack**
   - SOURCE: paper/v3-quantum.tex lines 878-912
-  - Lemma: O(poly(n)) exact queries extract all d_k
-  - Modified H'(x) shifts spectrum by x/2
-  - f(x) = 2*A_1(H'(x)) - A_1(H) = sum d_k/(Delta_k + x/2)
-  - P(x) = prod(Delta_k + x/2) * f(x) is polynomial degree M-1
-  - Lagrange interpolation: M points reconstruct P, extract d_k
-  - Total: 2M = O(poly(n)) queries
-  - TODO: Walk through; explain Delta_k known from H
+  - Lemma: $O(\text{poly}(n))$ exact queries extract all $d_k$
+  - Modified $H'(x)$ shifts spectrum by $x/2$
+  - $f(x) = 2 A_1(H'(x)) - A_1(H) = \sum d_k/(\Delta_k + x/2)$
+  - $P(x) = \prod(\Delta_k + x/2) \cdot f(x)$ is polynomial degree $M-1$
+  - Lagrange interpolation: $M$ points reconstruct $P$, extract $d_k$
+  - Total: $2M = O(\text{poly}(n))$ queries
+  - TODO: Walk through; explain $\Delta_k$ known from $H$
   - REVIEWER: technical_soundness - Interpolation correct
 
 - **Section: Robustness to Small Errors**
-  - SOURCE: paper/v3-quantum.tex lines 913-917
-  - #P robust to O(2^{-poly(n)}) errors (Paturi's lemma)
-  - Error propagation in interpolation bounded
-  - TODO: State Paturi if needed
-  - OPTION: Defer to appendix
+  - SOURCE: paper/v3-quantum.tex lines 913-921
+  - CRITICAL: Paturi's lemma (lines 915-921) enables $\#P$-hardness robust to $O(2^{-\text{poly}(n)})$ errors
+  - $\#P$ robust to small errors because: Lagrange interpolation is numerically stable, error propagation bounded
+  - Error bound: $O(2^{-\text{poly}(n)})$ precision in $A_1$ queries suffices for exact $d_k$ extraction
+  - TODO: State Paturi's lemma explicitly; derive error propagation bound
+  - REVIEWER: technical_soundness - Paturi's lemma critical for robustness claim
 
 - **Section: The Asymmetry with Circuits**
   - SOURCE: paper/v3-quantum.tex line 399
-  - Grover circuit: O~(sqrt(N/d_0)) without pre-computing s*
+  - Grover circuit: $\tilde{O}(\sqrt{N/d_0})$ without pre-computing $s^*$
   - AQO: same runtime but requires NP-hard pre-computation
-  - Why? Circuit schedule implicit in oracle queries; AQO schedule explicit upfront
-  - TODO: Make comparison precise; why "fundamental"
-  - REVIEWER: significance - Key conceptual contribution
+  - Why different? Grover queries adaptively DURING execution (oracle provides gap info implicitly); AQO needs schedule UPFRONT (must know $s^*$ before evolution begins)
+  - Key insight: Circuit model gathers spectral information through oracle queries as it runs; AQO must commit to schedule before any evolution
+  - This is NOT an artifact of analysis but reflects genuine model difference
+  - TODO: Make comparison precise; explain why adaptive queries don't help AQO (schedule determines Hamiltonian path)
+  - REVIEWER: significance - Key conceptual contribution, explains why same speedup has different costs
 
 - **Section: Optimality with Limitations**
   - SOURCE: paper/v3-quantum.tex line 399
@@ -818,16 +829,20 @@ The chapters should be written in this order:
 
 **Overview:** Original contributions characterizing information-optimality tradeoff. Extensions beyond published paper. Central thesis: AQO optimality is fundamentally an information question.
 
-**Needs:** Chapter 5 (H(s), A_1, s*, delta_s, g_min), Chapter 7 (runtime, schedule), Chapter 8 (hardness)
+**Context:** Extends Guo-An 2025's gap-informed baseline to uninformed/partial/adaptive regimes. Recent work (Guo-An 2025) shows gap-informed scheduling achieves optimal $O(1/\Delta_*)$. This chapter asks: what if gap information is unavailable, uncertain, or costly?
+
+**Needs:** Chapter 5 ($H(s)$, $A_1$, $s^*$, $\delta_s$, $g_{\min}$), Chapter 7 (runtime, schedule), Chapter 8 (hardness)
 
 **Status:** Most results have Lean formalization (noted per section)
+
+**RELATED WORK:** Guo-An 2025 (gap-informed baseline, measure condition), Han-Park-Choi 2025 (adaptive measurement), Roland-Cerf 2002 (original adaptive schedule)
 
 - **Section: The Separation Theorem**
   - SOURCE: src/experiments/04_separation_theorem/main.md
   - LEAN: Complete, no sorry
   - Problem: How much slower is gap-uninformed vs gap-informed?
-  - Main Result: T_uninformed / T_informed >= (s_R - s_L) / Delta_*
-  - Corollary: Omega(2^{n/2}) separation for n-qubit search
+  - Main Result: $T_{\text{uninformed}} / T_{\text{informed}} \geq (s_R - s_L) / \Delta_*$
+  - Corollary: $\Omega(2^{n/2})$ separation for $n$-qubit search
   - Proof: adversarial construction, velocity bound, time lower bound
   - Why novel: no prior minimax lower bound for FIXED uninformed schedules
   - Assumptions from literature: error model, informed achievability
@@ -838,12 +853,12 @@ The chapters should be written in this order:
 - **Section: The Partial Information Tradeoff**
   - SOURCE: src/experiments/07_partial_information/main.md
   - LEAN: Complete, no sorry
-  - Problem: If A_1 known to precision epsilon, what runtime?
-  - Main Result: T(epsilon) = T_inf * Theta(max(1, epsilon/delta_A1))
-  - For unstructured: T(epsilon) = T_inf * Theta(max(1, epsilon * 2^{n/2}))
-  - Key Finding: Interpolation is LINEAR in epsilon
+  - Problem: If $A_1$ known to precision $\epsilon$, what runtime?
+  - Main Result: $T(\epsilon) = T_{\inf} \cdot \Theta(\max(1, \epsilon/\delta_{A_1}))$
+  - For unstructured: $T(\epsilon) = T_{\inf} \cdot \Theta(\max(1, \epsilon \cdot 2^{n/2}))$
+  - Key Finding: Interpolation is LINEAR in $\epsilon$
   - Implications: no threshold, smooth degradation, NP-hard precision still exponential overhead
-  - Resolution: smooth confirmed, threshold refuted, graceful 1/epsilon refuted (it's T ~ epsilon)
+  - Resolution: smooth confirmed, threshold refuted, graceful $1/\epsilon$ refuted (it's $T \sim \epsilon$)
   - Lean: interpolation bounds, crossingPosition_deriv
   - TODO: Present formula; connect to NP-hardness operationally
   - REVIEWER: originality - First intermediate precision characterization
@@ -851,12 +866,13 @@ The chapters should be written in this order:
 - **Section: Robust Schedules**
   - SOURCE: src/experiments/02_robust_schedules/main.md
   - LEAN: Partial
-  - Problem: Can fixed schedule handle bounded uncertainty [u_L, u_R]?
+  - Problem: Can fixed schedule handle bounded uncertainty $[u_L, u_R]$?
   - Main Result: Hedging achieves constant-factor approximation
-  - Example: [0.4, 0.8] achieves ~60% reduction vs uniform
+  - Error formula: $\text{Error}_{\text{hedge}} / \text{Error}_{\text{unif}} \to (u_R - u_L)$ as interval narrows
+  - Example: $[0.4, 0.8]$ achieves ~60% reduction vs uniform
   - Key insight: NP-hardness is "soft" - bounded uncertainty = constant factor
-  - Strategy: distribute slowdown across interval
-  - TODO: Present hedging; connect to practical AQO
+  - Strategy: distribute slowdown across interval $[u_L, u_R]$
+  - TODO: Present hedging; connect to practical AQO; derive error formula
   - OPTION: Constructive response to hardness
   - REVIEWER: significance - Hardness not absolute
 
@@ -864,11 +880,11 @@ The chapters should be written in this order:
   - SOURCE: src/experiments/05_adaptive_schedules/main.md
   - LEAN: Partial
   - Problem: Can adaptive measurement overcome gap-uninformed limitation?
-  - Key Insight: Detecting s* quantumly EASY, computing classically HARD
-  - Theorem 1: Adaptive with O(n) measurements achieves T_adaptive = O(T_inf)
-  - Theorem 2: Omega(n) measurements required (binary search optimal)
-  - Complete characterization: T_uninformed = Omega(2^{n/2} * T_inf), T_adaptive = O(T_inf)
-  - Protocol: O(n) measurements to locate s*, then O(T_inf) execution
+  - Key Insight: Detecting $s^*$ quantumly EASY, computing classically HARD
+  - Theorem 1: Adaptive with $O(n)$ measurements achieves $T_{\text{adaptive}} = O(T_{\inf})$
+  - Theorem 2: $\Omega(n)$ measurements required (binary search optimal)
+  - Complete characterization: $T_{\text{uninformed}} = \Omega(2^{n/2} \cdot T_{\inf})$, $T_{\text{adaptive}} = O(T_{\inf})$
+  - Protocol: $O(n)$ measurements to locate $s^*$, then $O(T_{\inf})$ execution
   - Why works: classical NP-hard doesn't block quantum detection
   - TODO: Present protocol; explain phase estimation
   - REVIEWER: originality - First rigorous adaptive protocol
@@ -876,11 +892,11 @@ The chapters should be written in this order:
 - **Section: Measure Condition and Scaling**
   - SOURCE: src/experiments/06_measure_condition/main.md
   - LEAN: Complete, no sorry
-  - Problem: Guo-An (2025) requires "measure condition" for O(1/Delta_*). When fails?
-  - Measure condition: mu({s : Delta(s) <= x}) <= C * x
-  - Theorem 1 (Geometric): For Delta(s) = Delta_* + Theta(|s - s*|^alpha), alpha <= 1 holds, alpha > 1 fails
-  - Theorem 2 (Scaling): T = Theta(1/Delta_*^{3 - 2/alpha})
-  - Examples: alpha=1 -> T ~ 1/Delta_*; alpha=2 -> T ~ 1/Delta_*^2; alpha->infinity -> T -> 1/Delta_*^3
+  - Problem: Guo-An (2025) requires "measure condition" for $O(1/\Delta_*)$. When fails?
+  - Measure condition: $\mu(\{s : \Delta(s) \leq x\}) \leq C \cdot x$
+  - Theorem 1 (Geometric): For $\Delta(s) = \Delta_* + \Theta(|s - s^*|^\alpha)$, $\alpha \leq 1$ holds, $\alpha > 1$ fails
+  - Theorem 2 (Scaling): $T = \Theta(1/\Delta_*^{3 - 2/\alpha})$
+  - Examples: $\alpha=1 \to T \sim 1/\Delta_*$; $\alpha=2 \to T \sim 1/\Delta_*^2$; $\alpha \to \infty \to T \to 1/\Delta_*^3$
   - Resolution: necessity partially true, dichotomy FALSE (continuous spectrum)
   - Key Finding: NO sharp dichotomy - spectrum from 1 to 3
   - TODO: Present scaling spectrum; physical meaning of flat minimum
@@ -888,10 +904,10 @@ The chapters should be written in this order:
 
 - **Section: The Ignorance Taxonomy**
   - Synthesis of all results:
-  - Level 0: No information -> T = T_inf * Omega(2^{n/2}) [separation]
-  - Level 1: Precision epsilon -> T = T_inf * Theta(epsilon/delta_A1) [partial info]
-  - Level 2: Bounded interval -> T = O(T_inf * (u_R - u_L)) [robust]
-  - Level 3: Quantum measurement -> T = O(T_inf) with O(n) measurements [adaptive]
+  - Level 0: No information -> $T = T_{\inf} \cdot \Omega(2^{n/2})$ [separation]
+  - Level 1: Precision $\epsilon$ -> $T = T_{\inf} \cdot \Theta(\epsilon/\delta_{A_1})$ [partial info]
+  - Level 2: Bounded interval -> $T = O(T_{\inf} \cdot (u_R - u_L))$ [robust]
+  - Level 3: Quantum measurement -> $T = O(T_{\inf})$ with $O(n)$ measurements [adaptive]
   - Taxonomy shows: information determines achievable speedup
   - TODO: Table or figure; connect to practical scenarios
   - REVIEWER: presentation_quality - Unified picture is key
@@ -902,7 +918,7 @@ The chapters should be written in this order:
   - This chapter: characterize information-runtime tradeoff precisely
   - Key messages: information determines runtime, gap is information barrier, circuit vs adiabatic have different info requirements
   - "Information gap": gap in spectrum (physics), knowledge (information), models (computation)
-  - All connected through A_1 and s*
+  - All connected through $A_1$ and $s^*$
   - TODO: Frame as unifying perspective; connect to broader QC
   - REVIEWER: significance - Thesis's novel perspective
 
@@ -913,7 +929,7 @@ The chapters should be written in this order:
   - Exp 02 (Robust): PARTIAL
   - Exp 05 (Adaptive): PARTIAL
   - Exp 06 (Measure): COMPLETE, no sorry
-  - Total: 25 axioms, 76 theorems, 0 sorry in core
+  - Total: 27 axioms in code (25 unproved, 2 have proofs but kept for imports), 76 theorems, 0 sorry in core
   - TODO: Reference lean files; note axiomatized physics
   - REVIEWER: reproducibility - Formalization provides verification
 
@@ -945,8 +961,8 @@ The chapters should be written in this order:
 - **Section: Core Paper Formalization**
   - SOURCE: src/lean/README.md, UAQO/ directory
   - Structure: Foundations/, Spectral/, Adiabatic/, Complexity/
-  - Key abstractions: EigenStructure (eigenvalue/degeneracy data), matches paper notation
-  - Fully proved (21 eliminated): eigenvalue_condition, groundEnergy_variational_bound, shermanMorrison_resolvent, variational_principle, lagrange_interpolation, hardness lemmas
+  - Key abstractions: `EigenStructure` (eigenvalue/degeneracy data), matches paper notation
+  - Fully proved (21 eliminated): `eigenvalue_condition`, `groundEnergy_variational_bound`, `shermanMorrison_resolvent`, `variational_principle`, `lagrange_interpolation`, hardness lemmas
   - TODO: Highlight proof techniques; show notation correspondence
   - REVIEWER: technical_soundness - Verification against paper
 
@@ -973,11 +989,11 @@ The chapters should be written in this order:
 - **Section: Formulation Issues Discovered**
   - SOURCE: src/lean/README.md (Formulation Fixes)
   - 5+ errors found:
-    1. A2_lower_bound: was upper bound, reversed
-    2. avoidedCrossing_bound: missing spectralConditionForBounds
-    3. betaModifiedHam_eigenval_ordered_strict: missing allGapsGreaterThan
-    4. betaModifiedHam_eigenval_ordered: missing gap constraint
-    5. shermanMorrison_resolvent: sign error
+    1. `A2_lower_bound`: was upper bound, reversed
+    2. `avoidedCrossing_bound`: missing `spectralConditionForBounds`
+    3. `betaModifiedHam_eigenval_ordered_strict`: missing `allGapsGreaterThan`
+    4. `betaModifiedHam_eigenval_ordered`: missing gap constraint
+    5. `shermanMorrison_resolvent`: sign error
   - Lesson: formalization as debugging tool
   - TODO: Before/after for key fixes; implications for publishing
   - REVIEWER: significance - Demonstrates formalization value
@@ -988,7 +1004,7 @@ The chapters should be written in this order:
     2. Lagrange Interpolation: Mathlib.Lagrange + uniqueness
     3. Sherman-Morrison Resolvent: matrix inverse, sign correction
     4. Variational Principle: Parseval, spectral decomposition
-  - EigenStructure abstraction: avoids 2^n matrices, uses (eigenvalue, degeneracy) pairs
+  - `EigenStructure` abstraction: avoids $2^n$ matrices, uses (eigenvalue, degeneracy) pairs
   - TODO: Proof sketches with code excerpts
   - OPTION: Include snippets or keep abstract
   - REVIEWER: presentation_quality - Balance detail and accessibility
@@ -1013,9 +1029,9 @@ The chapters should be written in this order:
 - **Section: The Trilogy Revisited**
   - SOURCE: Chapters 5-8
   - One-page summary of main results:
-    - Main Result 1 (Chapter 7): T = O~(sqrt(N/d_0)), matches Grover, requires local adaptive schedule
-    - Main Result 2 (Chapter 8): A_1 to 1/poly(n) is NP-hard (two oracle calls, 3-SAT)
-    - Main Result 3 (Chapter 8): A_1 exactly is #P-hard (polynomial interpolation, d_0 extraction)
+    - Main Result 1 (Chapter 7): $T = \tilde{O}(\sqrt{N/d_0})$, matches Grover, requires local adaptive schedule
+    - Main Result 2 (Chapter 8): $A_1$ to $1/\text{poly}(n)$ is NP-hard (two oracle calls, 3-SAT)
+    - Main Result 3 (Chapter 8): $A_1$ exactly is $\#P$-hard (polynomial interpolation, $d_0$ extraction)
   - The synthesis: optimality exists but requires NP-hard problem
   - "Optimality with limitations" captures this tension
   - TODO: Crisp one-paragraph per result
@@ -1030,29 +1046,31 @@ The chapters should be written in this order:
   - REVIEWER: significance - Conceptual contribution matters
 
 - **Section: Comparison with Circuit Model**
-  - AQO vs Grover circuit: same O~(sqrt(N/d_0)) speedup
-  - Different information requirements: Grover needs oracle access only, AQO needs A_1 to exponential precision
-  - Asymmetry: Grover queries during execution, AQO needs gap info before
-  - Interpretation: circuit gathers info during computation, adiabatic needs upfront for schedule
+  - AQO vs Grover circuit: same $\tilde{O}(\sqrt{N/d_0})$ speedup
+  - Different information requirements: Grover needs oracle access only, AQO needs $A_1$ to exponential precision
+  - Asymmetry: Grover queries adaptively DURING execution; AQO needs schedule UPFRONT
+  - Key insight: circuit gathers spectral info through queries as it runs; AQO must commit before evolution
+  - This is a genuine model difference, not an artifact of analysis
   - TODO: Make asymmetry vivid
   - REVIEWER: significance - Important conceptual point
 
 - **Section: What This Changes**
   - Implications for AQO research:
   - Evaluating proposals: not just "what is gap?" but "how hard to compute gap?"
-  - New question: from "can AQO be fast?" to "when is A_1 tractable?"
-  - Experimental: scheduling needs A_1 or adaptive measurement, deviations may be fundamental
+  - New question: from "can AQO be fast?" to "when is $A_1$ tractable?"
+  - Experimental: scheduling needs $A_1$ or adaptive measurement, deviations may be fundamental
   - TODO: Connect to practical AQO/annealing
   - REVIEWER: significance - Practical relevance
 
 - **Section: Original Contributions (Chapter 9)**
+  - Context: extends Guo-An 2025's gap-informed baseline to uninformed/partial/adaptive regimes
   - Summary of extensions:
-    1. Separation Theorem: T_uninformed / T_informed >= (s_R - s_L) / Delta_*, Omega(2^{n/2}), LEAN complete
-    2. Partial Information: T(epsilon) = T_inf * Theta(max(1, epsilon/delta_A1)), linear, LEAN complete
-    3. Measure Condition: T = Theta(1/Delta_*^{3-2/alpha}), dichotomy FALSE, LEAN complete
+    1. Separation Theorem: $T_{\text{uninformed}} / T_{\text{informed}} \geq (s_R - s_L) / \Delta_*$, $\Omega(2^{n/2})$, LEAN complete
+    2. Partial Information: $T(\epsilon) = T_{\inf} \cdot \Theta(\max(1, \epsilon/\delta_{A_1}))$, linear, LEAN complete
+    3. Measure Condition: $T = \Theta(1/\Delta_*^{3-2/\alpha})$, dichotomy FALSE, LEAN complete
     4. Robust Schedules: hedging constant-factor, LEAN partial
-    5. Adaptive Schedules: O(n) measurements suffice, LEAN partial
-  - Ignorance taxonomy: no info (exponential), intermediate (linear in epsilon), bounded (constant), quantum measurement (logarithmic)
+    5. Adaptive Schedules: $O(n)$ measurements suffice, LEAN partial
+  - Ignorance taxonomy: no info (exponential), intermediate (linear in $\epsilon$), bounded (constant), quantum measurement (logarithmic)
   - TODO: Connect back to central thesis
   - REVIEWER: originality - These are novel contributions
 
@@ -1067,12 +1085,12 @@ The chapters should be written in this order:
 
 - **Section: Open Problems**
   - Research directions:
-    1. Structured instances: when is A_1 efficiently computable? (planted SAT, specific graphs)
+    1. Structured instances: when is $A_1$ efficiently computable? (planted SAT, specific graphs)
     2. Noise models: decoherence effects on tradeoffs, open-system adiabatic
     3. Intermediate precision: what can polynomial precision achieve? useful regimes?
     4. Alternative paths: non-linear interpolations, catalyst Hamiltonians, counterdiabatic
     5. Quantum annealing: real devices use thermal, what does analysis say?
-    6. Ultimate question: is there a family where AQO beats circuits? (needs tractable A_1)
+    6. Ultimate question: is there a family where AQO beats circuits? (needs tractable $A_1$)
   - TODO: Be specific about what is open
   - REVIEWER: significance - Guide future work
 

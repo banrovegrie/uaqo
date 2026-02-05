@@ -24,7 +24,7 @@ grep -rP '[^\x00-\x7F]' src/
 
 ### 2. No Horizontal Rule Separators
 
-Markdown files should not use `---`, `***`, or `___` as section separators.
+Markdown files should not use `---`, `***`, or `___` alone on a line as section separators (horizontal rules).
 
 **Why:** I hate them.
 
@@ -33,7 +33,9 @@ Markdown files should not use `---`, `***`, or `___` as section separators.
 grep -rn '^---$\|^***$\|^___$' src/*.md
 ```
 
-**Exception:** YAML frontmatter delimiters at file start are acceptable.
+**Exceptions:**
+- YAML frontmatter delimiters at file start are acceptable.
+- Inline `---` for em-dashes (e.g., "spine --- a few questions") is fine.
 
 ### 3. Math Delimiters in Markdown
 
