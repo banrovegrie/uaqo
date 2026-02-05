@@ -15,7 +15,7 @@
 
   This file completes the variational principle foundation with 0 remaining sorries.
 -/
-import UAQO.Spectral.GapBounds
+import UAQO.Spectral.AdiabaticHamiltonian
 import UAQO.Proofs.Spectral.EigenvalueCondition
 import Mathlib.LinearAlgebra.Matrix.Hermitian
 import Mathlib.Analysis.Matrix.Spectrum

@@ -1,18 +1,20 @@
 # UAQO Axiom Documentation
 
-This document catalogs all 25 axioms in the UAQO Lean formalization, organized by category with justifications for why each remains an axiom.
+This document catalogs all 23 axioms in the UAQO Lean formalization, organized by category with justifications for why each remains an axiom.
 
 ## Summary
 
 | Category | Count | Status |
 |----------|-------|--------|
 | External Foundations | 9 | Keep as axioms (standard results) |
-| Gap Bounds | 6 | Could be proved with more spectral theory |
+| Gap Bounds | 5 | Could be proved with more spectral theory |
 | Running Time | 4 | Depend on gap bounds + adiabatic theorem |
 | Hardness | 5 | Main complexity results |
-| Spectral Theory | 1 | Requires infinite-dim functional analysis |
 
-Total: 25 axioms (including 1 in Proofs/)
+Total: 23 axioms
+
+**Recent Eliminations:**
+- `firstExcited_lower_bound` - converted to theorem using variational principle
 
 ## External Foundations (9 axioms)
 
@@ -93,21 +95,22 @@ axiom resolvent_distance_to_spectrum {N : Nat} (A : Operator N) (gamma : Complex
 ```
 **Justification**: Resolvent norm bound by distance to spectrum. For finite-dimensional matrices, Mathlib may have this; for infinite-dimensional, requires functional analysis.
 
-## Gap Bounds (6 axioms)
+## Gap Bounds (5 axioms)
 
 These axioms characterize the spectral gap of the adiabatic Hamiltonian H(s). They could be proved with more development of spectral theory for H(s).
 
 **File**: `UAQO/Spectral/GapBounds.lean`
 
+**PROVED - `firstExcited_lower_bound`** (converted from axiom to theorem):
 ```lean
-axiom firstExcited_lower_bound {n M : Nat} (es : EigenStructure n M)
+theorem firstExcited_lower_bound {n M : Nat} (es : EigenStructure n M)
     (hM : M >= 2) (s : Real) (hs : 0 <= s /\ s <= 1) :
     exists (E1 : Real), IsEigenvalue (adiabaticHam es s hs) E1 /\
       E1 >= s * es.eigenvalues (Fin.mk 0 _) /\
       exists (E0 : Real), IsEigenvalue (adiabaticHam es s hs) E0 /\ E0 < E1
 ```
-**Justification**: Lower bound on first excited state. Requires spectral decomposition of H(s).
-**Proof Strategy**: Use variational principle with trial states.
+**Method**: Uses variational principle with orthogonal state (|0>-|1>)/sqrt(2).
+Full proof in `UAQO/Proofs/Spectral/GapBoundsProofs.lean`.
 
 ```lean
 axiom gap_bound_left_axiom {n M : Nat} (es : EigenStructure n M)

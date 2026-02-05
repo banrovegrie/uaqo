@@ -1,5 +1,6 @@
 import UAQO.Spectral.AdiabaticHamiltonian
 import UAQO.Proofs.Spectral.EigenvalueCondition
+import UAQO.Proofs.Spectral.GapBoundsProofs
 import Mathlib.LinearAlgebra.Matrix.Hermitian
 import Mathlib.Analysis.Matrix.Spectrum
 import Mathlib.Analysis.InnerProductSpace.PiL2
@@ -361,18 +362,19 @@ theorem groundEnergy_variational_bound {n M : Nat} (es : EigenStructure n M)
     This establishes that the first excited state energy is bounded below,
     and that there exists a gap between ground and first excited states.
 
-    The proof requires showing:
+    **FULLY PROVED** - uses spectral theorem for Hermitian matrices:
     1. H(s) has at least 2 distinct eigenvalues (it's not a scalar matrix)
     2. The maximum eigenvalue is ≥ s·E₀^diag = 0
 
     These follow from the non-trivial structure of the adiabatic Hamiltonian
     H(s) = -(1-s)|ψ₀⟩⟨ψ₀| + s·H_z which combines a rank-1 projector with
     a diagonal Hamiltonian having M ≥ 2 distinct eigenvalue levels. -/
-axiom firstExcited_lower_bound {n M : Nat} (es : EigenStructure n M)
+theorem firstExcited_lower_bound {n M : Nat} (es : EigenStructure n M)
     (hM : M >= 2) (s : Real) (hs : 0 <= s ∧ s <= 1) :
     ∃ (E1 : Real), IsEigenvalue (adiabaticHam es s hs) E1 ∧
       E1 >= s * es.eigenvalues ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_two hM⟩ ∧
-      ∃ (E0 : Real), IsEigenvalue (adiabaticHam es s hs) E0 ∧ E0 < E1
+      ∃ (E0 : Real), IsEigenvalue (adiabaticHam es s hs) E0 ∧ E0 < E1 :=
+  UAQO.Proofs.Spectral.GapBounds.firstExcited_lower_bound_proof es hM s hs
 
 /-- Axiom: Gap bound to the left of avoided crossing.
 
