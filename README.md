@@ -4,46 +4,9 @@ My master's thesis on Unstructured Adiabatic Quantum Optimization, supervised by
 
 Make sure that the way this thesis would be written is satisfactory to Prof. Shantanav Chakraborty (check `taste/` for papers by him). We also aim to beat the baseline expectations of the theses we have with us in `taste/` (of Zeeshan Ahmed and Ronald de Wolf).
 
-## Thesis Architecture
+## Table of Contents
 
-This thesis aims to be a single coherent path from first principles to the main results of arXiv:2411.05736, and to the extensions in `src/experiments/`. The structure follows three design principles:
-
-| Principle | What it forces | How it shows up here |
-|---|---|---|
-| Lead with the puzzle | The reader should know what is at stake before any machinery appears | Chapter 1 opens with the paradox (optimal runtime vs hard-to-achieve optimality), states scope, and frontloads the results map |
-| Treat computation as physics | "Runtime" is not the only resource; precision and control matter | Chapter 2 frames computation as controlled dynamics, setting up the later precision/hardness theme |
-| Make theorems the skeleton | Every chapter should have a clear statement/proof/discussion cadence | Chapters 5-9 follow the paper's spine: model -> spectrum -> schedule -> hardness -> beyond |
-
-### Reading paths
-
-| If you are... | Suggested path | What you can skip on first pass |
-|---|---|---|
-| New to QC/AQC | 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 | None |
-| Comfortable with QC, new to AQC/AQO | 1 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 | Most of 2-3 (keep Grover as the baseline) |
-| Comfortable with AQC basics, here for the paper | 1 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 | Most of 2-4 (keep 4.3-4.6 for schedule and gap framing) |
-| Here for the limitations story | 1 -> 7.5-7.6 -> 8 -> 9 -> 10 | Most of 2-6 after you know the model and what $A_1$ is |
-
-### Parts
-
-| Part | Chapters | Purpose |
-|---|---|---|
-| I. Framing | 1 | Hook, scope, results map, running example |
-| II. Foundations | 2-4 | Physics/computation lens, QC baseline (Grover), adiabatic theorem -> algorithm |
-| III. Core technical story | 5-7 | Unstructured AQO model, spectral analysis, optimal schedule and runtime |
-| IV. The information barrier | 8-9 | What optimality requires knowing; NP/#P hardness; robust/adaptive responses |
-| V. Closing | 10 | Synthesis, open problems, what to take away |
-
-## Table of Contents (proposed; 10 main chapters match `src/main.tex`)
-
-### Frontmatter
-
-| Item | Purpose |
-|---|---|
-| Epigraph | One-line theme: "what computation can ask of physics" |
-| Abstract | Results + what they mean (no suspense) |
-| Acknowledgments | Intellectual debts, not just names |
-| Notation and conventions | Symbols, norms, asymptotic notation, error parameters |
-| List of Theorems / Algorithms / Figures | Navigation for technical readers |
+This thesis aims to be a single coherent path from first principles to the main results of `paper/` and `rough/` (arXiv:2411.05736), and to the extensions in `src/experiments/`.
 
 ### Part I: Framing
 
@@ -94,7 +57,9 @@ This thesis aims to be a single coherent path from first principles to the main 
 | 4.6 Why gaps are hard | Avoided crossings, instance dependence, and what analysis must accomplish |
 | 4.7 Related work | Only work that the later technical chapters will compare against |
 
-### Part III: Core Technical Story (the paper's spine)
+### Part III: Core Technical Story
+
+We will be using `paper/` and `rough/` as the backbone for this.
 
 ### Chapter 5: Adiabatic Quantum Optimization
 
@@ -130,8 +95,6 @@ This thesis aims to be a single coherent path from first principles to the main 
 | 7.5 What this already assumes | Preview: locating $s^*$ (and thus $A_1$) to window scale precision |
 | 7.6 Discussion | Why this is "optimality with limitations" even before hardness enters |
 
-### Part IV: The Information Barrier and Beyond
-
 ### Chapter 8: Hardness of Optimality
 
 | Section | Content |
@@ -144,7 +107,11 @@ This thesis aims to be a single coherent path from first principles to the main 
 | 8.6 #P-hardness theorem | Exact $A_1$ reveals full degeneracy data |
 | 8.7 The asymmetry | Why the circuit model does not have the same "parameter knowledge" barrier |
 
-### Chapter 9: Exploring the Hardness Barrier [THESIS EXTENSIONS]
+### Part IV: Thesis Extensions
+
+Here, we will be extending the work based on our `src/experiments/`.
+
+### Chapter 9: Information Gap
 
 | Section | Content |
 |---------|---------|
@@ -163,12 +130,3 @@ This thesis aims to be a single coherent path from first principles to the main 
 | 10.2 What this changes | How to interpret AQO claims, and what "speedup" means when precision is a resource |
 | 10.3 Lean status (optional) | What has been formalized, what assumptions remain |
 | 10.4 Open problems | Structured instances, noise models, intermediate precision regimes, new schedule primitives |
-
-### Appendices (planned, optional but useful for "first principles")
-
-| Appendix | Purpose |
-|---|---|
-| A. Linear algebra and spectral facts | Statements used repeatedly (norms, perturbation, variational bounds) |
-| B. Complexity and oracle basics | P/NP/#P, reductions, query models as used in Chapter 8 |
-| C. Adiabatic theorem variants | One-page comparison of common formulations and their hypotheses |
-| D. Notation index | Symbols and where they are first defined |

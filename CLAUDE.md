@@ -22,8 +22,7 @@ For use in `src/` (main thesis work):
 3. `taste/` is about the style to base thesis on. Mostly we will distill this information here itself under the `Taste and Style` section.
 4. `src/experiments/` for new ideas, explorations, and rough drafts before they mature into chapters.
 5. `src/tests/` for alignment tests including notation consistency checks, taste comparisons, and math verification prompts.
-
-For direct comparison and unsupervised feedback we have `taste/zeeshan_ms_thesis.md` and `taste/dewolf_phd_thesis.md` as barebone baselines. We aim to write much much better than them with new work introduced as well.
+6. For direct comparison and unsupervised feedback we have `taste/zeeshan_ms_thesis.md` and `taste/dewolf_phd_thesis.md` as barebone baselines that we would want to beat.
 
 
 ```
@@ -54,6 +53,8 @@ For direct comparison and unsupervised feedback we have `taste/zeeshan_ms_thesis
 |   |-- tests/                  Alignment tests (notation consistency, etc.)
 |   +-- experiments/            New ideas, explorations and rough drafts
 |
+|-- run/                    Temporary run details (planning, logs, etc.)
+|
 ```
 
 ## Guidelines
@@ -73,7 +74,7 @@ All important content lives in `src/`.
 - Background check previous chapters before introducing definitions. Common repeated terms: hermitian, unitary, spectral gap. Do not re-define.
 - Generate a broad chapter index first. Use it as skeleton. Plan the story flow before filling content. Rearranging pieces later is hard.
 - LLMs struggle with technical depth. Feed relevant source content (paper, references) to produce substantive paragraphs.
-- Notation and math hallucination is easy to miss. Import math directly from the published paper where possible. Shantanav catches math errors immediately.
+- Notation and math hallucination is easy to miss. Import math directly from the published paper where possible. Any human expert would catch such math errors immediately.
 - Structure is fluid. Plan extensively before committing. Use `tests/` for notation consistency checks and more.
 
 ### Formatting
@@ -81,20 +82,20 @@ All important content lives in `src/`.
 - Avoid `---` separators in `.md` files.
 - No non-ASCII characters in the codebase.
 - Everything should be aligned well.
-- All math in `.tex` or `.md` should follow right LaTeX conventions.
+- All math in `.tex` or `.md` should follow right LaTeX conventions and delimiters.
 
 ### Taste and Style
 
-Good technical writing makes the reader feel that each idea arrives exactly when needed. Before any definition appears, the reader already wants it. Before any theorem is stated, the reader understands what gap it fills. This is achieved by genuinely building the intellectual tension that makes each concept necessary.
+Good technical writing makes the reader feel that each idea arrives exactly when needed. Before any definition appears, the reader already wants it. Before any theorem is stated, the reader understands what gap it fills. This is achieved by genuinely building the intellectual tension that makes each concept necessary. It is a conversation we have with the reader, trying to nourish them with perspective.
 
 The writing should make the reader care about the question before answering it. It should state results with precision: explicit bounds, clear dependencies, honest limitations. It should guide the reader through unfamiliar territory with patience, using concrete examples that recur and accumulate meaning. These qualities must be embodied, not named. The reader should never see the scaffolding. Phrases like "from a philosophical standpoint" or "to provide intuition" reveal technique rather than executing it. Good craft is invisible: the reader experiences clarity without noticing method.
 
 When writing with AI assistance, there is a specific danger. LLMs are trained on text that fills space rather than carrying meaning. The output tends toward vague generalities, hedged claims, and filler sentences unless actively counteracted. Every sentence must earn its place. If a sentence can be removed without information loss, remove it.
 
-The thesis concerns adiabatic quantum optimization. Use consistent notation throughout. Import mathematical statements directly from the published paper where possible. Notation and mathematical details are where LLMs fail most invisibly. Shantanav will catch errors here.
+The thesis concerns adiabatic quantum optimization. Use consistent notation throughout. Import mathematical statements directly from the published paper where possible. Notation and mathematical details are where LLMs fail most invisibly. A human expert would catch errors here.
 
 For detailed analysis of specific authors and their patterns, see `taste/README.md`.
 
 ### Testing
 
-See `src/tests/README.md` for alignment and correctness tests. Run before finalizing chapters. Iterate till satisfied.
+See `src/tests/` for alignment and correctness tests. Run before finalizing chapters. Iterate till satisfied.

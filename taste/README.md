@@ -4,7 +4,6 @@ Papers for taste, reference and style guidance, organized by author.
 
 Deep analysis of writing patterns, structural techniques, and actionable guidance for thesis writing.
 
-
 ## Scott Aaronson
 
 **Style essence**: Makes you *feel* why a result matters before showing you the proof. Master of the philosophical hook.
@@ -48,34 +47,6 @@ Aaronson writes for intelligent outsiders. His signature move is to take a techn
 1. 1011.3245 - Aaronson, Arkhipov - The Computational Complexity of Linear Optics (2010)
 2. 1108.1791 - Aaronson - Why Philosophers Should Care About Computational Complexity (2011)
 3. 1612.05903 - Aaronson, Chen - Complexity-Theoretic Foundations of Quantum Supremacy Experiments (2016)
-
-
-## Roger Penrose
-
-**Style essence**: Start from physical reality, build the mathematics as the inevitable language, and use geometry as the main intuition engine.
-
-### What Makes His Writing Work
-
-Penrose typically begins with the conceptual confusion first, not with the formalism. He asks what a physical statement even means, then introduces the minimum mathematics that makes the statement precise. The reader gets a feeling that the math is not decoration: it is the only way to say the thing cleanly.
-
-**Structural patterns to borrow**:
-1. **Physical question first**: "What is the world doing?" before "What is the model?"
-2. **Geometry as intuition**: Replace algebraic manipulation with a picture whenever possible (state space, energy landscapes, avoided crossings)
-3. **Build abstractions only when forced**: Each new definition is justified by a specific failure of the previous language
-4. **Long-range signposting**: Remind the reader why a technical detour matters two chapters later
-5. **Relentless clarity about assumptions**: Distinguish "postulate", "definition", "approximation", and "idealization"
-
-### Actionable Pointers for This Thesis (AQC/AQO)
-
-1. **Treat schedules as physical control**: Ask what it means to "set s(t)" in an experiment and what precision costs.
-2. **Make the spectral gap a shape**: Use a repeated schematic of g(s) with the window around s* to carry the entire technical story.
-3. **Use a single running system**: One toy spectrum / two-level avoided crossing picture that reappears in Chapters 4-9.
-4. **Connect complexity to physics via precision**: Frame NP/#P hardness as hardness of extracting fine spectral data, not as an abstract oracle game.
-5. **End chapters with synthesis**: A short summary that answers the opening physical question in the new language.
-
-### Works (not stored here)
-
-Penrose's relevant expository style is best seen in his books (e.g., The Emperor's New Mind, The Road to Reality). Use them as a tone reference, not as a technical source for AQC.
 
 
 ## Aram Harrow
@@ -255,86 +226,39 @@ The AQO paper (2411.05736) is directly relevant to the thesis topic. It demonstr
 10. 2510.06851 - Wang, Zhang, Hazra, Li, Shao, Chakraborty - Randomized Quantum Singular Value Transformation (2025)
 
 
-## Synthesis: Principles for Thesis Writing
-
-The patterns below should be internalized and embodied, not signaled. The reader should never see the scaffolding. Writing "from a philosophical standpoint" or "the key insight here is" reveals technique rather than executing it. Good craft is invisible.
-
-What the authors above share: they make the reader care about a question before answering it. They state results with precision and acknowledge limitations honestly. They guide the reader through unfamiliar territory with patience, building intuition through examples that recur and accumulate meaning. The goal is a thesis where each idea arrives exactly when needed, where definitions feel necessary before they appear, where the reader finishes with new perspective rather than just new facts.
-
-### Structural Blueprint for Chapters
-
-Based on de Wolf's thesis structure combined with modern conventions:
-
-```
-Chapter N: [Title]
-
-N.1 Introduction
-    - Why this chapter matters
-    - What we will prove
-    - Connection to previous chapters
-
-N.2 Preliminaries (if needed)
-    - Definitions specific to this chapter
-    - Notation conventions
-
-N.3-N.k Main Content
-    - Each section: motivation -> definition -> result -> discussion
-    - Running examples throughout
-    - Figures for complex structures
-
-N.(k+1) Summary
-    - Key results stated informally
-    - Connections to broader themes
-    - Preview of next chapter
-```
-
-### The 15 Commandments of Good Technical Writing
+### Footnotes
 
 **On Motivation**:
-1. Never introduce a concept without first explaining why we need it
-2. Every chapter should answer a question the reader already cares about
-3. The abstract/introduction should make a physicist want to read more
+- Never introduce a concept without first explaining why we need it
+- Every chapter should answer a question the reader already cares about
+- The abstract/introduction should make a physicist want to read more
 
 **On Structure**:
-4. State main results early; proofs can come later
-5. Use the two-pass pattern: intuition first, formalism second
-6. End every chapter with a summary that ties to larger themes
+- State main results early; proofs can come later
+- Use the two-pass pattern: intuition first, formalism second
+- End every chapter with a summary that ties to larger themes
 
 **On Precision**:
-7. Every theorem should have explicit error bounds and complexity
-8. Define notation when introduced, not in a front-loaded section
-9. State clearly what results do and don't achieve
+- Every theorem should have explicit error bounds and complexity
+- Define notation when introduced, not in a front-loaded section
+- State clearly what results do and don't achieve
 
 **On Examples**:
-10. Choose 2-3 running examples and use them throughout
-11. For every abstract concept, provide at least one concrete instance
-12. Use figures to visualize spectra, algorithms, proof structures
+- Choose 2-3 running examples and use them throughout
+- For every abstract concept, provide at least one concrete instance
+- Use figures to visualize spectra, algorithms, proof structures
 
 **On Connection**:
-13. Explicitly compare your work to prior results
-14. Acknowledge intellectual debts generously and specifically
-15. Include a discussion of open questions and limitations
+- Explicitly compare your work to prior results
+- Acknowledge intellectual debts generously and specifically
+- Include a discussion of open questions and limitations
 
-### Writing Checklist for Each Section
-
-Before finalizing any section, ask:
-
-- [ ] Does the opening paragraph explain why this section matters?
-- [ ] Are all definitions motivated before being stated?
-- [ ] Is there at least one concrete example?
-- [ ] Are all theorems stated with precise bounds?
-- [ ] Is there a transition to the next section?
-- [ ] Would a graduate student understand the main point on first read?
-- [ ] Have I acknowledged relevant prior work?
-- [ ] Does this connect to the thesis's larger narrative?
-
-### Common Mistakes to Avoid
-
-1. **The definition dump**: Opening with pages of notation before any motivation
-2. **The orphan concept**: Introducing something that's never used again
-3. **The vague claim**: "This is efficient" without stating O(f(n))
-4. **The missing context**: Proving something without explaining why we care
-5. **The abrupt ending**: Finishing a section without summary or transition
-6. **The assumed background**: Using terms without definition or reference
-7. **The citation-free claim**: Making strong statements without supporting references
-8. **The emotional hedge**: "We believe that..." instead of stating precisely what's proven
+**Common Mistakes to Avoid**:
+- The definition dump: Opening with pages of notation before any motivation
+- The orphan concept: Introducing something that's never used again
+- The vague claim: "This is efficient" without stating O(f(n))
+- The missing context: Proving something without explaining why we care
+- The abrupt ending: Finishing a section without summary or transition
+- The assumed background: Using terms without definition or reference
+- The citation-free claim: Making strong statements without supporting references
+- The emotional hedge: "We believe that..." instead of stating precisely what's proven

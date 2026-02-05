@@ -52,12 +52,12 @@ lake build
 | Metric              | Count  |
 |---------------------|--------|
 | Sorries             | 0      |
-| Axioms              | 28     |
-| Lines of Lean (main)| ~4,700 |
-| Lines of Lean (total)| ~6,000 |
+| Axioms              | 27     |
+| Lines of Lean (main)| ~4,800 |
+| Lines of Lean (total)| ~6,100 |
 
-The formalization is sorry-free but relies on 28 axioms for deep mathematical results.
-18 axioms have been eliminated through proofs since the initial formalization.
+The formalization is sorry-free but relies on 27 axioms for deep mathematical results.
+19 axioms have been eliminated through proofs since the initial formalization.
 
 ## Axiom Categories
 
@@ -97,7 +97,7 @@ Note: `measurement_yields_groundstate` was eliminated (proved using Cauchy-Schwa
 
 Note: `complex_cauchy_schwarz` was eliminated (proved using the quadratic discriminant method).
 
-### Gap Bounds (9 axioms)
+### Gap Bounds (8 axioms)
 
 Spectral gap analysis:
 
@@ -109,7 +109,8 @@ Spectral gap analysis:
 - `gap_bound_right_axiom`: Gap bound right of avoided crossing
 - `gap_bound_all_s_axiom`: Combined gap bound
 - `gap_minimum_at_crossing_axiom`: Gap minimum location
-- `shermanMorrison_resolvent`: Sherman-Morrison for resolvents
+
+Note: `shermanMorrison_resolvent` was eliminated (proved using verification with Matrix.inv_eq_left_inv and adjoint properties).
 
 ### Hardness Constructions (6 axioms)
 
@@ -175,6 +176,7 @@ The following 18 axioms were eliminated through proofs:
 | `variational_minimum` | SpectralTheory.lean | Ground eigenstate from SpectralDecomp |
 | `measurement_yields_groundstate` | RunningTime.lean | Cauchy-Schwarz + norm expansion |
 | `complex_cauchy_schwarz` | RunningTime.lean | Quadratic discriminant method |
+| `shermanMorrison_resolvent` | GapBounds.lean | Matrix inverse verification + adjoint lemmas |
 
 Additional definitions and theorems:
 - `modifiedHam_assignment`: Definition mapping extended states to eigenvalue indices
