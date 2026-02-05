@@ -13,6 +13,8 @@ import UAQO.Proofs.Foundations.VariationalPrinciple
 -- Spectral proofs
 import UAQO.Proofs.Spectral.A2Bounds
 import UAQO.Proofs.Spectral.ShermanMorrison
+import UAQO.Proofs.Spectral.EigenvalueCondition
+import UAQO.Proofs.Spectral.MatrixDetLemma
 
 -- Adiabatic proofs
 import UAQO.Proofs.Adiabatic.ScheduleProperties
@@ -45,12 +47,14 @@ These appear to have bugs - see README.md for details:
 - `A2_lower_bound` (A2Bounds.lean) - bound direction reversed
 - `avoidedCrossing_bound`, `piecewiseSchedule_monotone` (ScheduleProperties.lean) - missing hypothesis
 
-## Partially Proved with Sorry (6 axioms)
+## Partially Proved with Sorry (7 axioms)
 Need additional hypotheses or Mathlib dependencies:
 - `betaModifiedHam_eigenval_ordered`, `betaModifiedHam_eigenval_ordered_strict` (BetaModifiedHam.lean)
 - `betaModifiedHam_eigenval_bounds` (BetaModifiedHam.lean)
 - `variational_principle`, `variational_minimum` (VariationalPrinciple.lean)
 - `shermanMorrison_resolvent` (ShermanMorrison.lean)
+- `eigenvalue_condition` (EigenvalueCondition.lean) - proved for degenerate case and secular equation;
+  2 sorries for non-degenerate case (d_k=1) due to theorem statement limitation
 
 ## External Foundations (9 axioms - kept as axioms)
 - `threeSAT_in_NP`, `threeSAT_NP_complete` (Cook-Levin)
@@ -59,8 +63,13 @@ Need additional hypotheses or Mathlib dependencies:
 - `adiabaticTheorem`, `eigenpath_traversal` (Quantum dynamics)
 - `resolvent_distance_to_spectrum` (Spectral theory)
 
-## Not Yet Started (~18 axioms)
+## Not Yet Started (~17 axioms)
 Remaining axioms in GapBounds.lean, RunningTime.lean, and Hardness.lean.
+Note: `eigenvalue_condition` moved to "Partially Proved" - see EigenvalueCondition.lean.
+
+## Bridge Files (no axioms eliminated, provide Mathlib connections)
+- `MatrixDetLemma.lean` - connects our outerProd/innerProd to Mathlib's equivalents
+  Uses Mathlib's `det_add_replicateCol_mul_replicateRow` for matrix determinant lemma
 -/
 
 end UAQO.Proofs

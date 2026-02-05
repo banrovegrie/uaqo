@@ -84,7 +84,7 @@ We will be using `paper/` and `rough/` as the backbone for this.
 | 6.6 Right region bound | Resolvent/Sherman-Morrison and the role of $\Delta$ |
 | 6.7 Complete gap profile | A single picture the schedule analysis can plug into |
 
-### Chapter 7: The Optimal Schedule
+### Chapter 7: Optimal Schedule
 
 | Section | Content |
 |---------|---------|

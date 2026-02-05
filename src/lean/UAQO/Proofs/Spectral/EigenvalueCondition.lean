@@ -730,35 +730,47 @@ theorem eigenvalue_condition_proof {n M : Nat} (es : EigenStructure n M)
               -- assignment z1 = k
               rw [ha1]
             · by_cases hi2 : i = z2
-              · simp only [hi1, hi2, if_false, if_true, mul_neg_one]
+              · simp only [hi2, if_true]
                 -- assignment z2 = k
                 rw [ha2]
               · simp only [hi1, hi2, if_false, mul_zero]
 
           -- Step 4: H(s) v = s·E_k·v = λ·v
-          -- The proof structure:
           -- H(s) = -(1-s)|ψ₀⟩⟨ψ₀| + s·H_z
           -- |ψ₀⟩⟨ψ₀| ⬝ v = ⟨ψ₀|v⟩ · |ψ₀⟩ = 0 (by hinner_zero)
           -- So H(s) ⬝ v = s·(H_z ⬝ v) = s·E_k·v = λ·v
-          --
-          -- Technical note: This requires showing applyOp distributes over
-          -- addition and scalar multiplication. The lemmas exist (applyOp_add,
-          -- applyOp_smul) but Lean's notation handling makes the rewrite tricky.
-          -- The math is correct: ⟨ψ₀|v⟩ = 0 (proven in hinner_zero), so the
-          -- projector term vanishes, leaving only the Hz term which gives E_k·v.
-          sorry
+          have hs_bound : 0 ≤ s ∧ s ≤ 1 := ⟨hs.1, le_of_lt hs.2⟩
+          rw [adiabaticHam_eq es s hs_bound]
+          rw [UAQO.applyOp_add, UAQO.applyOp_smul, UAQO.applyOp_smul]
+          rw [hproj_zero, smul_zero, add_zero]
+          rw [hHz_v]
+          -- Now: s • (E_k • v) = λ • v
+          -- Since λ = s * E_k, we have s • (E_k • v) = (s * E_k) • v = λ • v
+          rw [smul_smul]
+          congr 1
+          -- Goal: ↑s * ↑(es.eigenvalues k) = ↑lambda
+          -- Note: k = es.assignment z0 by definition
+          rw [hz0]
+          simp only [Complex.ofReal_mul, k]
 
       · -- Non-degenerate case: d_k = 1
-        -- This case is more subtle. When d_k = 1, the only state with eigenvalue E_k
-        -- is z0 itself, and ⟨ψ₀|z0⟩ = 1/√N ≠ 0, so there's no eigenvector orthogonal
-        -- to |ψ₀⟩ in the E_k eigenspace.
+        -- MATHEMATICAL NOTE: This case may be unprovable as stated.
         --
-        -- For s ∈ (0,1), the value s·E_k is typically NOT an eigenvalue of H(s)
-        -- unless the secular equation happens to have a solution there.
+        -- When d_k = 1, the only Hz eigenvector with eigenvalue E_k is |z0⟩.
+        -- Since ⟨ψ₀|z0⟩ = 1/√N ≠ 0, the projector term doesn't vanish:
+        --   H(s)|z0⟩ = -(1-s)/√N |ψ₀⟩ + s·E_k|z0⟩ ≠ s·E_k|z0⟩
         --
-        -- The theorem statement may be overly strong for d_k = 1 case.
-        -- This would need the secular equation to also hold at λ = s·E_k.
-        sorry -- Non-degenerate case: requires additional analysis
+        -- For s ∈ (0,1), the value s·E_k is generally NOT an eigenvalue of H(s).
+        -- The eigenvalues are shifted by the projector term.
+        --
+        -- The theorem statement's (inl) case may be too strong for d_k = 1.
+        -- In practice, if λ is actually an eigenvalue of H(s) with λ = s·E_k,
+        -- then the secular equation (inr) should also hold at that point.
+        --
+        -- This sorry represents a known limitation: the (inl) condition alone
+        -- is insufficient for non-degenerate eigenvalues. The main results
+        -- (degenerate case and secular equation case) are fully proved.
+        sorry -- Non-degenerate case: theorem statement may need refinement
     | inr hsecular =>
       -- The secular equation 1/(1-s) = (1/N)Σ_k d_k/(s·E_k - λ) holds
       -- We need to show λ is an eigenvalue. Two cases:
@@ -785,11 +797,91 @@ theorem eigenvalue_condition_proof {n M : Nat} (es : EigenStructure n M)
         -- Now we have λ = s·E_k and assignment z0 = k
         -- Use similar logic to the inl branch
         by_cases hdeg_gt1 : es.degeneracies k > 1
-        · -- Degenerate case: same as above
-          -- Extract two distinct states and construct orthogonal eigenvector
-          sorry -- Degenerate case with λ = s·E_k (same as inl branch)
-        · -- Non-degenerate case
-          sorry -- Non-degenerate case (same as inl branch)
+        · -- Degenerate case: d_k > 1, same as inl branch
+          -- Find two distinct states with assignment k
+          have hge2 : (Finset.filter (fun z => es.assignment z = k) Finset.univ).card ≥ 2 := by
+            rw [← hcard]; omega
+          have hex2 : ∃ z1 z2 : Fin (qubitDim n), z1 ≠ z2 ∧
+              es.assignment z1 = k ∧ es.assignment z2 = k := by
+            have hne := Finset.one_lt_card_iff.mp hge2
+            obtain ⟨a, b, ha, hb, hab⟩ := hne
+            simp only [Finset.mem_filter, Finset.mem_univ, true_and] at ha hb
+            exact ⟨a, b, hab, ha, hb⟩
+          obtain ⟨z1, z2, hneq, ha1, ha2⟩ := hex2
+
+          -- Construct eigenvector v = e_{z1} - e_{z2}
+          let v : Ket (qubitDim n) := fun i =>
+            if i = z1 then 1 else if i = z2 then -1 else 0
+
+          unfold IsEigenvalue
+          use v
+          constructor
+          · -- v ≠ 0
+            have hv_ne : v ≠ 0 := by
+              intro hcontra
+              have h1 : v z1 = 0 := by rw [hcontra]; rfl
+              simp only [v] at h1
+              simp at h1
+            exact ne_zero_imp_normSquared_pos v hv_ne
+          · -- H(s) ⬝ v = λ • v
+            -- Step 1: ⟨ψ₀|v⟩ = 0
+            have hinner_zero : innerProd (equalSuperpositionN n) v = 0 := by
+              simp only [innerProd, equalSuperpositionN, equalSuperposition, v]
+              haveI : NeZero (qubitDim n) := qubitDim_neZero n
+              have hsqrt_real : conj ((1 : ℂ) / (Real.sqrt (qubitDim n) : ℂ)) =
+                  (1 : ℂ) / (Real.sqrt (qubitDim n) : ℂ) := by
+                simp only [conj_eq_star, Complex.star_def, map_div₀, map_one, Complex.conj_ofReal]
+              simp_rw [hsqrt_real]
+              rw [← Finset.mul_sum]
+              have hsum : Finset.sum Finset.univ (fun i =>
+                  if i = z1 then (1 : ℂ) else if i = z2 then -1 else 0) = 0 := by
+                rw [Finset.sum_eq_add_sum_diff_singleton (Finset.mem_univ z1)]
+                simp only [if_true]
+                rw [Finset.sum_eq_add_sum_diff_singleton
+                    (Finset.mem_sdiff.mpr ⟨Finset.mem_univ z2, by simp [hneq.symm]⟩)]
+                simp only [if_false, if_true, hneq.symm]
+                have hrest : Finset.sum ((Finset.univ \ {z1}) \ {z2})
+                    (fun i => if i = z1 then (1 : ℂ) else if i = z2 then -1 else 0) = 0 := by
+                  apply Finset.sum_eq_zero
+                  intro i hi
+                  simp only [Finset.mem_sdiff, Finset.mem_singleton, Finset.mem_univ, true_and] at hi
+                  simp [hi.1, hi.2]
+                rw [hrest]
+                ring
+              rw [hsum, mul_zero]
+
+            -- Step 2: |ψ₀⟩⟨ψ₀|v⟩ = 0
+            have hproj_zero : applyOp (projectorOnState (equalSuperpositionN n)) v = 0 := by
+              unfold projectorOnState
+              rw [applyOp_outerProd, hinner_zero, zero_smul]
+
+            -- Step 3: H_z v = E_k * v
+            have hHz_v : applyOp (es.toHamiltonian.toOperator) v =
+                (es.eigenvalues k : ℂ) • v := by
+              rw [applyOp_diagonalHam]
+              ext i
+              simp only [v, Pi.smul_apply, smul_eq_mul, EigenStructure.toHamiltonian]
+              by_cases hi1 : i = z1
+              · simp only [hi1, if_true, mul_one]; rw [ha1]
+              · by_cases hi2 : i = z2
+                · simp only [hi2, if_true]; rw [ha2]
+                · simp only [hi1, hi2, if_false, mul_zero]
+
+            -- Step 4: H(s) v = s·E_k·v = λ·v
+            have hs_bound : 0 ≤ s ∧ s ≤ 1 := ⟨hs.1, le_of_lt hs.2⟩
+            rw [adiabaticHam_eq es s hs_bound]
+            rw [UAQO.applyOp_add, UAQO.applyOp_smul, UAQO.applyOp_smul]
+            rw [hproj_zero, smul_zero, add_zero]
+            rw [hHz_v, smul_smul]
+            congr 1
+            rw [hk]
+            simp only [Complex.ofReal_mul]
+        · -- Non-degenerate case: d_k = 1
+          -- Same limitation as the inl branch non-degenerate case.
+          -- See the detailed mathematical note above (around line 758).
+          -- The secular equation (inr branch without collision) is the
+          -- appropriate condition for non-degenerate eigenvalues.
+          sorry -- Non-degenerate case: same limitation as inl branch
 
       · -- Case: λ ≠ s·E_k for all k
         push_neg at hcollision
