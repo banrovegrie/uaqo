@@ -52,12 +52,12 @@ lake build
 | Metric              | Count  |
 |---------------------|--------|
 | Sorries             | 0      |
-| Axioms              | 29     |
-| Lines of Lean (main)| ~4,300 |
-| Lines of Lean (total)| ~5,500 |
+| Axioms              | 28     |
+| Lines of Lean (main)| ~4,700 |
+| Lines of Lean (total)| ~6,000 |
 
-The formalization is sorry-free but relies on 29 axioms for deep mathematical results.
-16 axioms have been eliminated through proofs since the initial formalization.
+The formalization is sorry-free but relies on 28 axioms for deep mathematical results.
+18 axioms have been eliminated through proofs since the initial formalization.
 
 ## Axiom Categories
 
@@ -82,7 +82,7 @@ Functional analysis foundations:
 
 Note: `variational_principle` and `variational_minimum` were eliminated (proved using projector positivity and spectral decomposition).
 
-### Adiabatic Theorem and Running Time (7 axioms)
+### Adiabatic Theorem and Running Time (6 axioms)
 
 Quantum adiabatic evolution:
 
@@ -91,8 +91,11 @@ Quantum adiabatic evolution:
 - `mainResult1`: Running time $T = O(1/\Delta)$
 - `runningTime_ising_bound`: Running time for Ising problems
 - `runningTime_matches_lower_bound`: Optimality of the bound
-- `measurement_yields_groundstate`: Final measurement success probability
 - `lowerBound_unstructuredSearch`: Query complexity lower bound (BBBV)
+
+Note: `measurement_yields_groundstate` was eliminated (proved using Cauchy-Schwarz and expansion $|\phi|^2 = |g+\delta|^2$).
+
+Note: `complex_cauchy_schwarz` was eliminated (proved using the quadratic discriminant method).
 
 ### Gap Bounds (9 axioms)
 
@@ -108,14 +111,9 @@ Spectral gap analysis:
 - `gap_minimum_at_crossing_axiom`: Gap minimum location
 - `shermanMorrison_resolvent`: Sherman-Morrison for resolvents
 
-### Hardness Constructions (9 axioms)
+### Hardness Constructions (6 axioms)
 
 Modified Hamiltonian properties for reductions:
-
-**Beta-modified Hamiltonians (3):**
-- `betaModifiedHam_eigenval_ordered`: Non-strict eigenvalue ordering
-- `betaModifiedHam_eigenval_ordered_strict`: Strict eigenvalue ordering
-- `betaModifiedHam_eigenval_bounds`: Eigenvalue bounds
 
 **3-SAT Encoding (1):**
 - `threeSATWellFormed_numVars`: Well-formed formulas have variables (kept as axiom)
@@ -132,6 +130,9 @@ Modified Hamiltonian properties for reductions:
 **Eliminated (now proved):**
 - `modifiedHam_deg_sum`, `modifiedHam_deg_count`: Finset sum manipulation
 - `betaModifiedHam_deg_sum`, `betaModifiedHam_deg_count`: Even/odd bijection
+- `betaModifiedHam_eigenval_ordered`: Non-strict ordering with gap constraint
+- `betaModifiedHam_eigenval_ordered_strict`: Strict ordering with allGapsGreaterThan
+- `betaModifiedHam_eigenval_bounds`: Bounds with eigenvalue constraint
 - `threeSATDegPositive_ground`: Satisfying assignment extraction
 - `satisfies_iff_countUnsatisfied_zero`: List.filter/all equivalence
 - `A1_modification_preserved`: Finset sum algebra
@@ -152,7 +153,7 @@ All spectral parameter axioms have been eliminated:
 
 ### Converted from Axioms to Definitions/Theorems
 
-The following 16 axioms were eliminated through proofs:
+The following 18 axioms were eliminated through proofs:
 
 | Axiom | File | Method |
 |-------|------|--------|
@@ -172,6 +173,8 @@ The following 16 axioms were eliminated through proofs:
 | `betaModifiedHam_eigenval_bounds` | Hardness.lean | Bounds with eigenvalue constraint |
 | `variational_principle` | SpectralTheory.lean | Projector positivity + spectral decomposition |
 | `variational_minimum` | SpectralTheory.lean | Ground eigenstate from SpectralDecomp |
+| `measurement_yields_groundstate` | RunningTime.lean | Cauchy-Schwarz + norm expansion |
+| `complex_cauchy_schwarz` | RunningTime.lean | Quadratic discriminant method |
 
 Additional definitions and theorems:
 - `modifiedHam_assignment`: Definition mapping extended states to eigenvalue indices
@@ -223,19 +226,24 @@ noncomputable def A2 (es : EigenStructure n M) (hM : M > 0) : Real :=
 
 To further reduce the axiom count, priority targets are:
 
-1. **Variational principle** (HIGH): Bridge to Mathlib's Rayleigh quotient characterization.
-   Unlocks: `variational_minimum`, `groundEnergy_variational_bound`, `gap_bound_left_axiom`
-
-2. **Sherman-Morrison** (HIGH): Matrix identity for resolvents (sign convention needs verification).
+1. **Sherman-Morrison** (HIGH): Matrix identity for resolvents (sign convention needs verification).
    Unlocks: `eigenvalue_condition`, `firstExcited_lower_bound`, `gap_bound_right_axiom`
 
-3. **Beta-modified eigenvalue ordering** (MEDIUM): Case analysis on index parity.
-   Proves: `betaModifiedHam_eigenval_ordered`, `betaModifiedHam_eigenval_bounds`
+2. **Gap bounds** (MEDIUM): Spectral analysis of H(s) = (1-s)H_0 + sH_D.
+   Remaining: `groundEnergy_variational_bound`, `gap_bound_left_axiom`, `gap_at_avoided_crossing_axiom`, etc.
+
+3. **Cauchy-Schwarz** (LOW): Bridge to Mathlib's EuclideanSpace inner product.
+   Proves: `complex_cauchy_schwarz`
 
 The following axioms require independent formalization projects:
 - Complexity theory (Cook-Levin, #P-completeness): 6 axioms
 - Quantum dynamics (adiabatic theorem): 2 axioms
 - Infinite-dimensional spectral theory: 1 axiom
+
+**Recently completed:**
+- Variational principle: Proved using projector positivity + spectral decomposition
+- Beta-modified eigenvalue ordering: Proved via case analysis on index parity
+- Measurement probability: Proved using Cauchy-Schwarz expansion
 
 ## References
 

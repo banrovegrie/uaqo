@@ -146,6 +146,66 @@ lemma applyOp_mul {N : Nat} (A B : Operator N) (v : Ket N) :
   ext j
   ring
 
+/-- Applying an outer product to a vector: (|u⟩⟨w|) |v⟩ = ⟨w|v⟩ |u⟩
+
+    This is the key identity for outer product manipulation.
+    Proof: ((|u⟩⟨w|)|v⟩)ᵢ = Σⱼ uᵢ·conj(wⱼ)·vⱼ = uᵢ · Σⱼ conj(wⱼ)·vⱼ = uᵢ · ⟨w|v⟩ -/
+lemma applyOp_outerProd {N : Nat} (u w v : Ket N) :
+    applyOp (outerProd u w) v = innerProd w v • u := by
+  funext i
+  simp only [applyOp, outerProd, Matrix.of_apply, innerProd, Pi.smul_apply, smul_eq_mul]
+  -- Goal: ∑ j, u i * conj (w j) * v j = (∑ j, conj (w j) * v j) * u i
+  have h : ∀ j, u i * conj (w j) * v j = u i * (conj (w j) * v j) := fun j => by ring
+  simp_rw [h]
+  rw [← Finset.mul_sum]
+  ring
+
+/-- Outer product multiplication: (|u⟩⟨v|)(|w⟩⟨x|) = ⟨v|w⟩ |u⟩⟨x|
+
+    Proof: ((|u⟩⟨v|)(|w⟩⟨x|))ᵢⱼ = Σₖ uᵢ·conj(vₖ)·wₖ·conj(xⱼ)
+                                 = uᵢ·conj(xⱼ)·Σₖ conj(vₖ)·wₖ
+                                 = ⟨v|w⟩ · uᵢ·conj(xⱼ) -/
+lemma outerProd_mul_outerProd {N : Nat} (u v w x : Ket N) :
+    outerProd u v * outerProd w x = innerProd v w • outerProd u x := by
+  ext i j
+  simp only [Matrix.mul_apply, outerProd, Matrix.of_apply, innerProd,
+             Matrix.smul_apply, smul_eq_mul]
+  -- Goal: ∑ k, u i * conj (v k) * (w k * conj (x j)) = (∑ k, conj (v k) * w k) * (u i * conj (x j))
+  have h : ∀ k, u i * conj (v k) * (w k * conj (x j)) = (u i * conj (x j)) * (conj (v k) * w k) :=
+    fun k => by ring
+  simp_rw [h]
+  rw [← Finset.mul_sum]
+  ring
+
+/-- Left multiplication with outer product: A(|u⟩⟨v|) = |Au⟩⟨v|
+
+    Proof: (A(|u⟩⟨v|))ᵢⱼ = Σₖ Aᵢₖ uₖ conj(vⱼ) = (Au)ᵢ conj(vⱼ) -/
+lemma mul_outerProd {N : Nat} (A : Operator N) (u v : Ket N) :
+    A * outerProd u v = outerProd (A ⬝ u) v := by
+  ext i j
+  simp only [Matrix.mul_apply, outerProd, Matrix.of_apply, applyOp]
+  -- Goal: ∑ k, A i k * (u k * conj (v j)) = (∑ k, A i k * u k) * conj (v j)
+  have h : ∀ k, A i k * (u k * conj (v j)) = (A i k * u k) * conj (v j) := fun k => by ring
+  simp_rw [h]
+  rw [← Finset.sum_mul]
+
+/-- Right multiplication with outer product: (|u⟩⟨v|)A = |u⟩⟨A†v|
+
+    Proof: ((|u⟩⟨v|)A)ᵢⱼ = Σₖ uᵢ conj(vₖ) Aₖⱼ = uᵢ · conj(Σₖ conj(Aₖⱼ) vₖ) = uᵢ conj((A†v)ⱼ) -/
+lemma outerProd_mul {N : Nat} (u v : Ket N) (A : Operator N) :
+    outerProd u v * A = outerProd u (dagger A ⬝ v) := by
+  ext i j
+  simp only [Matrix.mul_apply, outerProd, Matrix.of_apply, dagger, applyOp,
+             Matrix.conjTranspose_apply, conj_eq_star]
+  -- Goal: ∑ k, u i * star (v k) * A k j = u i * star (∑ k, star (A k j) * v k)
+  -- RHS = u i * ∑ k, star (star (A k j) * v k) = u i * ∑ k, A k j * star (v k)
+  rw [star_sum]
+  simp only [star_mul', star_star]
+  -- Now: ∑ k, u i * star (v k) * A k j = u i * ∑ k, A k j * star (v k)
+  have h : ∀ k, u i * star (v k) * A k j = u i * (A k j * star (v k)) := fun k => by ring
+  simp_rw [h]
+  rw [← Finset.mul_sum]
+
 /-- Adjoint property: ⟨v|A†|w⟩ = ⟨Av|w⟩
 
     This is the defining property of the adjoint operator. -/
@@ -169,6 +229,14 @@ lemma innerProd_dagger {N : Nat} (A : Operator N) (v w : Ket N) :
   ext i
   simp only [star_mul']
   ring
+
+/-- Adjoint property (swapped): ⟨A†w|v⟩ = ⟨w|Av⟩
+
+    This is the symmetric form of innerProd_dagger. -/
+lemma innerProd_dagger_swap {N : Nat} (A : Operator N) (w v : Ket N) :
+    innerProd (dagger A ⬝ w) v = innerProd w (A ⬝ v) := by
+  rw [innerProd_conj_symm, innerProd_dagger, innerProd_conj_symm]
+  exact star_star _
 
 /-- For Hermitian operators: ⟨v|A|w⟩ = ⟨Av|w⟩ -/
 lemma innerProd_hermitian {N : Nat} (A : Operator N) (hA : IsHermitian A) (v w : Ket N) :
@@ -277,6 +345,22 @@ noncomputable def resolvent {N : Nat} (A : Operator N) (gamma : Complex) : Opera
   (gamma • identityOp N - A)⁻¹
 
 notation "R_" A "(" gamma ")" => resolvent A gamma
+
+/-- The resolvent inverse property: (γI - A) * R_A(γ) = I when γI - A is invertible -/
+lemma resolvent_left_inv {N : Nat} (A : Operator N) (gamma : Complex)
+    (hInv : (gamma • identityOp N - A).det ≠ 0) :
+    (gamma • identityOp N - A) * resolvent A gamma = 1 := by
+  simp only [resolvent]
+  have hUnit : IsUnit (gamma • identityOp N - A).det := isUnit_iff_ne_zero.mpr hInv
+  exact Matrix.mul_nonsing_inv _ hUnit
+
+/-- The resolvent inverse property: R_A(γ) * (γI - A) = I when γI - A is invertible -/
+lemma resolvent_right_inv {N : Nat} (A : Operator N) (gamma : Complex)
+    (hInv : (gamma • identityOp N - A).det ≠ 0) :
+    resolvent A gamma * (gamma • identityOp N - A) = 1 := by
+  simp only [resolvent]
+  have hUnit : IsUnit (gamma • identityOp N - A).det := isUnit_iff_ne_zero.mpr hInv
+  exact Matrix.nonsing_inv_mul _ hUnit
 
 /-- For a normal operator, ‖R_A(γ)‖⁻¹ gives the distance from γ to spectrum of A -/
 -- This is a key fact used in the paper (Eq. 2.1)

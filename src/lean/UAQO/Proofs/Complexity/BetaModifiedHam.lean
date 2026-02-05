@@ -341,9 +341,13 @@ theorem betaModifiedHam_eigenval_ordered_strict_proof {n M : Nat} (es : EigenStr
       simp only [add_zero]
       exact es.eigenval_ordered ⟨i.val / 2, horigI⟩ ⟨j.val / 2, horigJ⟩ hOrigLt
 
-/-- Eigenvalue bounds in beta-modified Hamiltonian. -/
+/-- Eigenvalue bounds in beta-modified Hamiltonian.
+
+    Note: This requires the hypothesis that all eigenvalues are <= 1 - beta/2,
+    which ensures the upper level eigenvalues E_k + beta/2 don't exceed 1. -/
 theorem betaModifiedHam_eigenval_bounds_proof {n M : Nat} (es : EigenStructure n M)
-    (beta : Real) (hbeta : 0 < beta ∧ beta < 1) (hM : M > 0) :
+    (beta : Real) (hbeta : 0 < beta ∧ beta < 1) (hM : M > 0)
+    (hEigBound : ∀ k : Fin M, es.eigenvalues k <= 1 - beta / 2) :
     ∀ k : Fin (2 * M),
       let origIdx := k.val / 2
       let isUpperLevel := k.val % 2 = 1
@@ -361,11 +365,11 @@ theorem betaModifiedHam_eigenval_bounds_proof {n M : Nat} (es : EigenStructure n
     have hE_nonneg := (es.eigenval_bounds ⟨k.val / 2, horigK⟩).1
     split_ifs <;> linarith [hbeta.1]
   · -- Upper bound: E_origK + (0 or beta/2) <= 1
-    have hE_le_one := (es.eigenval_bounds ⟨k.val / 2, horigK⟩).2
+    have hE_bound := hEigBound ⟨k.val / 2, horigK⟩
     split_ifs with h
-    · -- Upper level: need E_origK + beta/2 <= 1, requires E_origK <= 1 - beta/2
-      sorry
-    · -- Lower level: E_origK + 0 <= 1
+    · -- Upper level: E_origK + beta/2 <= 1 since E_origK <= 1 - beta/2
       linarith
+    · -- Lower level: E_origK + 0 <= 1 - beta/2 <= 1
+      linarith [hbeta.1]
 
 end UAQO.Complexity.Proofs

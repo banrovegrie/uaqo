@@ -221,17 +221,148 @@ noncomputable def gammaLine {n M : Nat} (es : EigenStructure n M)
 /-- Sherman-Morrison formula for resolvent (rank-1 update).
 
     For a rank-1 perturbation A + |u⟩⟨v|, the resolvent satisfies:
-    (γI - A - |u⟩⟨v|)⁻¹ = (γI - A)⁻¹ - (γI - A)⁻¹|u⟩⟨v|(γI - A)⁻¹ / (1 + ⟨v|(γI - A)⁻¹|u⟩)
+    (γI - A - |u⟩⟨v|)⁻¹ = (γI - A)⁻¹ + (γI - A)⁻¹|u⟩⟨v|(γI - A)⁻¹ / (1 - ⟨v|(γI - A)⁻¹|u⟩)
 
-    This is a standard result in linear algebra. -/
-axiom shermanMorrison_resolvent {n : Nat} (_A : NQubitOperator n)
-    (_u _v : NQubitState n) (_gamma : Complex)
-    (_hInv : ((_gamma • identityOp (qubitDim n) - _A).det ≠ 0))
-    (_hDenom : 1 + innerProd _v (applyOp (resolvent _A _gamma) _u) ≠ 0) :
-    resolvent (_A + outerProd _u _v) _gamma =
-    resolvent _A _gamma -
-    (1 / (1 + innerProd _v (applyOp (resolvent _A _gamma) _u))) •
-    outerProd (applyOp (resolvent _A _gamma) _u) (applyOp ((resolvent _A _gamma)†) _v)
+    Derivation: Let B = γI - A, R = B⁻¹. Then:
+    (B - uv†)⁻¹ = (B + (-u)v†)⁻¹ = B⁻¹ - B⁻¹(-u)v†B⁻¹/(1 + v†B⁻¹(-u))
+                = B⁻¹ + B⁻¹uv†B⁻¹/(1 - v†B⁻¹u)
+    And B⁻¹uv†B⁻¹ = outerProd(Ru, R†v), v†B⁻¹u = ⟨v|R|u⟩.
+
+    This is a standard result in linear algebra (special case of Woodbury identity).
+
+    Proof: We verify by showing RHS * (B - uv†) = I where B = γI - A.
+    Let R = B⁻¹, α = 1/(1 - ⟨v|Ru⟩).
+    RHS * (B - uv†) = (R + α|Ru⟩⟨R†v|)(B - uv†)
+                    = RB - R·uv† + αB|Ru⟩⟨R†v| - α|Ru⟩⟨R†v|·uv†
+                    = I - |Ru⟩⟨v| + α|Ru⟩⟨v| - α⟨R†v|u⟩|Ru⟩⟨v|
+                    [using RB=I, R·uv†=|Ru⟩⟨v|, B|Ru⟩=|u⟩, |Ru⟩⟨R†v|·uv†=⟨R†v|u⟩|Ru⟩⟨v|]
+                    = I + (α - 1 - α⟨R†v|u⟩)|Ru⟩⟨v|
+
+    Now ⟨R†v|u⟩ = conj(⟨u|R†v⟩) = conj(⟨Ru|v⟩) = conj(conj(⟨v|Ru⟩)) = ⟨v|Ru⟩
+    So: α - 1 - α⟨v|Ru⟩ = α(1 - ⟨v|Ru⟩) - 1 = 1 - 1 = 0  ✓ -/
+theorem shermanMorrison_resolvent {n : Nat} (A : NQubitOperator n)
+    (u v : NQubitState n) (gamma : Complex)
+    (hInv : ((gamma • identityOp (qubitDim n) - A).det ≠ 0))
+    (hDenom : 1 - innerProd v (applyOp (resolvent A gamma) u) ≠ 0) :
+    resolvent (A + outerProd u v) gamma =
+    resolvent A gamma +
+    (1 / (1 - innerProd v (applyOp (resolvent A gamma) u))) •
+    outerProd (applyOp (resolvent A gamma) u) (applyOp ((resolvent A gamma)†) v) := by
+  -- Let B = γI - A, R = B⁻¹ = resolvent A gamma
+  let B := gamma • identityOp (qubitDim n) - A
+  let R := resolvent A gamma
+  let α := 1 / (1 - innerProd v (applyOp R u))
+  -- The RHS is R + α • outerProd(Ru)(R†v)
+  let RHS := R + α • outerProd (applyOp R u) (applyOp (R†) v)
+  -- We need to show (B - outerProd u v)⁻¹ = RHS
+  -- By Matrix.inv_eq_left_inv, it suffices to show RHS * (B - outerProd u v) = 1
+  have hB_det : B.det ≠ 0 := hInv
+  -- The resolvent of (A + outerProd u v) is ((γI - A) - outerProd u v)⁻¹ = (B - outerProd u v)⁻¹
+  have h_res : resolvent (A + outerProd u v) gamma = (B - outerProd u v)⁻¹ := by
+    simp only [resolvent, B]
+    congr 1
+    simp only [sub_sub]
+  rw [h_res]
+  -- Now show (B - outerProd u v)⁻¹ = RHS by verification
+  -- By Matrix.inv_eq_left_inv, if RHS * (B - outerProd u v) = 1, then (B - outerProd u v)⁻¹ = RHS
+  have hverify : RHS * (B - outerProd u v) = 1 := by
+    -- Key algebraic identity: (R + α|Ru⟩⟨R†v|) * (B - |u⟩⟨v|) = I
+    -- Expanding: RB - R|u⟩⟨v| + α|Ru⟩⟨R†v|B - α|Ru⟩⟨R†v||u⟩⟨v|
+    -- = I - |Ru⟩⟨v| + α|Ru⟩⟨v| - α⟨R†v|u⟩|Ru⟩⟨v|      [using RB=I, |Ru⟩⟨R†v|B=|Ru⟩⟨v|]
+    -- = I + (-1 + α - α⟨R†v|u⟩)|Ru⟩⟨v|
+    -- = I + (-1 + α(1 - ⟨v|Ru⟩))|Ru⟩⟨v|                  [using ⟨R†v|u⟩=⟨v|Ru⟩]
+    -- = I + 0 = I                                         [using α = 1/(1-⟨v|Ru⟩)]
+    -- Step 1: R*B = I (resolvent property)
+    have hRB : R * B = 1 := resolvent_right_inv A gamma hInv
+    -- Step 2: R*|u⟩⟨v| = |Ru⟩⟨v| (by mul_outerProd)
+    have hR_outer : R * outerProd u v = outerProd (R ⬝ u) v := mul_outerProd R u v
+    -- Step 3: |Ru⟩⟨R†v|*B = |Ru⟩⟨B†(R†v)| = |Ru⟩⟨v| since B†R† = (RB)† = I
+    -- First, outerProd_mul: |w⟩⟨x|*M = |w⟩⟨M†x|
+    have h_outer_B_eq : outerProd (R ⬝ u) (R† ⬝ v) * B =
+        outerProd (R ⬝ u) (B† ⬝ (R† ⬝ v)) := outerProd_mul _ _ B
+    -- Now B†R† = (RB)† = I† = I
+    have hBdagRdag : B† * R† = 1 := by
+      calc B† * R† = (R * B)† := (Matrix.conjTranspose_mul R B).symm
+        _ = (1 : Operator (qubitDim n))† := by rw [hRB]
+        _ = 1 := Matrix.conjTranspose_one
+    -- So B† ⬝ (R† ⬝ v) = (B† * R†) ⬝ v = I ⬝ v = v
+    have hBdag_Rdag_v : B† ⬝ (R† ⬝ v) = v := by
+      calc B† ⬝ (R† ⬝ v) = (B† * R†) ⬝ v := (applyOp_mul B† R† v).symm
+        _ = (1 : Operator (qubitDim n)) ⬝ v := by rw [hBdagRdag]
+        _ = v := by
+          funext i
+          simp only [applyOp, Matrix.one_apply]
+          rw [Finset.sum_eq_single i]
+          · simp
+          · intro j _ hji; simp [Ne.symm hji]
+          · intro hi; exact absurd (Finset.mem_univ i) hi
+    have h_outer_B : outerProd (R ⬝ u) (R† ⬝ v) * B = outerProd (R ⬝ u) v := by
+      rw [h_outer_B_eq, hBdag_Rdag_v]
+    -- Step 4: |Ru⟩⟨R†v||u⟩⟨v| = ⟨R†v|u⟩|Ru⟩⟨v| (by outerProd_mul_outerProd)
+    have h_outer_outer : outerProd (R ⬝ u) (R† ⬝ v) * outerProd u v =
+        innerProd (R† ⬝ v) u • outerProd (R ⬝ u) v := outerProd_mul_outerProd _ _ _ _
+    -- Step 5: ⟨R†v|u⟩ = ⟨v|Ru⟩ by innerProd_dagger_swap
+    have h_inner_swap : innerProd (R† ⬝ v) u = innerProd v (R ⬝ u) :=
+      innerProd_dagger_swap R v u
+    -- Now combine everything: RHS * (B - |u⟩⟨v|)
+    -- = (R + α • |Ru⟩⟨R†v|) * (B - |u⟩⟨v|)
+    -- = R*B - R*|u⟩⟨v| + α•|Ru⟩⟨R†v|*B - α•|Ru⟩⟨R†v|*|u⟩⟨v|
+    -- Direct computation expanding RHS
+    calc RHS * (B - outerProd u v)
+        = (R + α • outerProd (R ⬝ u) (R† ⬝ v)) * (B - outerProd u v) := rfl
+      _ = R * (B - outerProd u v) + (α • outerProd (R ⬝ u) (R† ⬝ v)) * (B - outerProd u v) := by
+          rw [add_mul]
+      _ = (R * B - R * outerProd u v) + (α • outerProd (R ⬝ u) (R† ⬝ v)) * (B - outerProd u v) := by
+          rw [mul_sub]
+      _ = (1 - outerProd (R ⬝ u) v) + (α • outerProd (R ⬝ u) (R† ⬝ v)) * (B - outerProd u v) := by
+          rw [hRB, hR_outer]
+      _ = (1 - outerProd (R ⬝ u) v) +
+          ((α • outerProd (R ⬝ u) (R† ⬝ v)) * B - (α • outerProd (R ⬝ u) (R† ⬝ v)) * outerProd u v) := by
+          rw [mul_sub]
+      _ = (1 - outerProd (R ⬝ u) v) +
+          (α • (outerProd (R ⬝ u) (R† ⬝ v) * B) - α • (outerProd (R ⬝ u) (R† ⬝ v) * outerProd u v)) := by
+          rw [smul_mul_assoc, smul_mul_assoc]
+      _ = (1 - outerProd (R ⬝ u) v) +
+          (α • outerProd (R ⬝ u) v - α • (innerProd (R† ⬝ v) u • outerProd (R ⬝ u) v)) := by
+          rw [h_outer_B, h_outer_outer]
+      _ = (1 - outerProd (R ⬝ u) v) +
+          (α • outerProd (R ⬝ u) v - (α * innerProd (R† ⬝ v) u) • outerProd (R ⬝ u) v) := by
+          rw [smul_smul]
+      _ = (1 - outerProd (R ⬝ u) v) +
+          (α • outerProd (R ⬝ u) v - (α * innerProd v (R ⬝ u)) • outerProd (R ⬝ u) v) := by
+          rw [h_inner_swap]
+      _ = 1 + ((-1 : Complex) + α - α * innerProd v (R ⬝ u)) • outerProd (R ⬝ u) v := by
+          -- Factor out the outerProd
+          ext i j
+          simp only [Matrix.add_apply, Matrix.sub_apply, Matrix.one_apply, Matrix.smul_apply,
+                     smul_eq_mul]
+          ring
+      _ = 1 := by
+          -- The coefficient is: -1 + α - α*⟨v|Ru⟩ = -1 + α(1 - ⟨v|Ru⟩) = -1 + 1 = 0
+          have hcoeff : (-1 : Complex) + α - α * innerProd v (R ⬝ u) = 0 := by
+            simp only [α]
+            -- Goal: -1 + 1/(1 - ⟨v|Ru⟩) - 1/(1 - ⟨v|Ru⟩) * ⟨v|Ru⟩ = 0
+            have hw : (1 - innerProd v (R ⬝ u)) ≠ 0 := hDenom
+            -- Convert 1/x to x⁻¹ for easier manipulation
+            simp only [one_div]
+            have h : (1 - innerProd v (R ⬝ u))⁻¹ -
+                (1 - innerProd v (R ⬝ u))⁻¹ * innerProd v (R ⬝ u) = 1 := by
+              calc (1 - innerProd v (R ⬝ u))⁻¹ -
+                  (1 - innerProd v (R ⬝ u))⁻¹ * innerProd v (R ⬝ u)
+                  = (1 - innerProd v (R ⬝ u))⁻¹ * (1 - innerProd v (R ⬝ u)) := by ring
+                _ = 1 := inv_mul_cancel₀ hw
+            calc (-1 : Complex) + (1 - innerProd v (R ⬝ u))⁻¹ -
+                (1 - innerProd v (R ⬝ u))⁻¹ * innerProd v (R ⬝ u)
+                = -1 + ((1 - innerProd v (R ⬝ u))⁻¹ -
+                    (1 - innerProd v (R ⬝ u))⁻¹ * innerProd v (R ⬝ u)) := by ring
+              _ = -1 + 1 := by rw [h]
+              _ = 0 := by ring
+          rw [hcoeff, zero_smul, add_zero]
+  -- Use Matrix.inv_eq_left_inv: if RHS * X = 1 then X⁻¹ = RHS
+  have hresult : (B - outerProd u v)⁻¹ = RHS := Matrix.inv_eq_left_inv hverify
+  -- Now RHS is exactly our claimed formula
+  simp only [RHS, R, α] at hresult
+  exact hresult
 
 /-- Axiom: Gap bound to the right of avoided crossing.
 

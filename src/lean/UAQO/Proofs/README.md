@@ -176,17 +176,17 @@ To eliminate an axiom completely:
 
 | Category | Count |
 |----------|-------|
-| Eliminated axioms (fully proved) | 16 |
+| Eliminated axioms (fully proved) | 18 |
 | Axioms with formulation fixes | 4 |
 | Partial proofs in Proofs/ directory | 1 |
 | External foundations (kept as axioms) | 9 |
-| Remaining provable axioms | ~20 |
-| **Total axioms in main files** | **29** |
+| Remaining provable axioms | ~19 |
+| **Total axioms in main files** | **28** |
 | **Sorries in main files** | **0** |
-| **Lines of Lean (main)** | **~4,300** |
-| **Lines of Lean (total)** | **~5,500** |
+| **Lines of Lean (main)** | **~4,700** |
+| **Lines of Lean (total)** | **~6,000** |
 
-### Recently Eliminated Axioms (16 total)
+### Recently Eliminated Axioms (18 total)
 
 | Axiom | File | Method |
 |-------|------|--------|
@@ -206,6 +206,8 @@ To eliminate an axiom completely:
 | `lagrange_interpolation` | SharpP.lean | Mathlib.Lagrange + uniqueness proof |
 | `betaModifiedHam_deg_sum` | Hardness.lean | Even/odd bijection over Fin(2*M) |
 | `betaModifiedHam_deg_count` | Hardness.lean | Finset filter equality |
+| `measurement_yields_groundstate` | RunningTime.lean | Cauchy-Schwarz + norm expansion |
+| `complex_cauchy_schwarz` | RunningTime.lean | Quadratic discriminant method |
 
 ### Remaining External Foundations (9 axioms - keep as axioms)
 
@@ -224,16 +226,15 @@ These require independent formalization projects:
 | `avoidedCrossing_bound` | Missing hypothesis | Added `spectralConditionForBounds` |
 | `betaModifiedHam_eigenval_ordered_strict` | Used first gap only | Changed to `allGapsGreaterThan` |
 | `betaModifiedHam_eigenval_ordered` | Missing gap constraint | Added `allGapsAtLeast es (beta/2)` |
+| `shermanMorrison_resolvent` | Sign error in formula | Fixed: `+` and `(1 - ⟨v|R|u⟩)` instead of `-` and `(1 + ⟨v|R|u⟩)` |
 
 ### Remaining Provable Axioms (by category)
 
-**Complexity (8 axioms):**
+**Complexity (6 axioms):**
 - `mainResult2`, `A1_approx_implies_P_eq_NP` - Main P vs NP implications
-- `betaModifiedHam_eigenval_ordered_strict` - Strict ordering (proof complex)
-- `betaModifiedHam_eigenval_bounds` - Needs eigenvalue constraint
 - `A1_polynomial_in_beta` - Polynomial structure
 - `mainResult3`, `mainResult3_robust` - #P-hardness results
-- `threeSATWellFormed_numVars` - Input constraint
+- `threeSATWellFormed_numVars` - Input constraint (keep as axiom)
 
 **Adiabatic (5 axioms):**
 - `mainResult1` - Running time theorem

@@ -5,6 +5,7 @@
   - shermanMorrison_resolvent
 -/
 import UAQO.Spectral.GapBounds
+import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 
 namespace UAQO.Proofs.Spectral
 
@@ -12,75 +13,56 @@ open UAQO
 
 /-- Sherman-Morrison formula for matrix inverse under rank-1 update.
 
-    For an invertible matrix B and vectors u, v, if (1 + v^T B^{-1} u) ≠ 0, then:
-    (B + u v^T)^{-1} = B^{-1} - (B^{-1} u)(v^T B^{-1}) / (1 + v^T B^{-1} u)
+    For an invertible matrix B and vectors u, v, if (1 - v† B⁻¹ u) ≠ 0, then:
+    (B - u v†)⁻¹ = B⁻¹ + (B⁻¹ u)(v† B⁻¹) / (1 - v† B⁻¹ u)
 
-    This is a fundamental result in linear algebra. The proof verifies the identity
-    by showing (B + uv^T)(proposed inverse) = I.
+    This is a fundamental result in linear algebra.
 
-    For the resolvent case with A a Hermitian operator:
+    For the resolvent case:
     - B = γI - A (assumed invertible, i.e., γ not in spectrum of A)
-    - The rank-1 perturbation gives H(s) = -(1-s)|ψ₀⟩⟨ψ₀| + sH_z
+    - resolvent A γ = B⁻¹
+    - The formula becomes:
+      resolvent (A + uv†) γ = (B - uv†)⁻¹ = B⁻¹ + B⁻¹ u v† B⁻¹ / (1 - v† B⁻¹ u)
+                            = R + (1/(1 - ⟨v|R|u⟩)) |Ru⟩⟨R†v|
+
+    Note: B⁻¹ u v† B⁻¹ = outerProd(B⁻¹ u, (B⁻¹)† v) because:
+    (B⁻¹ u v† B⁻¹)_{ij} = (B⁻¹ u)_i * (v† B⁻¹)_j = (B⁻¹ u)_i * conj((B†⁻¹ v)_j)
+
+    Derivation using Woodbury (for B + (-u)v† = B - uv†):
+    (B - uv†)⁻¹ = (B + (-u)v†)⁻¹
+                = B⁻¹ - B⁻¹(-u)v†B⁻¹/(1 + v†B⁻¹(-u))
+                = B⁻¹ + B⁻¹uv†B⁻¹/(1 - v†B⁻¹u) ✓
 -/
 theorem shermanMorrison_resolvent_proof {n : Nat} (A : NQubitOperator n)
     (u v : NQubitState n) (gamma : Complex)
     (hInv : ((gamma • identityOp (qubitDim n) - A).det ≠ 0))
-    (hDenom : 1 + innerProd v (applyOp (resolvent A gamma) u) ≠ 0) :
+    (hDenom : 1 - innerProd v (applyOp (resolvent A gamma) u) ≠ 0) :
     resolvent (A + outerProd u v) gamma =
-    resolvent A gamma -
-    (1 / (1 + innerProd v (applyOp (resolvent A gamma) u))) •
+    resolvent A gamma +
+    (1 / (1 - innerProd v (applyOp (resolvent A gamma) u))) •
     outerProd (applyOp (resolvent A gamma) u) (applyOp ((resolvent A gamma)†) v) := by
-  -- The proof proceeds by verifying the matrix identity:
-  -- (γI - A - uv^T) * (proposed RHS) = I
+  -- The proof proceeds by verification:
+  -- Show (B - uv†) * (proposed RHS) = I where B = γI - A
   --
-  -- Let R = (γI - A)^{-1} be the resolvent of A
-  -- Let B = γI - A
-  -- We need: (B - uv^T)(R - R u v^T R / (1 + v^T R u)) = I
+  -- Let R = B⁻¹ = resolvent A gamma
+  -- RHS = R + α • outerProd(Ru, R†v) where α = 1/(1 - ⟨v|Ru⟩)
   --
-  -- Expanding:
-  -- = BR - B R u v^T R / (1 + v^T R u) - uv^T R + uv^T R u v^T R / (1 + v^T R u)
-  -- = I - u v^T R / (1 + v^T R u) - uv^T R + (v^T R u) uv^T R / (1 + v^T R u)
-  --   [using BR = I]
-  -- = I - uv^T R [1/(1 + v^T R u) + 1 - (v^T R u)/(1 + v^T R u)]
-  -- = I - uv^T R [(1 + (1 + v^T R u) - v^T R u) / (1 + v^T R u)]
-  -- = I - uv^T R [2 / (1 + v^T R u)]
+  -- (B - uv†)(R + α|Ru⟩⟨R†v|) = BR + αB|Ru⟩⟨R†v| - uv†R - αuv†|Ru⟩⟨R†v|
+  --                           = I + α|u⟩⟨R†v| - |u⟩⟨R†v| - α⟨v|Ru⟩|u⟩⟨R†v|
+  --                           [using BR = I, uv†R = |u⟩⟨v|R = |u⟩⟨R†v|]
+  --                           = I + (α - 1 - α⟨v|Ru⟩)|u⟩⟨R†v|
+  --                           = I + (α(1 - ⟨v|Ru⟩) - 1)|u⟩⟨R†v|
+  --                           = I + (1 - 1)|u⟩⟨R†v|  [since α = 1/(1 - ⟨v|Ru⟩)]
+  --                           = I ✓
   --
-  -- Hmm, that doesn't simplify to I. Let me recalculate...
+  -- The full formal proof requires:
+  -- 1. Matrix multiplication associativity lemmas
+  -- 2. Resolvent inverse property: B * R = I
+  -- 3. outerProd manipulation lemmas
+  -- 4. Scalar distribution lemmas
   --
-  -- Actually the formula should be:
-  -- (B + uv^T)^{-1} = B^{-1} - B^{-1} u v^T B^{-1} / (1 + v^T B^{-1} u)
-  --
-  -- But our perturbation is A + outerProd u v, and resolvent is (γI - (A + uv^T))^{-1}
-  -- So B + uv^T = γI - A - uv^T (note the sign!)
-  --
-  -- The standard Sherman-Morrison is for (B + uv^T)^{-1}
-  -- We have (γI - A - uv^T)^{-1} = ((γI - A) - uv^T)^{-1} = (B - uv^T)^{-1}
-  --
-  -- For (B - uv^T)^{-1}, Sherman-Morrison gives:
-  -- (B - uv^T)^{-1} = B^{-1} + B^{-1} u v^T B^{-1} / (1 - v^T B^{-1} u)
-  --
-  -- This is different from what's stated in the axiom. Let me check the axiom again...
-  --
-  -- The axiom says:
-  -- resolvent (A + outerProd u v) gamma = resolvent A gamma - ...
-  --
-  -- resolvent (A + uv^T) gamma = (γI - (A + uv^T))^{-1} = (γI - A - uv^T)^{-1}
-  --
-  -- Let R = (γI - A)^{-1} = resolvent A gamma
-  -- (γI - A - uv^T)^{-1} = ((γI - A)(I - R uv^T))^{-1}
-  --                      = (I - R uv^T)^{-1} R
-  --
-  -- By Woodbury: (I - R uv^T)^{-1} = I + R u v^T / (1 - v^T R u)
-  --
-  -- So: (γI - A - uv^T)^{-1} = R + R u v^T R / (1 - v^T R u)
-  --
-  -- Comparing to axiom: R - (1/(1 + v^T R u)) R u v^T R^†
-  --
-  -- There's a sign difference and also R vs R^†.
-  -- The axiom formulation may have errors or use a different convention.
-  -- For Hermitian A, R^† relates to R in specific ways.
-  --
-  -- For now, we mark as sorry as the exact formula needs verification.
+  -- For now, we leave this as sorry since the algebraic verification
+  -- while straightforward is tedious in Lean.
   sorry
 
 end UAQO.Proofs.Spectral
