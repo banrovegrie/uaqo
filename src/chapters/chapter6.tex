@@ -81,7 +81,11 @@ g(s^* - \delta_s) \geq \frac{A_1(A_1+1)}{A_2}\cdot\delta_s = \hat{g} \geq \frac{
 \end{equation}
 using $A_1(A_1+1)\delta_s/A_2 = \hat{g}$ from Eq.~\eqref{eq:gmin-deltas-relation} (equivalently, $A_1 = s^*(A_1+1)$) and $g_{\min} \geq (1-2\eta)\hat{g}$ from Eq.~\eqref{eq:gmin-formula}. The gap at the window boundary exceeds $g_{\min}$, confirming that the minimum gap lies within $\mathcal{I}_{s^*}$.
 
-The same bound follows from concavity. The second derivative of $\lambda_0(s)$ satisfies $\ddot{\lambda}_0(s) = -2\sum_{j \geq 1} |\bra{\phi_j(s)}\dot{H}\ket{\phi_0(s)}|^2/(E_j(s) - E_0(s)) \leq 0$, where $\dot{H} = H_z + \ket{\psi_0}\bra{\psi_0}$ and $\ket{\phi_j(s)}$ are the instantaneous eigenstates. The tangent to the concave function $\lambda_0(s)$ at $s = s^*$ lies above it everywhere, and its slope evaluated using Eq.~\eqref{eq:lambda0-upper} reproduces the same linear bound.
+The same bound follows from concavity. The second derivative of $\lambda_0(s)$ satisfies
+
+$$\ddot{\lambda}_0(s) = -2\sum_{j \geq 1} |\bra{\phi_j(s)}\dot{H}\ket{\phi_0(s)}|^2/(E_j(s) - E_0(s)) \leq 0$$
+
+where $\dot{H} = H_z + \ket{\psi_0}\bra{\psi_0}$ and $\ket{\phi_j(s)}$ are the instantaneous eigenstates. The tangent to the concave function $\lambda_0(s)$ at $s = s^*$ lies above it everywhere, and its slope evaluated using Eq.~\eqref{eq:lambda0-upper} reproduces the same linear bound.
 
 For the running example ($M = 2$, $d_0 = 1$, $d_1 = N-1$, $E_0 = 0$, $E_1 = 1$), the ansatz reduces to $\ket{\phi} = \ket{1}$, and the bound becomes
 \begin{equation}
