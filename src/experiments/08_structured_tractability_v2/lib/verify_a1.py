@@ -3,6 +3,7 @@ Numerical verification for Experiment 08: Structured Tractability.
 Verifies all quantitative claims in proof.md.
 """
 
+import math
 from math import comb, log2
 from fractions import Fraction
 
@@ -95,10 +96,15 @@ def main():
         M_max = n**2       # poly(n) levels
         dk_max = n**2       # poly(n) degeneracies
         non_ground = (M_max - 1) * dk_max
+        if non_ground >= N:
+            # For small n, a coarse poly(n)^2 upper bound can exceed N=2^n.
+            # The Proposition 2 statement is asymptotic: for sufficiently large n,
+            # poly(n)^2 << 2^n and the bound becomes meaningful.
+            print(f"  n={n:3d}: N=2^{n}, non-ground <= {non_ground} (bound trivial)")
+            continue
         d0_lower = N - non_ground
         ratio = d0_lower / N
-        print(f"  n={n:3d}: N=2^{n}, non-ground <= {non_ground}, "
-              f"d0/N >= {ratio:.10f}")
+        print(f"  n={n:3d}: N=2^{n}, non-ground <= {non_ground}, d0/N >= {ratio:.10f}")
 
     # --- Hamming distance ---
     print("\n--- Proposition 7: Hamming distance ---")
@@ -126,6 +132,35 @@ def main():
         a1 = a1_hamming(n)
         ratio = float(a1) * n / 2
         print(f"  n={n:4d}: A_1*n/2 = {ratio:.4f} (should -> 1)")
+
+    # --- Proposition 10: truncation/anchoring bound sanity check ---
+    print("\n--- Proposition 10: anchored truncation bound sanity check (Hamming) ---")
+    n = 12
+    N = 2**n
+    eps = 0.01
+    ln = math.log(1.0 / eps)
+    diff = 0.0
+    for k in range(1, n + 1):
+        diff += comb(n, k) * (eps**k) * (1.0 / k + ln)
+    diff /= N
+    bound = eps * (1.0 + ln)
+    print(f"  n={n}, eps={eps}: A_1 - A_1^(eps) = {diff:.6e}, bound = {bound:.6e}")
+    assert diff >= -1e-12, "Expected A_1 - A_1^(eps) >= 0"
+    assert diff <= bound + 1e-12, "Proposition 10 bound violated (numerics)"
+    print("  [PASS] bound holds")
+
+    # --- Proposition 11: Laplace anchored proxy bound sanity check ---
+    print("\n--- Proposition 11: Laplace anchored proxy bound sanity check (Hamming) ---")
+    B = 3.0
+    diff = 0.0
+    for k in range(1, n + 1):
+        diff += comb(n, k) * math.exp(-B * k) * (1.0 / k + B)
+    diff /= N
+    bound = math.exp(-B) * (1.0 + B)
+    print(f"  n={n}, B={B}: A_1 - A_1^[B] = {diff:.6e}, bound = {bound:.6e}")
+    assert diff >= -1e-12, "Expected A_1 - A_1^[B] >= 0"
+    assert diff <= bound + 1e-12, "Proposition 11 bound violated (numerics)"
+    print("  [PASS] bound holds")
 
     # --- Proposition 5: Grover sweet spot ---
     print("\n--- Proposition 5: Grover sweet spot for various N ---")

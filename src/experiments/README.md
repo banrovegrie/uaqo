@@ -18,6 +18,7 @@ Each experiment lives in a numbered directory `0x_name/` with standardized conte
 0x_experiment_name/
 +-- main.md              # Overview: problem, conjectures, status, references
 +-- proof.md             # Full mathematical proof (the main deliverable)
++-- todo.md              # (Optional) Plans, progress log, and consolidated findings
 +-- lib/                 # Supporting code (Python, numerical experiments)
 |   +-- *.py
 |   +-- requirements.txt
@@ -34,6 +35,8 @@ Each experiment lives in a numbered directory `0x_name/` with standardized conte
 **File purposes**:
 - `main.md`: Overview - problem statement, conjectures, approach, status, references. Navigable summary.
 - `proof.md`: The actual work - full theorems with complete proofs. This becomes the thesis chapter.
+- `todo.md` (optional): Working scratchpad for ongoing work; keep all open threads in one place.
+  Recommended section structure: `## Plans`, `## Progress`, `## Findings`.
 - `lib/`: Numerical validation, computational experiments, figures
 - `lean/`: End-to-end complete formal verification (optional)
 - `notes/`: Literature surveys, failed attempts, scratchpad, intermediate drafts

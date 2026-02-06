@@ -22,6 +22,21 @@ The paper proves hardness for general Hamiltonians but says:
 This experiment resolves the three natural conjectures about the tractability boundary
 and identifies the precise structural property (spectral complexity) that controls it.
 
+**What is new vs the paper and Guo–An (2025).**
+- The paper’s hardness results show $A_1$ is hard in the worst case. This experiment
+  adds *positive structure*: $A_1$ can be computed exactly for bounded-treewidth local
+  energy functions via a partition-function DP (Prop 8) and approximated via
+  partition-function evaluation over a temperature window (Props 10–12).
+- Propositions 10–12 make a new bridge explicit: additive approximation of $A_1$ can
+  avoid computing $d_0$ (the counting-hard quantity) by anchoring at $Z(\varepsilon)$
+  or $Z(B)$, turning “estimate $A_1$” into “estimate $Z$ on a grid” with explicit
+  truncation/quadrature error bounds.
+- Guo–An (2025) studies schedule optimality under gap-measure conditions. These
+  results are complementary: they take the gap profile as a given object, while this
+  experiment isolates and formalizes the *information* needed to obtain that profile
+  (via $A_1$) and how structure/promises can make it tractable (or not) at different
+  precision regimes.
+
 
 ## Conjectures and Resolutions
 
@@ -71,6 +86,11 @@ counting complexity while optimization tracks decision complexity. See Propositi
 | Prop 6 | Conjecture 3 fails both directions | Proved |
 | Remark | Planted instances: A_1 as O(n)-bit advice | Observation |
 | Prop 7 | Hamming distance: A_1 = f(n) only | Proved |
+| Prop 8 | Bounded treewidth: exact A_1 via partition-function DP | Proved |
+| Prop 9 | Coarse A_1 approximation is easy when E_0 is known | Proved |
+| Prop 10 | Approximate A_1 from Z(t) without d_0 | Proved |
+| Prop 11 | Laplace proxy: approximate A_1 from Z(β) without d_0 | Proved |
+| Prop 12 | Oracle reduction: approximate Z on a grid ⇒ additive A_1 | Proved |
 
 ### Key Conclusions
 
@@ -94,8 +114,9 @@ promise, even Grover's A_1 requires Theta(sqrt(N)) quantum queries to determine.
    of a hard search problem with easy A_1. Do natural combinatorial NP-hard problems
    (not oracle search) ever have simple enough spectra?
 
-3. **Approximate A_1.** The paper shows A_1 computation is #P-hard for CSPs with hard counting. Perhaps
-   constant-factor approximation suffices for near-optimal schedules.
+3. **Approximate A_1.** Exact $A_1$ can be \#P-hard (Prop 4), but coarse additive
+   approximation can be easy under natural promises (Prop 9). What approximation
+   quality is sufficient for near-optimal schedules?
 
 4. **Quantum computation of A_1.** Phase estimation on H_z could estimate A_1
    quantumly. Classical hardness does not rule out efficient quantum computation.
@@ -111,12 +132,28 @@ promise, even Grover's A_1 requires Theta(sqrt(N)) quantum queries to determine.
 
 ## Numerical Verification
 
-All claims verified in `lib/verify_a1.py`. Key checks:
+Quantitative sanity checks verified in `lib/verify_a1.py`. Key checks:
 - Grover N=4, d_0=1: A_1 = 3/4, s* = 3/7
 - Grover N=4, d_0=2: A_1 = 1/2, s* = 1/3
 - Proposition 1 (n=4, N=16): A_1 = 9/8 = 1.125, vs 1/Delta = 4
 - Hamming n=4: A_1 = 103/192 = 0.537
 - Hamming asymptotic: A_1 * n/2 -> 1 (verified to n=128)
+
+Structured-family demo (bounded width): `lib/variable_elimination_a1.py` computes
+$Z(t)$ and $A_1$ exactly by variable elimination and checks against brute force on toy
+instances.
+
+Coarse approximation demo: `lib/estimate_a1_sampling.py` estimates $A_1$ by Monte
+Carlo sampling (Proposition 9) and compares to an exact computation for a toy
+structured instance.
+
+Partition-function quadrature demo: `lib/approx_a1_from_partition_function.py`
+implements a log-grid midpoint rule for $A_1^{(\varepsilon)}$ (Propositions 10–12) and
+compares to an exact computation on a toy structured instance.
+
+Laplace-side quadrature demo: `lib/approx_a1_from_laplace_partition_function.py`
+implements the anchored proxy $A_1^{[B]}$ (Proposition 11) via midpoint quadrature and
+compares to the exact value for a toy structured instance.
 
 
 ## References
@@ -134,3 +171,6 @@ All claims verified in `lib/verify_a1.py`. Key checks:
 All conjectures resolved. All results are propositions (no unjustified "theorem"
 labels). Sufficient conditions established; necessary conditions remain open. Numerics
 verified. Honest about caveats (contrived counterexample, promise model for Grover).
+
+**Next:** see `todo.md` (task tree + progress) for publication-grade directions
+beyond the current (mostly boundary-setting) propositions.
