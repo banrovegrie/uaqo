@@ -269,7 +269,7 @@ $$\frac{C^2}{I} \to \frac{1}{c_L} = \frac{A_2}{A_1(A_1+1)}.$$
 
 The improvement factor is approximately $c_L = A_1(A_1+1)/A_2$. For Grover, $c_L \to 2$: the JRS bound is roughly twice as tight. For the exact Grover values, the improvement grows as $\sqrt{N}$ (since $C^2 = 1$ while $I \sim \sqrt{N}$), but this overstates the practical advantage because the JRS constant $K$ is not computed here.
 
-**Conjecture 3 (Full Resolution).** The JRS framework's constant $C^2$ is strictly smaller than the RC integral constant $I$ for any instance where $c_L > 1$ (equivalently $A_1(A_1+1) > A_2$). This includes Grover and, more generally, any instance where the eigenvalue distribution is not concentrated at the smallest level. The $p = 3/2$ schedule's JRS bound is provably tighter in this regime.
+**Conjecture 3 (Full Resolution).** The structural constant $C^2$ in the JRS framework is strictly smaller than the integral constant $I$ in the RC framework for any instance where $c_L > 1$ (equivalently $A_1(A_1+1) > A_2$). This includes Grover and, more generally, any instance where the eigenvalue distribution is not concentrated at the smallest level. The $p = 3/2$ schedule's JRS bound is tighter in its structural constant by a factor of $c_L$, modulo the universal prefactor $K$ from the JRS error functional (which is not computed here).
 
 **When $c_L < 1$: a counterpoint.** For a two-level system with small gap $\Delta$: $A_1 = d_1/(N\Delta)$, $A_2 = d_1/(N\Delta^2)$, so $c_L = \Delta(A_1+1) = \Delta(d_1/(N\Delta) + 1) = d_1/N + \Delta$. For $\Delta$ small (and $d_1/N < 1$): $c_L < 1$, and $C^2/I > 1$. The RC analysis is tighter for small-gap instances. This makes physical sense: when the gap is very small, the instantaneous transition rate (bounded by RC) is the dominant error mechanism.
 
@@ -278,38 +278,33 @@ The improvement factor is approximately $c_L = A_1(A_1+1)/A_2$. For Grover, $c_L
 
 The measure condition's validity depends on how the gap opens near its minimum. We classify this by the flatness exponent $\alpha$.
 
-**Theorem F (Classification).** Consider $g(s) = \max(g_{\min}, c|s - s^*|^\alpha)$ on $[0,1]$ with $s^* \in (0,1)$, $c > 0$, $g_{\min} > 0$, and $\alpha > 0$. Write $\ell = \min(s^*, 1 - s^*)$.
+**Theorem F (Classification).** Consider $g(s) = \max(g_{\min}, c|s - s^*|^\alpha)$ on $[0,1]$ with $s^* \in (0,1)$, $c > 0$, $g_{\min} > 0$, and $\alpha > 0$.
 
-(a) $\alpha < 1$ (steeper than linear): the measure condition holds with $C = 2\ell^{1-\alpha}/c$, independent of $g_{\min}$.
+(a) $\alpha \leq 1$: the measure condition holds with $C \leq 2^\alpha/c$, independent of $g_{\min}$. Equality holds when $s^* = 1/2$ (symmetric profile).
 
-(b) $\alpha = 1$ (linear): the measure condition holds with $C = 2/c$, independent of $g_{\min}$.
-
-(c) $\alpha > 1$ (flatter than linear): $C = 2c^{-1/\alpha} g_{\min}^{1/\alpha - 1} \to \infty$ as $g_{\min} \to 0$.
+(b) $\alpha > 1$: $C = 2c^{-1/\alpha} g_{\min}^{1/\alpha - 1} \to \infty$ as $g_{\min} \to 0$.
 
 The measure condition holds (with $C$ bounded as $g_{\min} \to 0$) if and only if $\alpha \leq 1$.
 
-*Proof.* For $x \geq g_{\min}$: $g(s) \leq x$ iff $|s - s^*| \leq (x/c)^{1/\alpha}$. Intersecting with $[0,1]$:
-$$\mu(\{g \leq x\}) = \min(2(x/c)^{1/\alpha},\, 1).$$
+*Proof.* For $x < g_{\min}$: $\mu = 0$. For $x \geq g_{\min}$: $g(s) \leq x$ iff $|s - s^*| \leq (x/c)^{1/\alpha}$. Boundary clipping can only decrease the sublevel measure, so
+$$\mu(\{g \leq x\}) \leq \min(2(x/c)^{1/\alpha},\, 1).$$
+Hence $\mu/x \leq \min(2c^{-1/\alpha} x^{1/\alpha - 1},\, 1/x)$.
 
-In the range $x \in [g_{\min},\, c\ell^\alpha]$ where $\mu < 1$: $\mu/x = 2c^{-1/\alpha} x^{1/\alpha - 1}$.
+(a) For $\alpha \leq 1$: the first term $2c^{-1/\alpha} x^{1/\alpha-1}$ is non-decreasing in $x$ (exponent $\geq 0$), while $1/x$ is decreasing. Their minimum is maximized at the crossover $2c^{-1/\alpha} x_0^{1/\alpha - 1} = 1/x_0$, giving $x_0 = c/2^\alpha$. At this point:
+$$C \leq \frac{1}{x_0} = \frac{2^\alpha}{c},$$
+independent of $g_{\min}$. When $s^* = 1/2$, the profile is symmetric and boundary clipping does not reduce $\mu$ below $\min(2(x/c)^{1/\alpha}, 1)$ for any $x$, so equality holds.
 
-For $\alpha < 1$: the exponent $1/\alpha - 1 > 0$, so $\mu/x$ is increasing. The supremum over $[g_{\min}, c\ell^\alpha]$ is at $x = c\ell^\alpha$:
-$$C = 2c^{-1/\alpha}(c\ell^\alpha)^{1/\alpha - 1} = \frac{2\ell^{1-\alpha}}{c},$$
-independent of $g_{\min}$.
+(b) For $\alpha > 1$: $2c^{-1/\alpha} x^{1/\alpha - 1}$ is decreasing (exponent $< 0$), so $\mu/x$ achieves its supremum at $x = g_{\min}$. At this point the sublevel set is $\{|s - s^*| \leq (g_{\min}/c)^{1/\alpha}\}$, which for small $g_{\min}$ lies entirely within $(0,1)$, so boundary clipping does not apply and $\mu = 2(g_{\min}/c)^{1/\alpha}$ exactly:
+$$C = 2c^{-1/\alpha} g_{\min}^{1/\alpha - 1} \to \infty. \quad \square$$
 
-For $\alpha = 1$: $\mu/x = 2/c$ is constant.
+**Remark on asymmetric profiles.** When $s^* \neq 1/2$, the sublevel set clips on the near boundary before the far boundary. The exact $C$ for $\alpha < 1$ depends on the asymmetry: writing $\ell = \min(s^*, 1-s^*)$ and $r = 1 - \ell$, the exact value satisfies $C = \max(2\ell^{1-\alpha}/c,\, 1/(cr^\alpha))$ for $\alpha \in (1/2, 1)$ and $C = 1/(cr^\alpha)$ for $\alpha \leq 1/2$. Both are bounded by $2^\alpha/c$.
 
-For $\alpha > 1$: the exponent $1/\alpha - 1 < 0$, so $\mu/x$ is decreasing. The supremum is at $x = g_{\min}$:
-$$C = 2c^{-1/\alpha} g_{\min}^{1/\alpha - 1} \to \infty.$$
-
-For $x > c\ell^\alpha$: $\mu = 1$, so $\mu/x = 1/x \leq 1/(c\ell^\alpha)$, which is bounded and smaller than the values above in all cases. $\square$
-
-**Numerical verification.** For $c = 1$, $s^* = 1/2$, $\ell = 1/2$:
+**Numerical verification.** For $c = 1$, $s^* = 1/2$:
 
 | $\alpha$ | $g_{\min} = 0.1$ | $g_{\min} = 0.01$ | $g_{\min} = 0.001$ | Theory |
 |---|---|---|---|---|
-| $0.5$ | $C = 1.414$ | $C = 1.414$ | $C = 1.414$ | $2(1/2)^{1/2} = \sqrt{2}$ |
-| $1.0$ | $C = 2.000$ | $C = 2.000$ | $C = 2.000$ | $2/1 = 2$ |
+| $0.5$ | $C = 1.414$ | $C = 1.414$ | $C = 1.414$ | $2^{1/2} = \sqrt{2}$ |
+| $1.0$ | $C = 2.000$ | $C = 2.000$ | $C = 2.000$ | $2^1 = 2$ |
 | $2.0$ | $C = 6.32$ | $C = 20.0$ | $C = 63.2$ | $2g_{\min}^{-1/2} \to \infty$ |
 
 

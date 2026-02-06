@@ -16,7 +16,7 @@ All current hardness results are specific to adiabatic quantum optimization:
 
 The paper itself observes (p.983) that $A_1$ hardness is "absent in the circuit model." The core negative result -- that the $A_1$ barrier is model-specific -- is therefore not new. The novel contributions of this experiment are:
 
-1. **$A_1$-blindness formalization** (Part VII): A rigorous information-theoretic proof that Durr-Hoyer's output satisfies $I(X_{\mathrm{DH}}; A_1 \mid S_0, E_0) = 0$. This makes the informal observation precise: the circuit model reveals zero bits about $A_1$, while the adiabatic model both requires and leaks information about $A_1$.
+1. **$A_1$-blindness formalization** (Part VII): A rigorous information-theoretic proof that, for the amplified Durr-Hoyer algorithm, $I(X_{\mathrm{DH}}; A_1 \mid S_0, E_0) \leq 2^{-\Omega(n)}$, with equality to zero conditioned on success. This makes the informal observation precise: the circuit model reveals negligible information about $A_1$, while the adiabatic model both requires and leaks information about $A_1$.
 
 2. **Unified information-runtime landscape** (Part VIII): Importing the interpolation theorem from Experiment 07 and recasting it in the communication framework of Part IV. The bit-runtime tradeoff $T(C) = T_{\mathrm{inf}} \cdot 2^{n/2 - C}$ for $C$ communicated bits, with the circuit model bypassing the tradeoff entirely at $C = 0$.
 
@@ -40,7 +40,7 @@ Original claim: there exists a function $f$ such that for any algorithm achievin
 ### Conjecture 3 (Adiabatic Limitation) -- PROVED (with caveat)
 Adiabatic algorithms are uniquely limited: they achieve optimal query complexity $O(\sqrt{N/d_0})$ but require additional $O(n)$ bits of information ($A_1$ or equivalent) that circuit algorithms do not need.
 
-**Resolution**: Correct but the framing is misleading. Circuit algorithms do not "get $A_1$ for free" -- they do not need $A_1$ at all. Formally: $I(X_{\mathrm{DH}}; A_1 \mid S_0, E_0) = 0$ (Part VII, Proposition 8).
+**Resolution**: Correct but the framing is misleading. Circuit algorithms do not "get $A_1$ for free" -- they do not need $A_1$ at all. Formally: $I(X_{\mathrm{DH}}; A_1 \mid S_0, E_0) \leq 2^{-\Omega(n)}$ for amplified Durr-Hoyer, and exactly zero conditioned on success (Part VII, Proposition 8).
 
 ### Conjecture 4 (No Free Lunch) -- REFUTED
 Original claim: any algorithm achieving $O(\sqrt{N/d_0})$ without explicit spectral information either (a) implicitly computes the spectral information, or (b) works only for structured problem classes.
@@ -71,7 +71,7 @@ For any continuous-time rank-one algorithm with control functions chosen without
 
 **Theorem 5 (Counterexample to No Free Lunch)**: Durr-Hoyer refutes Conjecture 4.
 
-**Propositions 6-8 ($A_1$-Blindness)**: Durr-Hoyer's output distribution depends only on the ground space $S_0$; its query complexity depends only on $N$ and $d_0$; the mutual information $I(X_{\mathrm{DH}}; A_1 \mid S_0, E_0) = 0$.
+**Propositions 6-8 ($A_1$-Blindness)**: Conditioned on success, Durr-Hoyer's output is $\mathrm{Uniform}(S_0)$ independent of $A_1$; its query complexity depends only on $N$ and $d_0$; $I(X_{\mathrm{DH}}; A_1 \mid S_0, E_0) \leq 2^{-\Omega(n)}$ for the amplified algorithm.
 
 **Theorem 6 (Interpolation, from Experiment 07)**: With $A_1$ known to precision $\varepsilon$: $T(\varepsilon) = T_{\mathrm{inf}} \cdot \Theta(\max(1, \varepsilon/\delta_{A_1}))$ where $\delta_{A_1} = \Theta(2^{-n/2})$.
 
@@ -88,7 +88,7 @@ The complete picture:
 
 | Model | Bits of $A_1$ | Runtime | $I(\text{output}; A_1)$ |
 |---|---|---|---|
-| Circuit (Durr-Hoyer) | 0 | $\Theta(\sqrt{N/d_0})$ | 0 |
+| Circuit (Durr-Hoyer) | 0 | $\Theta(\sqrt{N/d_0})$ | $\leq 2^{-\Omega(n)}$ |
 | Adiabatic, $C$ bits | $C$ | $T_{\mathrm{inf}} \cdot 2^{n/2-C}$ | $> 0$ |
 | Adiabatic, fully informed | $n/2$ | $\Theta(\sqrt{N/d_0})$ | $> 0$ |
 | Adiabatic, uninformed | 0 | $\Omega(N/\sqrt{d_0})$ | $> 0$ |
@@ -106,7 +106,7 @@ Reduced ground state finding to unstructured search. Applied BBBV lower bound. R
 Formalized as Alice-Bob communication problem. Result: clean separation $C_{\mathrm{circuit}} = 0$, $C_{\mathrm{adiabatic}} = \Theta(n)$, $C_{\mathrm{adaptive}} = 0$.
 
 ### Strategy 3: Information-Theoretic Framework -- EXECUTED
-The mutual information framework (Conjecture 2) turned out to be ill-defined for quantum algorithms. Replaced with: (a) the $A_1$-blindness formalization $I(X_{\mathrm{DH}}; A_1 \mid S_0, E_0) = 0$ (Part VII), and (b) the bit-runtime tradeoff from Experiment 07 (Part VIII).
+The mutual information framework (Conjecture 2) turned out to be ill-defined for quantum algorithms. Replaced with: (a) the $A_1$-blindness formalization $I(X_{\mathrm{DH}}; A_1 \mid S_0, E_0) \leq 2^{-\Omega(n)}$ (Part VII), and (b) the bit-runtime tradeoff from Experiment 07 (Part VIII).
 
 ### Strategy 4: Compare Algorithm Classes -- EXECUTED
 Complete landscape table (proof.md, Part VIII) covers circuit, adiabatic at every bit-precision level, and adaptive models.

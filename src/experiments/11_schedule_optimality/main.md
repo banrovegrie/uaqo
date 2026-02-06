@@ -57,7 +57,7 @@ Specifically:
 | 3: $p = 3/2$ improves constant over $p = 2$ | **PROVED** | Theorem E |
 | 4: Grover case $C = O(1)$ | **PROVED** | Theorem B |
 
-**On Conjecture 3 (Full Resolution).** The JRS framework's constant $C^2$ is strictly smaller than the RC integral constant $I$ by a factor of $c_L = A_1(A_1+1)/A_2$ in the right-arm-dominated regime (Theorem E). For Grover, $C^2_{\mathrm{bound}}/I_{\mathrm{bound}} \approx 0.603 < 1$; for exact values, $C^2_{\mathrm{exact}} = 1$ while $I_{\mathrm{exact}} \to (\pi/2)\sqrt{N}$. The $p = 3/2$ JRS bound is provably tighter when $c_L > 1$. When $c_L < 1$ (small-gap instances with $\Delta \ll 1$), the RC bound wins.
+**On Conjecture 3 (Full Resolution).** The structural constant $C^2$ in the JRS framework is strictly smaller than the integral constant $I$ in the RC framework by a factor of approximately $c_L = A_1(A_1+1)/A_2$ in the right-arm-dominated regime (Theorem E). For Grover, $C^2_{\mathrm{bound}}/I_{\mathrm{bound}} \approx 0.603$; for exact values, $C^2_{\mathrm{exact}} = 1$ while $I_{\mathrm{exact}} \to (\pi/2)\sqrt{N}$. The $p = 3/2$ JRS bound is tighter in its structural constant when $c_L > 1$, modulo the universal JRS prefactor $K$ (not computed here). When $c_L < 1$ (small-gap instances with $\Delta \ll 1$), the RC bound wins.
 
 
 ## Technical Details

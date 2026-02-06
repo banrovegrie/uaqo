@@ -166,16 +166,22 @@ The observations in Parts II and V are informal: Durr-Hoyer "does not use" $A_1$
 
 Ground-equivalent Hamiltonians may differ in every other spectral parameter: the number of distinct eigenlevels $M$, the degeneracies $\{d_k\}_{k \geq 1}$, the energy gaps $\{E_k - E_0\}_{k \geq 1}$, and consequently $A_1$, $A_2$, and all derived quantities.
 
-**Proposition 6 (Output Independence).** Let $H_z$, $H_z'$ be ground-equivalent. Then the output distributions of Durr-Hoyer on $H_z$ and $H_z'$ are identical:
-$$\Pr[\mathrm{DH}(H_z) = x] = \Pr[\mathrm{DH}(H_z') = x] \quad \text{for all } x \in \{0,1\}^n.$$
+**Proposition 6 (Output Independence).** Let $H_z$, $H_z'$ be ground-equivalent. Consider the amplified Durr-Hoyer algorithm (running $r$ independent trials and outputting the element with minimum energy). Then:
 
-*Proof.* The Durr-Hoyer algorithm maintains a threshold $y$ and a candidate $x_0$, and repeatedly uses Grover search to find $x'$ with $E_{x'} < y$. At each Grover subroutine call, the initial state is the uniform superposition $|\psi_0\rangle = N^{-1/2}\sum_x|x\rangle$.
+(a) Conditioned on success (outputting a ground state), the output distributions are identical on $H_z$ and $H_z'$: for all $x \in S_0$,
+$$\Pr[\mathrm{DH}(H_z) = x \mid \mathrm{DH}(H_z) \in S_0] = 1/d_0 = \Pr[\mathrm{DH}(H_z') = x \mid \mathrm{DH}(H_z') \in S_0].$$
 
-Conditioned on success (outputting a ground state, which occurs with probability $\geq 2/3$), the output $x_0$ satisfies $E_{x_0} = E_0$. At the iteration that produced this $x_0$, the Grover subroutine searched for elements of $\{x : E_x < y\}$ for some threshold $y > E_0$. By the symmetry of Grover's algorithm applied to the uniform initial state, the output is uniformly distributed over the marked set $\{x : E_x < y\}$. Conditioned on $E_{x_0} = E_0$, the output is $\mathrm{Uniform}(S_0)$.
+(b) With $r = O(n)$ repetitions, the failure probability is $2^{-\Omega(n)}$. The total variation distance between the unconditional output distributions on $H_z$ and $H_z'$ is at most $2^{-\Omega(n)}$.
 
-Since $H_z$ and $H_z'$ share the same $S_0$ and $E_0$, the conditional output distributions are identical. $\square$
+*Proof.* (a) The Durr-Hoyer algorithm maintains a threshold $y$ and a candidate $x_0$, and repeatedly uses Grover search to find $x'$ with $E_{x'} < y$. At each Grover subroutine call, the initial state is the uniform superposition $|\psi_0\rangle = N^{-1/2}\sum_x|x\rangle$.
 
-**Remark (Trajectory differs).** While the output distributions are identical, the execution trajectories differ. The intermediate threshold values $y_0 > y_1 > \cdots > y_T = E_0$ depend on the excited spectrum. For instance, if $H_z$ has two excited levels and $H_z'$ has one, the descent pattern differs. But the terminal state is the same.
+Conditioned on success, the output $x_0$ satisfies $E_{x_0} = E_0$. At the iteration that produced this $x_0$, the Grover subroutine searched for elements of $\{x : E_x < y\}$ for some threshold $y > E_0$. By the symmetry of Grover's algorithm applied to the uniform initial state, the output is uniformly distributed over the marked set $\{x : E_x < y\}$. Conditioned on $E_{x_0} = E_0$, the output is $\mathrm{Uniform}(S_0)$. Since $H_z$ and $H_z'$ share the same $S_0$, the conditional output distributions are identical.
+
+(b) A single run of Durr-Hoyer finds the minimum with probability $\geq 2/3$ (Boyer-Brassard-Hoyer-Tapp 1998). The amplified version with $r$ independent trials outputs the element with minimum energy across all trials. The probability of failure (not finding any ground state) is at most $(1/3)^r = 2^{-\Omega(r)}$. With $r = O(n)$, this is $2^{-\Omega(n)}$. The unconditional output distributions on $H_z$ and $H_z'$ agree on the success event (by part (a)) and differ only on the failure event (probability $\leq 2^{-\Omega(n)}$). $\square$
+
+**Remark (Failure outputs can differ).** The unconditional output distributions of a single (unamplified) Durr-Hoyer run are NOT identical for ground-equivalent instances. When the algorithm fails to find the minimum, the output depends on the intermediate threshold values, which depend on the excited spectrum. However, this failure probability is at most $1/3$ per run and exponentially small after amplification.
+
+**Remark (Trajectory differs).** The execution trajectories differ between ground-equivalent instances. The intermediate threshold values $y_0 > y_1 > \cdots > y_T = E_0$ depend on the excited spectrum. For instance, if $H_z$ has two excited levels and $H_z'$ has one, the descent pattern differs. But the terminal state (conditioned on success) is the same.
 
 **Proposition 7 (Query Complexity Independence).** The expected query complexity of Durr-Hoyer on $H_z$ is $O(\sqrt{N/d_0})$, depending only on $N$ and $d_0 = |S_0|$, not on $A_1$ or any other spectral parameter.
 
@@ -185,10 +191,15 @@ The total cost over all stages is $\sum_{i=0}^{\lceil\log_2(N/d_0)\rceil} O(2^{i
 
 This bound depends on $N$ and $d_0$ only. The geometric halving argument assumes each new threshold eliminates roughly half the below-threshold items. When there are degeneracies (multiple items at the same energy), the threshold may skip entire levels, but this only accelerates the descent. The $O(\sqrt{N/d_0})$ bound holds a fortiori. $\square$
 
-**Proposition 8 ($A_1$ Mutual Information).** Let $X_{\mathrm{DH}}$ denote the output of Durr-Hoyer. Then:
-$$I(X_{\mathrm{DH}}; \, A_1 \mid S_0, E_0) = 0.$$
+**Proposition 8 ($A_1$ Mutual Information).** Let $X_{\mathrm{DH}}$ denote the output of the amplified Durr-Hoyer algorithm (with $r = O(n)$ repetitions). Then:
+$$I(X_{\mathrm{DH}}; \, A_1 \mid S_0, E_0) \leq 2^{-\Omega(n)}.$$
 
-*Proof.* By Proposition 6, the conditional distribution of $X_{\mathrm{DH}}$ given $(S_0, E_0)$ is $\mathrm{Uniform}(S_0)$, regardless of $A_1$. Therefore $X_{\mathrm{DH}} \perp\!\!\!\perp A_1 \mid (S_0, E_0)$, and the conditional mutual information vanishes. $\square$
+Conditioned on success ($X_{\mathrm{DH}} \in S_0$), the mutual information is exactly zero:
+$$I(X_{\mathrm{DH}}; \, A_1 \mid S_0, E_0, X_{\mathrm{DH}} \in S_0) = 0.$$
+
+*Proof.* By Proposition 6(a), the conditional distribution of $X_{\mathrm{DH}}$ given $(S_0, E_0, X_{\mathrm{DH}} \in S_0)$ is $\mathrm{Uniform}(S_0)$, regardless of $A_1$. This gives the exact-zero conditional statement.
+
+For the unconditional bound: by Proposition 6(b), the output distributions on any two ground-equivalent instances (with different $A_1$) have total variation distance at most $2^{-\Omega(n)}$. By Pinsker's inequality, the KL divergence is at most $O(2^{-\Omega(n)})$, and the mutual information is bounded by the supremum of this KL divergence over the distribution of $A_1$. $\square$
 
 **Contrast: Adiabatic $A_1$-Dependence.** The informed adiabatic algorithm has the opposite property. Its schedule $s(t)$ is constructed from $s^* = A_1/(A_1+1)$, with velocity $v(s) \propto g(s)^2$ near $s^*$. Two ground-equivalent Hamiltonians with different $A_1$ values produce different crossings $s^*$, different gap profiles $g(s)$, and require different schedules. Concretely:
 
@@ -304,7 +315,7 @@ We resolved all four conjectures:
 
 Additionally, the extended results (Parts VII-IX) establish:
 
-5. **$A_1$-Blindness (Part VII).** Durr-Hoyer's output satisfies $I(X_{\mathrm{DH}}; A_1 \mid S_0, E_0) = 0$ exactly. The circuit model reveals zero information about $A_1$, while the adiabatic model both requires and leaks information about $A_1$.
+5. **$A_1$-Blindness (Part VII).** For the amplified Durr-Hoyer algorithm, $I(X_{\mathrm{DH}}; A_1 \mid S_0, E_0) \leq 2^{-\Omega(n)}$, and conditioned on success, the mutual information is exactly zero. The circuit model reveals negligible information about $A_1$, while the adiabatic model both requires and leaks information about $A_1$.
 
 6. **Unified Landscape (Part VIII).** Importing the interpolation theorem from Experiment 07: each bit of $A_1$ knowledge halves the adiabatic runtime, with the tradeoff $T(C) = T_{\mathrm{inf}} \cdot 2^{n/2 - C}$ for $C$ communicated bits. The circuit model bypasses this tradeoff entirely.
 
