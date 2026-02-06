@@ -623,22 +623,153 @@ $(mN)h^2K/2 = (mN)h\ln(1/\varepsilon)/2$. Dividing by $N$ gives
 $(m/2)h\ln(1/\varepsilon)$. $\square$
 
 **Remark (structured families).** Proposition 12 is where partition-function algorithms
-enter: whenever a model admits an FPRAS / deterministic approximation scheme for $Z(t)$
-on $t\in[\varepsilon,1]$, we immediately obtain an additive approximation scheme for $A_1$.
+enter: whenever a model admits an FPRAS / deterministic approximation scheme for $Z$ on
+a temperature window, we immediately obtain an additive approximation scheme for $A_1$.
 
-**Corollary (example: ferromagnetic Ising).** The classical ferromagnetic Ising model
-(with *consistent* external fields) admits an FPRAS for its partition function
-(Jerrum–Sinclair, SIAM J. Comput. 1993; see also later expositions). Combined with the
-Laplace proxy of Proposition 11 (or the ordinary proxy of Proposition 10 after
-discretization), this implies that for such Ising instances one can approximate $A_1$
-to any inverse-polynomial additive accuracy in randomized polynomial time, provided the
-ground energy shift $E_0$ is efficiently computable for the family.
+
+## Proposition 13: Ferromagnetic Ising via Multiplicative Partition-Function Approximation
+
+We now make the error drivers explicit: energy scale, minimum excitation, and mass
+near the ground.
+
+Assume $E_0=0$ and $E(x)\in[0,R]$ for all basis states $x$. Define
+$$\rho_0 \defeq d_0/N,\qquad
+\Delta_{\min}\defeq \min\{E(x):E(x)>0\}.$$
+Let $Z(\beta)=\sum_x e^{-\beta E(x)}$.
+
+Fix $B>0$, $K\ge 1$, and midpoints $\beta_i\defeq(i+1/2)B/K$.
+Suppose an oracle returns $\widehat{Z}(\beta)$ such that for every queried
+$\beta\in[0,B]$,
+$$(1-\mu)Z(\beta)\le \widehat{Z}(\beta)\le (1+\mu)Z(\beta),$$
+with failure probability at most $\delta_q$ per query.
+
+Define
+$$\widehat{A}_1^{[B]} \defeq \frac{B}{KN}\sum_{i=0}^{K-1}\left(\widehat{Z}(\beta_i)-\widehat{Z}(B)\right).$$
+Then, with probability at least $1-(K+1)\delta_q$,
+$$\left|A_1-\widehat{A}_1^{[B]}\right|
+\le (1-\rho_0)e^{-B\Delta_{\min}}\left(B+\frac{1}{\Delta_{\min}}\right)
+   +2\mu B + \frac{R B^2}{2K}.$$
+
+In particular, choosing
+$$\mu\le \frac{\eta}{6B},\qquad
+K\ge \frac{3RB^2}{2\eta},\qquad
+(1-\rho_0)e^{-B\Delta_{\min}}\left(B+\frac{1}{\Delta_{\min}}\right)\le \frac{\eta}{3},$$
+and $\delta_q=\delta/(K+1)$ gives an additive-$\eta$ estimator with success
+probability at least $1-\delta$.
+
+**Proof.** Write the exact anchored proxy
+$$A_1^{[B]}=\frac{1}{N}\int_0^B\left(Z(\beta)-Z(B)\right)\,d\beta.$$
+Split
+$$|A_1-\widehat{A}_1^{[B]}|
+\le |A_1-A_1^{[B]}|
+ + |A_1^{[B]}-\widetilde{A}_1^{[B]}|
+ + |\widetilde{A}_1^{[B]}-\widehat{A}_1^{[B]}|,$$
+where $\widetilde{A}_1^{[B]}$ is the midpoint rule using exact $Z$ values.
+
+Tail term:
+\begin{align}
+(A_1-A_1^{[B]})N
+&= \sum_{x:E(x)>0} e^{-B E(x)}\left(\frac{1}{E(x)}+B\right) \\
+&\le (N-d_0)e^{-B\Delta_{\min}}\left(B+\frac{1}{\Delta_{\min}}\right).
+\end{align}
+Dividing by $N$ gives
+$$|A_1-A_1^{[B]}|
+\le (1-\rho_0)e^{-B\Delta_{\min}}\left(B+\frac{1}{\Delta_{\min}}\right).$$
+
+Oracle term: whenever all oracle calls succeed,
+$$|\widehat{Z}(\beta)-Z(\beta)|\le \mu Z(\beta)\le \mu N$$
+for every queried $\beta$ (since $Z(\beta)\le N$ for nonnegative energies).
+Hence for each midpoint,
+\begin{align}
+\left|(\widehat{Z}(\beta_i)-\widehat{Z}(B))-(Z(\beta_i)-Z(B))\right|
+\le 2\mu N.
+\end{align}
+After summing and multiplying by $B/(KN)$,
+$$|\widetilde{A}_1^{[B]}-\widehat{A}_1^{[B]}|\le 2\mu B.$$
+
+Quadrature term: let $F(\beta)\defeq Z(\beta)-Z(B)$. Then
+\begin{align}
+|F'(\beta)|
+&= |Z'(\beta)|
+ = \left|\sum_x -E(x)e^{-\beta E(x)}\right|
+ \le \sum_x E(x) \le RN.
+\end{align}
+So $F$ is $RN$-Lipschitz on $[0,B]$. For interval length $h=B/K$, midpoint error on
+one interval is at most $RN h^2/2$, so total quadrature error is at most
+$RN Bh/2 = RN B^2/(2K)$. Dividing by $N$:
+$$|A_1^{[B]}-\widetilde{A}_1^{[B]}|\le \frac{R B^2}{2K}.$$
+
+Combining the three bounds gives the claimed inequality.
+There are $K+1$ oracle calls ($K$ midpoints plus $\beta=B$), so by union bound the
+success probability is at least $1-(K+1)\delta_q$. Substituting
+$\delta_q=\delta/(K+1)$ and the parameter choices yields total error at most $\eta$.
+$\square$
+
+**Corollary (ferromagnetic Ising with consistent fields).**
+Consider the Ising cost function on spins $\sigma\in\{\pm1\}^n$:
+$$C(\sigma)=\sum_{(i,j)\in E} J_{ij}\frac{1-\sigma_i\sigma_j}{2}
+           +\sum_{i=1}^n h_i\frac{1-\sigma_i}{2},$$
+with $J_{ij},h_i\in\mathbb{Z}_{\ge 0}$ (if all external fields are nonpositive,
+globally flip all spins first). Let
+$$W\defeq \sum_{(i,j)\in E}J_{ij}+\sum_i h_i,\qquad E(\sigma)\defeq C(\sigma)/W.$$
+Assume $W>0$.
+Then $E(\sigma)\in[0,1]$, $E_0=0$, and $\Delta_{\min}\ge 1/W$. If a multiplicative
+FPRAS for $Z(\beta)=\sum_\sigma e^{-\beta E(\sigma)}$ is available on $\beta\in[0,B]$
+(as in classical ferromagnetic Ising FPRAS results in this regime), Proposition 13
+gives an additive approximation of $A_1$.
+
+For target $\eta$ and failure probability $\delta$, pick any $B$ such that
+$e^{-B/W}(B+W)\le \eta/3$ (equivalently $B=O(W\log(W/\eta))$), then choose
+$\mu=\Theta(\eta/B)$ and $K=\Theta(B^2/\eta)$. If the FPRAS runtime is
+$\mathrm{poly}(n,1/\mu,\log(1/\delta_q))$, the resulting $A_1$ estimator runs in
+$\mathrm{poly}(n,W,1/\eta,\log(1/\delta))$ time for inverse-polynomial $\eta$.
+
+At schedule-level precision $\eta=2^{-n/2}$, the same reduction requires
+$1/\mu=\Omega(B/\eta)=\Omega(2^{n/2}/\mathrm{poly}(n))$, so the induced runtime is no
+longer polynomial. This matches the low-temperature precision barrier.
+
+
+## Proposition 14: Schedule-Relevant Precision for $A_1$
+
+Let $s^*(A)\defeq A/(1+A)$ for $A>0$. Suppose we estimate $A_1$ by
+$\widehat{A}_1=A_1+\epsilon$ with $\widehat{A}_1>-1$, and define
+$\widehat{s}^*=s^*(\widehat{A}_1)$.
+
+Then
+$$\widehat{s}^*-s^*=\frac{\epsilon}{(1+A_1)(1+A_1+\epsilon)}.$$
+In particular, if $|\epsilon|\le (1+A_1)/2$, then
+$$|\widehat{s}^*-s^*|\le \frac{2|\epsilon|}{(1+A_1)^2}.$$
+So a sufficient condition for $|\widehat{s}^*-s^*|\le \delta_s$ is
+$$|\epsilon|\le \frac{(1+A_1)^2}{2}\,\delta_s.$$
+
+Using the paper's crossing-window scale
+$$\delta_s=\frac{2}{(1+A_1)^2}\sqrt{\frac{d_0A_2}{N}},$$
+it suffices to estimate $A_1$ to additive precision
+$$|\epsilon|\le \sqrt{\frac{d_0A_2}{N}}.$$
+In the worst case $d_0=\Theta(1)$ and $A_2=\Theta(1)$, this is
+$\Theta(2^{-n/2})$.
+
+**Proof.** The identity is direct algebra:
+\begin{align}
+\frac{A_1+\epsilon}{1+A_1+\epsilon}-\frac{A_1}{1+A_1}
+=\frac{\epsilon}{(1+A_1)(1+A_1+\epsilon)}.
+\end{align}
+If $|\epsilon|\le (1+A_1)/2$, then
+$1+A_1+\epsilon\ge (1+A_1)/2$, hence
+\begin{align}
+|\widehat{s}^*-s^*|
+&\le \frac{|\epsilon|}{(1+A_1)\cdot (1+A_1)/2}
+=\frac{2|\epsilon|}{(1+A_1)^2}.
+\end{align}
+The sufficient condition follows by requiring the right-hand side be at most
+$\delta_s$, and substituting the paper's formula for $\delta_s$ yields the final
+expression. $\square$
 
 
 ## Sanity Checks
 
-All quantitative claims verified numerically (`lib/verify_a1.py` and auxiliary demos in
-`lib/`).
+All quantitative claims verified numerically (`lib/verify_a1.py`,
+`lib/verify_ising_bridge.py`, and auxiliary demos in `lib/`).
 
 **Grover $N = 4$, $d_0 = 1$.**
 - $A_1 = (4 - 1)/4 = 3/4$. $\checkmark$
@@ -658,6 +789,17 @@ All quantitative claims verified numerically (`lib/verify_a1.py` and auxiliary d
 - Sum: $4 + 3 + 4/3 + 1/4 = 103/12 \approx 8.583$. $\checkmark$
 - $A_1 = 103/(12 \cdot 16) = 103/192 \approx 0.5365$. $\checkmark$
 
+**Proposition 13 (Ising multiplicative-$Z$ to additive-$A_1$).**
+- Numerical bound check on a ferromagnetic Ising chain with bounded multiplicative
+  oracle noise passes: observed errors stay below
+  $(1-\rho_0)e^{-B\Delta_{\min}}(B+1/\Delta_{\min})+2\mu B + B^2/(2K)$.
+  $\checkmark$ (`lib/verify_ising_bridge.py`)
+
+**Proposition 14 (schedule sensitivity).**
+- Direct numerical checks confirm
+  $|\widehat{s}^*-s^*|\le 2|\epsilon|/(1+A_1)^2$ in the stated regime. $\checkmark$
+  (`lib/verify_ising_bridge.py`)
+
 
 ## Summary Table
 
@@ -676,30 +818,34 @@ All quantitative claims verified numerically (`lib/verify_a1.py` and auxiliary d
 | Prop 10 | Approximate $A_1$ from $Z(t)$ without $d_0$ | Proved |
 | Prop 11 | Laplace proxy: approximate $A_1$ from $Z(\beta)$ without $d_0$ | Proved |
 | Prop 12 | Oracle reduction: approximate $Z$ on a grid $\Rightarrow$ additive $A_1$ | Proved |
+| Prop 13 | Ferromagnetic Ising (multiplicative $Z$ approximation) $\Rightarrow$ additive $A_1$ with explicit $(R,\Delta_{\min},\rho_0)$ error drivers | Proved |
+| Prop 14 | Schedule-relevant $A_1$ precision is $\Theta(\sqrt{d_0A_2/N})$ via $s^*=A_1/(1+A_1)$ sensitivity | Proved |
 
 
 ## Information-Gap Interpretation (Chapter 9 hook)
 
-The paper’s “information gap” phenomenon can be reframed using Propositions 10–12:
+The paper's "information gap" phenomenon can be reframed using Propositions 10--14:
 
-- **Coarse accuracy is a moderate-temperature object.** To achieve additive error
-  $\eta=1/\mathrm{poly}(n)$, Proposition 11 suggests it suffices (under
-  $\Delta_{\min}\ge 1/\mathrm{poly}(n)$) to access $Z(\beta)$ only up to
-  $B=\Theta((1/\Delta_{\min})\log(1/\eta))=\mathrm{polylog}(n)$, and Proposition 10
-  suggests accessing $Z(t)$ only down to $\varepsilon=\mathrm{poly}(n)^{-1}$.
-  This is precisely the regime where many classical partition-function algorithms (and
-  even naive sampling) can succeed under natural promises.
+- **Coarse accuracy is a moderate-temperature object.** For additive
+  $\eta=1/\mathrm{poly}(n)$ and $\Delta_{\min}\ge 1/\mathrm{poly}(n)$, Proposition 11
+  only needs $B=\Theta((1/\Delta_{\min})\log(1/\eta))=\mathrm{polylog}(n)$, and
+  Proposition 10 only needs $\varepsilon=\mathrm{poly}(n)^{-1}$. Proposition 13 then
+  turns any multiplicative partition-function approximation in that window into a
+  randomized polynomial-time additive approximation for $A_1$.
 
-- **Schedule-relevant accuracy is low-temperature.** In the worst case, the schedule
-  needs $A_1$ to additive accuracy $\eta\approx \delta_s=\Theta(2^{-n/2})$ (cf. the
-  paper’s discussion around predicting $s^*$ to within $\delta_s$). Then:
+- **Schedule-relevant accuracy is low-temperature.** Proposition 14 makes the required
+  scale explicit: to localize $s^*$ at crossing-window scale, we need
+  $|A_1-\widehat{A}_1|=\Theta(\sqrt{d_0A_2/N})$, which is $\Theta(2^{-n/2})$ in the
+  worst case. At that precision:
   - Proposition 11 requires $B=\Theta(n/\Delta_{\min})$;
-  - Proposition 10 requires $\varepsilon \approx 2^{-n/2}/\mathrm{poly}(n)$, i.e.
-    partition-function access at exponentially small $t$.
+  - Proposition 10 requires $\varepsilon\approx 2^{-n/2}/\mathrm{poly}(n)$;
+  - Proposition 13 requires multiplicative partition-function accuracy
+    $\mu=O(2^{-n/2}/B)$, i.e. effectively exponential effort for oracle runtimes
+    polynomial in $1/\mu$.
 
 In other words: **the information barrier corresponds to the need for low-temperature
 partition-function information** (or equivalently, fine-grained density-of-states
-information), even though the adiabatic evolution itself is “zero-temperature”.
+information), even though the adiabatic evolution itself is "zero-temperature".
 
 
 ## What Remains Open

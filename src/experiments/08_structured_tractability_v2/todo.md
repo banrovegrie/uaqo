@@ -22,13 +22,13 @@ next actions while the experiment is evolving.
 - [x] Prove an analogous bound for the Laplace form
       \(\frac{1}{N}\int_0^\infty (Z(\beta)-d_0)\,d\beta\) with truncation at
       \(\beta_{\max}\) and tail control.
-- [ ] Make error parameters explicit (energy normalization, minimum excited energy,
+- [x] Make error parameters explicit (energy normalization, minimum excited energy,
       mass near the ground, etc.).
 
 **A2. Structured-family positive theorem**
 - [x] Choose 1–2 families where \(Z\) is tractable and derive a polynomial-time
       algorithm for approximating \(A_1\) (to a specified precision regime).
-- [ ] Choose a *second* family where \(Z\) is nontrivially approximable (e.g. a known
+- [x] Choose a *second* family where \(Z\) is nontrivially approximable (e.g. a known
       FPRAS regime for a spin system / matching polynomial) and write a clean corollary.
 - [x] Write as a theorem + proof, not just an observation.
 
@@ -62,16 +62,16 @@ next actions while the experiment is evolving.
 ### C. Precision-aware story (bridge to Chapter 9 + Experiment 13)
 
 **C0. Map precisions to “what AQO needs”**
-- [ ] Extract from the paper: the required \(\delta_{A_1}\) scale for schedule
+- [x] Extract from the paper: the required \(\delta_{A_1}\) scale for schedule
       correctness; restate it in this experiment’s notation.
-- [ ] Decide which precision regimes are worth targeting for “structured
+- [x] Decide which precision regimes are worth targeting for “structured
       tractability” results.
 
 **C1. Connect the structured-family theorem(s) to algorithmic precision**
-- [ ] For the chosen structured family, determine whether we can compute/estimate
+- [x] For the chosen structured family, determine whether we can compute/estimate
       \(A_1\) to \(\eta=2^{-n/2}\) (or the correct derived scale) in polytime /
       quasi-poly / etc.
-- [ ] If only constant-factor or inverse-poly additive error is feasible, determine
+- [x] If only constant-factor or inverse-poly additive error is feasible, determine
       whether that is meaningful for near-optimal schedules.
 
 **C2. Integration**
@@ -89,7 +89,7 @@ Selection criteria:
 Candidates:
 - [ ] **Bounded treewidth CSPs / factor graphs**: exact dynamic programming for
       partition functions \(\Rightarrow\) exact/approx \(A_1\).
-- [ ] **Ferromagnetic Ising / monotone systems**: known FPRAS regimes for partition
+- [x] **Ferromagnetic Ising / monotone systems**: known FPRAS regimes for partition
       functions in some parameter ranges.
 - [ ] **XOR-SAT / linear codes**: counting is in P \(\Rightarrow\) exact \(Z(t)\);
       check if it yields a clean, nontrivial \(A_1\) theorem.
@@ -98,7 +98,7 @@ Candidates:
       tractable, could yield a strong positive theorem.
 
 Immediate action:
-- [ ] Choose the “main family” and write a 1-page mini-brief: input model, known
+- [x] Choose the “main family” and write a 1-page mini-brief: input model, known
       \(Z\) facts, target precision, likely theorem statement.
 
 
@@ -131,6 +131,12 @@ Immediate action:
   Proposition 12 (oracle reduction $Z$-approx $\Rightarrow$ additive $A_1$); added
   numerical sanity checks for the bounds in `lib/verify_a1.py` and a Laplace-side
   quadrature demo in `lib/approx_a1_from_laplace_partition_function.py`.
+- 2026-02-06: selected ferromagnetic Ising with consistent fields as the main
+  approximation family (`notes/family_selection.md`); added Proposition 13
+  (multiplicative-$Z$ to additive-$A_1$ with explicit $(R,\Delta_{\min},\rho_0)$ error
+  drivers) and Proposition 14 (schedule-relevant precision
+  \(\eta_{A_1}=\Theta(\sqrt{d_0A_2/N})\)); added `lib/verify_ising_bridge.py` and
+  verified all checks pass.
 
 
 ## Findings
@@ -146,24 +152,29 @@ Immediate action:
   \(Z\), connecting tractability/hardness of \(A_1\) to tractability/hardness of \(Z\).
 - Additive \(A_1\) approximation can avoid computing \(d_0\) via anchoring at
   \(Z(\varepsilon)\) (ordinary) or \(Z(B)\) (Laplace), with explicit truncation bounds.
+- In structured ferromagnetic Ising regimes, multiplicative approximation of
+  partition functions on a temperature window yields additive approximation of \(A_1\)
+  with explicit decomposition into tail, oracle, and quadrature terms (Prop 13).
+- Crossing-position sensitivity gives an explicit required precision scale
+  \(\eta_{A_1}=\Theta(\sqrt{d_0A_2/N})\), recovering the worst-case
+  \(2^{-n/2}\) regime from the paper's \(\delta_s\) formula (Prop 14).
 
 ### Missing (needed for novelty)
 
-- A nontrivial **positive** tractability theorem for a natural broad family where the
-  result is not “degeneracies are given”.
-- A nontrivial **necessary/boundary** theorem under explicit structural hypotheses.
-- A clean, precision-aware bridge to the algorithmic precision regime relevant for
-  Chapter 9 (and Experiment 13).
+- A nontrivial **necessary/boundary** theorem under explicit structural hypotheses
+  that is not just the interpolation reduction route (Target B / A3).
 
 ### Chapter 9 insertion outline (draft)
 
 - **Motivation:** predicting the avoided crossing requires $A_1$ to precision
-  $O(\delta_s)$, which can be exponentially small.
+  $O(\delta_s)$; by Prop 14 this is equivalent to additive
+  \(\eta_{A_1}=O(\sqrt{d_0A_2/N})\), worst-case \(2^{-n/2}\).
 - **Key structural lemma:** $A_1$ as a partition-function transform (Laplace + ordinary
   generating function).
 - **Positive structure:** bounded treewidth gives exact $Z(t)$ coefficients and exact
   $A_1$ (Prop 8); more generally, approximate $Z$ over a temperature window implies
-  additive $A_1$ (Props 10–12).
+  additive $A_1$ (Props 10–13), including ferromagnetic Ising FPRAS regimes.
 - **Precision-aware message:** coarse $A_1$ is often “moderate temperature”, but the
-  schedule-relevant regime $\eta\approx 2^{-n/2}$ is “low temperature”, aligning with
-  the paper’s information barrier.
+  schedule-relevant regime \(\eta_{A_1}\approx 2^{-n/2}\) is “low temperature”, and
+  Prop 13 shows this pushes required multiplicative $Z$ accuracy into effectively
+  exponential effort for $1/\mu$-polynomial oracles.

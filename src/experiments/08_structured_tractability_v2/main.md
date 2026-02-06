@@ -26,8 +26,8 @@ and identifies the precise structural property (spectral complexity) that contro
 - The paper’s hardness results show $A_1$ is hard in the worst case. This experiment
   adds *positive structure*: $A_1$ can be computed exactly for bounded-treewidth local
   energy functions via a partition-function DP (Prop 8) and approximated via
-  partition-function evaluation over a temperature window (Props 10–12).
-- Propositions 10–12 make a new bridge explicit: additive approximation of $A_1$ can
+  partition-function evaluation over a temperature window (Props 10-14).
+- Propositions 10–13 make a new bridge explicit: additive approximation of $A_1$ can
   avoid computing $d_0$ (the counting-hard quantity) by anchoring at $Z(\varepsilon)$
   or $Z(B)$, turning “estimate $A_1$” into “estimate $Z$ on a grid” with explicit
   truncation/quadrature error bounds.
@@ -91,6 +91,8 @@ counting complexity while optimization tracks decision complexity. See Propositi
 | Prop 10 | Approximate A_1 from Z(t) without d_0 | Proved |
 | Prop 11 | Laplace proxy: approximate A_1 from Z(β) without d_0 | Proved |
 | Prop 12 | Oracle reduction: approximate Z on a grid ⇒ additive A_1 | Proved |
+| Prop 13 | Ferromagnetic Ising + multiplicative Z approximation ⇒ additive A_1 (explicit error drivers) | Proved |
+| Prop 14 | Schedule-level A_1 precision: η_A1 = Θ(sqrt(d_0 A_2 / N)) | Proved |
 
 ### Key Conclusions
 
@@ -103,6 +105,16 @@ The Grover Hamiltonian is the canonical "sweet spot": hard search with trivially
 computable A_1 in the promise model. But this relies on knowing d_0. Without that
 promise, even Grover's A_1 requires Theta(sqrt(N)) quantum queries to determine.
 
+The partition-function bridge is now family-level concrete: for ferromagnetic Ising
+with consistent fields, multiplicative approximation of Z on a temperature window
+implies additive approximation of A_1 with explicit dependence on energy scale R,
+minimum excitation Delta_min, and ground mass d_0/N (Prop 13).
+
+Precision is the real boundary: to place the crossing at window scale, A_1 must be
+estimated to additive precision eta_A1 = Theta(sqrt(d_0 A_2 / N)) (Prop 14), which is
+Theta(2^{-n/2}) in the worst case. Coarse inverse-polynomial precision can be
+tractable while schedule-level precision can still be intractable.
+
 
 ## Remaining Open Questions
 
@@ -114,9 +126,9 @@ promise, even Grover's A_1 requires Theta(sqrt(N)) quantum queries to determine.
    of a hard search problem with easy A_1. Do natural combinatorial NP-hard problems
    (not oracle search) ever have simple enough spectra?
 
-3. **Approximate A_1.** Exact $A_1$ can be \#P-hard (Prop 4), but coarse additive
-   approximation can be easy under natural promises (Prop 9). What approximation
-   quality is sufficient for near-optimal schedules?
+3. **Boundary at schedule precision.** We now know the target precision scale
+   eta_A1 = Theta(sqrt(d_0 A_2 / N)) (Prop 14). Which natural families still admit
+   polynomial-time approximation at that scale, not just at inverse-polynomial error?
 
 4. **Quantum computation of A_1.** Phase estimation on H_z could estimate A_1
    quantumly. Classical hardness does not rule out efficient quantum computation.
@@ -132,7 +144,8 @@ promise, even Grover's A_1 requires Theta(sqrt(N)) quantum queries to determine.
 
 ## Numerical Verification
 
-Quantitative sanity checks verified in `lib/verify_a1.py`. Key checks:
+Quantitative sanity checks verified in `lib/verify_a1.py` and
+`lib/verify_ising_bridge.py`. Key checks:
 - Grover N=4, d_0=1: A_1 = 3/4, s* = 3/7
 - Grover N=4, d_0=2: A_1 = 1/2, s* = 1/3
 - Proposition 1 (n=4, N=16): A_1 = 9/8 = 1.125, vs 1/Delta = 4
@@ -155,6 +168,10 @@ Laplace-side quadrature demo: `lib/approx_a1_from_laplace_partition_function.py`
 implements the anchored proxy $A_1^{[B]}$ (Proposition 11) via midpoint quadrature and
 compares to the exact value for a toy structured instance.
 
+Ferromagnetic bridge verification: `lib/verify_ising_bridge.py` checks the full
+Proposition 13 bound numerically (tail + oracle + quadrature terms) and validates the
+Proposition 14 crossing-sensitivity identity.
+
 
 ## References
 
@@ -162,6 +179,7 @@ compares to the exact value for a toy structured instance.
 2. Valiant 1979 -- #P-completeness of counting
 3. Bennett, Bernstein, Brassard, Vazirani 1997 -- query lower bounds
 4. Grover 1996 -- quantum search
+5. Jerrum, Sinclair (ferromagnetic Ising partition-function approximation regime)
 
 
 ## Status

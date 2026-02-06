@@ -125,33 +125,33 @@ lemma secularTerm_strictMono {n M : Nat} (es : EigenStructure n M)
     (hsame : (s * es.eigenvalues k - lambda1) * (s * es.eigenvalues k - lambda2) > 0) :
     (es.degeneracies k : Real) / (s * es.eigenvalues k - lambda1) <
     (es.degeneracies k : Real) / (s * es.eigenvalues k - lambda2) := by
-  let a := s * es.eigenvalues k
-  let d := (es.degeneracies k : Real)
+  -- Algebraic approach: show d/(a-λ₂) - d/(a-λ₁) > 0
+  -- = d(λ₂-λ₁)/((a-λ₂)(a-λ₁)) > 0  since d > 0, λ₂-λ₁ > 0, product > 0
+  set a := s * es.eigenvalues k
+  set d := (es.degeneracies k : Real)
   have hd_pos : d > 0 := Nat.cast_pos.mpr (es.deg_positive k)
   have ha1 : a - lambda1 ≠ 0 := sub_ne_zero.mpr (Ne.symm hne1)
   have ha2 : a - lambda2 ≠ 0 := sub_ne_zero.mpr (Ne.symm hne2)
-  -- (a - λ₂) < (a - λ₁) since λ₁ < λ₂
-  have h_sub : a - lambda2 < a - lambda1 := by linarith
-  -- Product positive means same sign
-  rcases (mul_pos_iff.mp (le_of_lt hsame |>.lt_of_ne (Ne.symm (ne_of_gt hsame)))) with
-    ⟨h1, h2⟩ | ⟨h1, h2⟩
-  · -- Case 1: both positive
-    -- 0 < a - λ₂ < a - λ₁, d > 0
-    -- d/(a - λ₁) < d/(a - λ₂) because smaller denominator → larger fraction
-    exact div_lt_div_of_pos_left hd_pos h2 h_sub
-  · -- Case 2: both negative
-    -- a - λ₂ < a - λ₁ < 0
-    -- Equivalently: λ₂ - a > λ₁ - a > 0
-    -- d/(a - λ₁) is negative with smaller absolute value
-    -- d/(a - λ₂) is negative with larger absolute value... NO, this is wrong direction
-    -- Actually: |a - λ₂| > |a - λ₁|, and both are negative
-    -- d/(a - λ₂) > d/(a - λ₁) because d > 0, a-λ₂ more negative → d/(a-λ₂) less negative
-    -- Wait: d > 0 and a - λ₂ < a - λ₁ < 0
-    -- d/(a - λ₂) = d / (negative, larger magnitude) = less negative
-    -- d/(a - λ₁) = d / (negative, smaller magnitude) = more negative
-    -- So d/(a - λ₂) > d/(a - λ₁) ✓
-    -- Use: for d > 0 and x < y < 0, d/x > d/y (dividing by more negative gives less negative)
-    exact div_lt_div_of_neg_left hd_pos h1 h_sub
+  suffices h : d / (a - lambda2) - d / (a - lambda1) > 0 by linarith
+  rw [div_sub_div _ _ ha2 ha1]
+  apply div_pos
+  · -- Numerator: d*(a-λ₁) - (a-λ₂)*d = d*(λ₂-λ₁) > 0
+    have hnum : d * (a - lambda1) - (a - lambda2) * d = d * (lambda2 - lambda1) := by ring
+    rw [hnum]
+    exact mul_pos hd_pos (sub_pos.mpr hlt)
+  · -- Denominator: (a-λ₂)*(a-λ₁) > 0
+    have hprod : (a - lambda2) * (a - lambda1) = (a - lambda1) * (a - lambda2) := mul_comm _ _
+    rw [hprod]; exact hsame
+
+/-- When two points are in the same interval between poles, the denominator products are positive. -/
+private lemma same_interval_product_pos {a x y : Real}
+    (h : (a < x ∧ a < y) ∨ (x < a ∧ y < a) ∨ (a ≤ x ∧ y ≤ a))
+    (hlt : x < y) :
+    (a - x) * (a - y) > 0 := by
+  rcases h with ⟨h1, h2⟩ | ⟨h1, h2⟩ | ⟨h1, h2⟩
+  · exact mul_pos_of_neg_of_neg (sub_neg.mpr h1) (sub_neg.mpr h2)
+  · exact mul_pos (sub_pos.mpr h1) (sub_pos.mpr h2)
+  · linarith
 
 /-- The secular function evaluated at two points in the same interval.
     If λ₁ < λ₂ and both are in the same interval between poles,
@@ -169,16 +169,26 @@ theorem secularFun_strictMono_on_interval {n M : Nat} (es : EigenStructure n M)
       (lambda1 < s * es.eigenvalues k ∧ lambda2 < s * es.eigenvalues k) ∨
       (s * es.eigenvalues k ≤ lambda1 ∧ lambda2 ≤ s * es.eigenvalues k)) :
     secularFun es hM s lambda1 < secularFun es hM s lambda2 := by
-  -- Key insight: ∂F/∂λ = (1/N) Σ d_k/(sE_k - λ)² > 0 on each pole-free interval.
-  -- So F is strictly increasing. The proof uses the mean value theorem:
-  -- F(λ₂) - F(λ₁) = F'(c) · (λ₂ - λ₁) > 0 for some c ∈ (λ₁, λ₂).
-  -- Alternatively, we show each term d_k/(sE_k - λ) is strictly increasing on the interval.
-  --
-  -- d/dλ [d_k/(sE_k - λ)] = d_k/(sE_k - λ)² > 0
-  -- This means: for λ₁ < λ₂ in the same interval,
-  --   d_k/(sE_k - λ₂) > d_k/(sE_k - λ₁) when sE_k > λ₂ (both denoms positive)
-  --   d_k/(sE_k - λ₂) > d_k/(sE_k - λ₁) when λ₁ > sE_k (both denoms negative)
-  sorry
+  -- Each term d_k/(sE_k - λ) is strictly increasing in λ on each pole-free interval.
+  -- Sum of strictly increasing functions is strictly increasing. The -1/(1-s) cancels.
+  unfold secularFun
+  -- Suffices to show the sum part is strictly increasing (constant cancels)
+  suffices h_sum :
+      (Finset.sum Finset.univ (fun k : Fin M =>
+        (es.degeneracies k : Real) / (s * es.eigenvalues k - lambda1))) <
+      (Finset.sum Finset.univ (fun k : Fin M =>
+        (es.degeneracies k : Real) / (s * es.eigenvalues k - lambda2))) by
+    have hN_pos : (1 : Real) / (qubitDim n : Real) > 0 :=
+      div_pos one_pos (Nat.cast_pos.mpr (Nat.pow_pos (by norm_num : 0 < 2)))
+    linarith [mul_lt_mul_of_pos_left h_sum hN_pos]
+  apply Finset.sum_lt_sum
+  · -- Each term: term(lambda1) ≤ term(lambda2)
+    intro k _
+    exact le_of_lt (secularTerm_strictMono es s lambda1 lambda2 k hlt (hne1 k) (hne2 k)
+      (same_interval_product_pos (h_same_interval k) hlt))
+  · -- At least one strict: use k = 0
+    exact ⟨⟨0, hM⟩, Finset.mem_univ _, secularTerm_strictMono es s lambda1 lambda2 ⟨0, hM⟩ hlt
+      (hne1 _) (hne2 _) (same_interval_product_pos (h_same_interval _) hlt)⟩
 
 /-! ## Root structure -/
 
@@ -207,7 +217,71 @@ theorem secularFun_neg_at_neg_infty {n M : Nat} (es : EigenStructure n M)
       lambda < L →
       (∀ k : Fin M, lambda < s * es.eigenvalues k) →
       |secularFun es hM s lambda + 1/(1-s)| < ε := by
-  sorry -- TODO: Sum → 0 as λ → -∞
+  intro ε hε
+  -- Choose L so that sE₀ - λ > 1/ε
+  use s * es.eigenvalues ⟨0, hM⟩ - 1/ε
+  intro lambda hL h_below
+  -- Abbreviations
+  set N := (qubitDim n : Real) with hN_def
+  set E₀ := es.eigenvalues ⟨0, hM⟩
+  -- Positivity
+  have hN_pos : N > 0 := Nat.cast_pos.mpr (Nat.pow_pos (by norm_num : 0 < 2))
+  have hdiff_pos : ∀ k : Fin M, s * es.eigenvalues k - lambda > 0 :=
+    fun k => sub_pos.mpr (h_below k)
+  -- Key identity: secularFun + 1/(1-s) = (1/N) * Σ d_k/(sE_k - λ)
+  -- Since value ≥ 0, suffices to show value < ε
+  suffices h_bound : (1 / N) * Finset.sum Finset.univ (fun k : Fin M =>
+      (es.degeneracies k : Real) / (s * es.eigenvalues k - lambda)) < ε by
+    have hkey : secularFun es hM s lambda + 1 / (1 - s) =
+        (1 / N) * Finset.sum Finset.univ (fun k : Fin M =>
+          (es.degeneracies k : Real) / (s * es.eigenvalues k - lambda)) := by
+      unfold secularFun; ring
+    rw [hkey]
+    have hnn : 0 ≤ (1 / N) * Finset.sum Finset.univ (fun k : Fin M =>
+        (es.degeneracies k : Real) / (s * es.eigenvalues k - lambda)) :=
+      mul_nonneg (div_nonneg one_pos.le hN_pos.le)
+        (Finset.sum_nonneg fun k _ => le_of_lt (div_pos (Nat.cast_pos.mpr (es.deg_positive k)) (hdiff_pos k)))
+    rw [abs_of_nonneg hnn]; exact h_bound
+  -- E₀ ≤ E_k for all k (eigenvalues ordered)
+  have hE₀_min : ∀ k : Fin M, E₀ ≤ es.eigenvalues k := by
+    intro k
+    by_cases hk0 : (k : Nat) = 0
+    · have : k = ⟨0, hM⟩ := Fin.ext hk0
+      rw [this]
+    · exact le_of_lt (es.eigenval_ordered ⟨0, hM⟩ k (show (0 : Nat) < k from by omega))
+  -- sE₀ - λ > 0
+  have hbase_pos : s * E₀ - lambda > 0 := hdiff_pos ⟨0, hM⟩
+  -- sE₀ - λ > 1/ε
+  have hbase_large : s * E₀ - lambda > 1 / ε := by linarith
+  -- Each term d_k/(sE_k - λ) ≤ d_k/(sE₀ - λ)  [bigger denom → smaller frac]
+  have h_term_le : ∀ k ∈ Finset.univ, (es.degeneracies k : Real) / (s * es.eigenvalues k - lambda) ≤
+      (es.degeneracies k : Real) / (s * E₀ - lambda) := by
+    intro k _
+    apply div_le_div_of_nonneg_left (Nat.cast_nonneg _) hbase_pos
+    linarith [mul_le_mul_of_nonneg_left (hE₀_min k) (le_of_lt hs.1)]
+  -- Σ d_k/(sE_k - λ) ≤ Σ d_k/(sE₀ - λ) = (Σ d_k)/(sE₀ - λ) = N/(sE₀ - λ)
+  have hsum_le : Finset.sum Finset.univ (fun k : Fin M =>
+      (es.degeneracies k : Real) / (s * es.eigenvalues k - lambda)) ≤
+      N / (s * E₀ - lambda) := by
+    calc Finset.sum Finset.univ (fun k => (↑(es.degeneracies k) : Real) / (s * es.eigenvalues k - lambda))
+        ≤ Finset.sum Finset.univ (fun k => (↑(es.degeneracies k) : Real) / (s * E₀ - lambda)) :=
+          Finset.sum_le_sum h_term_le
+      _ = (Finset.sum Finset.univ (fun k : Fin M => (es.degeneracies k : Real))) / (s * E₀ - lambda) :=
+          (Finset.sum_div ..).symm
+      _ = N / (s * E₀ - lambda) := by
+          congr 1
+          -- Σ (d_k : ℝ) = N = qubitDim n
+          rw [hN_def]
+          have h := es.deg_sum  -- : Σ d_k = qubitDim n (in ℕ)
+          exact_mod_cast h
+  -- (1/N) * sum ≤ (1/N) * N/(sE₀ - λ) = 1/(sE₀ - λ) < ε
+  calc (1 / N) * Finset.sum Finset.univ _
+      ≤ (1 / N) * (N / (s * E₀ - lambda)) :=
+        mul_le_mul_of_nonneg_left hsum_le (div_nonneg one_pos.le hN_pos.le)
+    _ = 1 / (s * E₀ - lambda) := by field_simp
+    _ < ε := by
+        have h := (one_div_lt_one_div hbase_pos (div_pos one_pos hε)).mpr hbase_large
+        rwa [one_div_one_div] at h
 
 /-- There is exactly one root of F(s,·) in (-∞, s·E₀).
     This root is the ground state eigenvalue of H(s). -/
