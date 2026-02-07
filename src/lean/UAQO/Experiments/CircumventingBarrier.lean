@@ -67,7 +67,6 @@ a lemma with proof.
 lemma equalSuperposition_amp_sq (n : Nat) (z : Fin (qubitDim n)) :
     Complex.normSq (equalSuperpositionN n z) = 1 / (qubitDim n : Real) := by
   simp only [equalSuperpositionN, equalSuperposition]
-  -- equalSuperposition N z = 1 / Complex.ofReal (Real.sqrt N)
   rw [Complex.normSq_div, Complex.normSq_one]
   have hN : (0 : Real) < (qubitDim n : Real) :=
     Nat.cast_pos.mpr (Nat.pow_pos (by norm_num : 0 < 2))
@@ -198,10 +197,6 @@ private lemma A1_oneQubitES (E₁ : Real) (hE₁_pos : 0 < E₁)
     (hE₁_le1 : E₁ ≤ 1) :
     A1 (oneQubitES E₁ hE₁_pos hE₁_le1) (by norm_num) = 1 / (2 * E₁) := by
   simp only [A1, spectralParam, oneQubitES, qubitDim, pow_one]
-  -- The sum is over k ∈ Fin 2 with k.val > 0, which is just k = 1
-  -- Term for k=1: d₁/(E₁ - E₀) = 1/E₁
-  -- Prefactor: 1/N = 1/2
-  -- Result: (1/2) * (1/E₁) = 1/(2*E₁)
   rw [show Finset.filter (fun k : Fin 2 => k.val > 0) Finset.univ = {⟨1, by norm_num⟩}
     from by ext k; fin_cases k <;> simp]
   simp
@@ -298,13 +293,10 @@ theorem theorem4_multisegment_rigidity_statement :
           (i : Fin numSegments),
         fixedParams i = A1 es hM) := by
   intro numSegments hSeg fixedParams h
-  -- Specialize to Instance A and Instance B at segment 0
   have hA := h 1 2 (oneQubitES 1 one_pos le_rfl) (by norm_num) ⟨0, hSeg⟩
   have hB := h 1 2 (oneQubitES (1/2) (by norm_num) (by norm_num)) (by norm_num) ⟨0, hSeg⟩
-  -- fixedParams 0 = 1/2 and fixedParams 0 = 1
   rw [A1_instanceA] at hA
   rw [A1_instanceB] at hB
-  -- 1/2 = 1 is a contradiction
   linarith
 
 /-- Theorem 4 (Multi-Segment): Instance-independent schedules are impossible. -/

@@ -30,7 +30,6 @@ theorem lagrange_interpolation_proof (M : Nat) (hM : M > 0)
     ∃ (p : Polynomial Real),
       p.natDegree < M ∧
       ∀ i : Fin M, p.eval (points i) = values i := by
-  -- Use Lagrange.interpolate from Mathlib
   use Lagrange.interpolate Finset.univ points values
   constructor
   · -- Degree bound: natDegree < M

@@ -100,7 +100,6 @@ theorem sharpP_solves_NP (prob : CountingProblem) (_hSharpP : IsSharpPComplete p
       ∃ (oracleFunc : List Bool -> List Bool),
         InPWithOracle decision oracleFunc := by
   intro decision _hNP
-  -- Use a classical oracle that directly decides membership
   letI : DecidablePred (· ∈ decision.yes_instances) := Classical.decPred _
   use fun x => if x ∈ decision.yes_instances then [true] else [false]
   refine ⟨{ algorithm := fun oracle x => oracle x, query_bound := 1 }, fun x => ?_⟩

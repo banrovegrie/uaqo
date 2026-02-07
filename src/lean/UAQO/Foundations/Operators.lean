@@ -201,7 +201,6 @@ lemma outerProd_mul {N : Nat} (u v : Ket N) (A : Operator N) :
   -- RHS = u i * ∑ k, star (star (A k j) * v k) = u i * ∑ k, A k j * star (v k)
   rw [star_sum]
   simp only [star_mul', star_star]
-  -- Now: ∑ k, u i * star (v k) * A k j = u i * ∑ k, A k j * star (v k)
   have h : ∀ k, u i * star (v k) * A k j = u i * (A k j * star (v k)) := fun k => by ring
   simp_rw [h]
   rw [← Finset.mul_sum]
@@ -324,9 +323,7 @@ lemma projector_expectation_nonneg {N : Nat} (P : Operator N) (hP : IsProjector 
     simp only [expectation, hPsq]
   -- Step 3: = innerProd v (P ⬝ (P ⬝ v)) by applyOp_mul
   rw [h1, applyOp_mul]
-  -- Step 4: = innerProd (P† ⬝ v) (P ⬝ v) by adjoint property (innerProd_dagger in reverse)
-  -- Actually we use innerProd_hermitian: for Hermitian A, ⟨w|A|u⟩ = ⟨Aw|u⟩
-  -- So ⟨v|P|Pv⟩ = ⟨Pv|Pv⟩
+  -- Step 4: ⟨v|P(Pv)⟩ = ⟨Pv|Pv⟩ by innerProd_hermitian
   have h2 : innerProd v (P ⬝ (P ⬝ v)) = innerProd (P ⬝ v) (P ⬝ v) := by
     exact innerProd_hermitian P hHerm v (P ⬝ v)
   rw [h2]

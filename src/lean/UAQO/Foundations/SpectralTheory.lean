@@ -186,19 +186,12 @@ theorem variational_minimum (N M : Nat) (A : Operator N)
   constructor
   · exact hpsi_norm
   · -- Show ⟨psi|A|psi⟩ = E_0
-    -- Since P_0 psi = psi and A = Σ E_k P_k:
-    -- ⟨psi|A|psi⟩ = Σ E_k ⟨psi|P_k|psi⟩
-    -- For k ≠ 0: ⟨psi|P_k|psi⟩ = ⟨P_0 psi|P_k|psi⟩ = ⟨psi|P_0 P_k|psi⟩ = 0
-    -- For k = 0: ⟨psi|P_0|psi⟩ = ⟨psi|psi⟩ = 1
-    -- So ⟨psi|A|psi⟩ = E_0 · 1 = E_0
     have hspec := sd.spectral_decomp
     have h_exp : expectation A psi = expectation (Finset.sum Finset.univ
         (fun k => (sd.eigenvalues k : Complex) • sd.projectors k)) psi := by
       exact congrArg (fun B => expectation B psi) hspec
     rw [h_exp, expectation_finsum]
     simp only [expectation_smul]
-    -- The sum equals E_0 * expectation P_0 psi + Σ_{k≠0} E_k * expectation P_k psi
-    -- For k ≠ 0, expectation P_k psi = 0
     have h_orthog : ∀ k : Fin M, k ≠ ⟨0, hM⟩ →
         expectation (sd.projectors k) psi = 0 := by
       intro k hk
@@ -212,18 +205,13 @@ theorem variational_minimum (N M : Nat) (A : Operator N)
           applyOp (sd.projectors k) (applyOp (sd.projectors ⟨0, hM⟩) psi) := by
         rw [hpsi_eigen]
       rw [h1, ← applyOp_mul, hPkP0]
-      -- applyOp 0 psi = 0
       simp only [applyOp]
       simp [Matrix.zero_apply]
-    -- For k = 0, expectation P_0 psi = ‖psi‖² = 1
     have h_ground : expectation (sd.projectors ⟨0, hM⟩) psi = 1 := by
       simp only [expectation]
       rw [hpsi_eigen]
       -- innerProd psi psi = normSquared psi (as Complex)
       have h := innerProd_self_eq_normSquared psi
-      -- h : (innerProd psi psi).re = normSquared psi
-      -- We need innerProd psi psi = 1 (as Complex)
-      -- Since innerProd psi psi is real and equals normSquared psi = 1
       have h2 : innerProd psi psi = (normSquared psi : Complex) := by
         apply Complex.ext
         · exact h
@@ -237,7 +225,6 @@ theorem variational_minimum (N M : Nat) (A : Operator N)
           exact Complex.ofReal_im _
       rw [h2, hpsi_norm]
       rfl
-    -- The sum simplifies to E_0 * 1
     have h_sum : Finset.sum Finset.univ (fun k =>
         (sd.eigenvalues k : Complex) * expectation (sd.projectors k) psi) =
         (sd.eigenvalues ⟨0, hM⟩ : Complex) * 1 := by

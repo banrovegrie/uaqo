@@ -37,8 +37,6 @@ theorem satisfies_iff_countUnsatisfied_zero_proof (f : CNFFormula) (z : Fin (2^f
     rw [List.all_eq_true]
     intro c hc
     specialize h c hc
-    -- h says !evalClause c ≠ true
-    -- So !evalClause c = false, meaning evalClause c = true
     simp only [Bool.not_eq_true] at h
     cases hb : evalClause (finToAssignment f.numVars z) c <;> simp_all
 
@@ -59,8 +57,6 @@ lemma finToAssignment_injective (n : Nat) :
   intro z w h
   ext
   -- If finToAssignment z = finToAssignment w, then z = w
-  -- This follows because z.val.testBit i = w.val.testBit i for all i < n
-  -- And two numbers are equal iff they have equal bits at all positions
   have heq : ∀ i : Fin n, z.val.testBit i.val = w.val.testBit i.val := by
     intro i
     have hz := congrFun h i
@@ -94,22 +90,11 @@ instance Assignment_fintype (n : Nat) : Fintype (Assignment n) :=
     This follows from injectivity and equal cardinality. -/
 lemma finToAssignment_surjective (n : Nat) :
     Function.Surjective (finToAssignment n) := by
-  -- finToAssignment : Fin (2^n) → (Fin n → Bool)
-  -- It's injective by finToAssignment_injective
-  -- The domain and codomain have equal cardinality (both finite)
-  -- Therefore it's surjective (by pigeonhole for finite types)
   have hinj : Function.Injective (finToAssignment n) := finToAssignment_injective n
   have hcard : Fintype.card (Fin (2^n)) = Fintype.card (Fin n → Bool) := card_fin_pow_eq_card_fun n
   intro a
-  -- Use Fintype.bijective_iff_surjective_and_card
-  -- Since the domain and codomain have equal finite cardinality,
-  -- an injective function must be surjective
   by_contra h
   push_neg at h
-  -- h says: ∀ z, finToAssignment n z ≠ a
-  -- But the image of finToAssignment has card = 2^n (since injective)
-  -- And the codomain has card = 2^n
-  -- So the image is the whole codomain, contradiction
   have hcard_image : (Finset.univ.image (finToAssignment n)).card = Fintype.card (Fin (2^n)) := by
     rw [Finset.card_image_of_injective _ hinj]
     exact Finset.card_univ
@@ -138,14 +123,10 @@ theorem threeSATDegPositive_ground_proof (f : CNFFormula) (_hf : is_kCNF 3 f)
   -- isSatisfiable means there exists a satisfying assignment
   obtain ⟨a, ha⟩ := hsat
   simp only [numSatisfyingAssignments]
-  -- By surjectivity, there exists z such that finToAssignment z = a
   obtain ⟨z, hz⟩ := finToAssignment_surjective f.numVars a
-  -- This z is in the filter
   apply Finset.card_pos.mpr
   use z
   simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-  -- Need: evalCNF (finToAssignment f.numVars z) f = true
-  -- Since finToAssignment z = a and satisfies a f, we have evalCNF (finToAssignment z) f = true
   rw [hz]
   exact ha
 

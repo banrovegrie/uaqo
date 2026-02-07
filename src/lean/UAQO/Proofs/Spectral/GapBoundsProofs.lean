@@ -527,7 +527,6 @@ Bridge challenges:
 lemma exists_eigenvalue_of_hermitian {N : Nat} [NeZero N]
     (A : Matrix (Fin N) (Fin N) ℂ) (hA : Matrix.IsHermitian A) :
     ∃ (lam : ℝ), ∃ (v : Fin N → ℂ), v ≠ 0 ∧ A *ᵥ v = (lam : ℂ) • v := by
-  -- Use Mathlib's eigenvalues
   have hN : 0 < N := NeZero.pos N
   let idx : Fin N := ⟨0, hN⟩
   use hA.eigenvalues idx
@@ -730,8 +729,6 @@ lemma spectral_expansion_quadratic_form {N : Nat} [NeZero N]
     rw [← c_eq_dot' k]
 
   rw [rhs_eq]
-
-  -- Now we need to prove: (star phi) ⬝ᵥ (A *ᵥ phi) = Σ_k λ_k |c_k|²
 
   -- Step 1: phi = Σ_k c_k v_k in the function space
   have hphi_sum : phi = ∑ k : Fin N, c k • ⇑(b k) := by
@@ -1249,7 +1246,6 @@ lemma adiabaticHam_off_diagonal_nonzero {n M : Nat} (es : EigenStructure n M)
     -- H(s) = -(1-s) * projectorOnState(psi0) + s * Hz
     -- projectorOnState(psi0)_{01} = psi0_0 * conj(psi0_1) = (1/sqrt(N)) * (1/sqrt(N)) = 1/N
     -- Hz_{01} = 0 (diagonal)
-    -- So H(s)_{01} = -(1-s)/N
     simp only [adiabaticHam]
     -- Expand the matrix addition and scalar multiplication
     simp only [Matrix.add_apply, Matrix.smul_apply, smul_eq_mul]
@@ -1952,7 +1948,6 @@ lemma spectral_gap_pair_exists {n M : Nat} (es : EigenStructure n M)
     · rw [applyOp_eq_mulVec]
       have h := hHerm.mulVec_eigenvectorBasis j1
       simp only [hj1_eq] at h; exact h
-  -- Assemble the result
   refine ⟨E0, E1, hE0_is, hE1_is, hE0_lt_E1, ?_, ?_⟩
   · -- Ground state: E0 ≤ E for all eigenvalues
     intro E hE_is

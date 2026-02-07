@@ -430,23 +430,17 @@ theorem shermanMorrison_resolvent {n : Nat} (A : NQubitOperator n)
     resolvent A gamma +
     (1 / (1 - innerProd v (applyOp (resolvent A gamma) u))) •
     outerProd (applyOp (resolvent A gamma) u) (applyOp ((resolvent A gamma)†) v) := by
-  -- Let B = γI - A, R = B⁻¹ = resolvent A gamma
   let B := gamma • identityOp (qubitDim n) - A
   let R := resolvent A gamma
   let α := 1 / (1 - innerProd v (applyOp R u))
-  -- The RHS is R + α • outerProd(Ru)(R†v)
   let RHS := R + α • outerProd (applyOp R u) (applyOp (R†) v)
-  -- We need to show (B - outerProd u v)⁻¹ = RHS
   -- By Matrix.inv_eq_left_inv, it suffices to show RHS * (B - outerProd u v) = 1
   have hB_det : B.det ≠ 0 := hInv
-  -- The resolvent of (A + outerProd u v) is ((γI - A) - outerProd u v)⁻¹ = (B - outerProd u v)⁻¹
   have h_res : resolvent (A + outerProd u v) gamma = (B - outerProd u v)⁻¹ := by
     simp only [resolvent, B]
     congr 1
     simp only [sub_sub]
   rw [h_res]
-  -- Now show (B - outerProd u v)⁻¹ = RHS by verification
-  -- By Matrix.inv_eq_left_inv, if RHS * (B - outerProd u v) = 1, then (B - outerProd u v)⁻¹ = RHS
   have hverify : RHS * (B - outerProd u v) = 1 := by
     -- Key algebraic identity: (R + α|Ru⟩⟨R†v|) * (B - |u⟩⟨v|) = I
     -- Expanding: RB - R|u⟩⟨v| + α|Ru⟩⟨R†v|B - α|Ru⟩⟨R†v||u⟩⟨v|
@@ -540,9 +534,7 @@ theorem shermanMorrison_resolvent {n : Nat} (A : NQubitOperator n)
               _ = -1 + 1 := by rw [h]
               _ = 0 := by ring
           rw [hcoeff, zero_smul, add_zero]
-  -- Use Matrix.inv_eq_left_inv: if RHS * X = 1 then X⁻¹ = RHS
   have hresult : (B - outerProd u v)⁻¹ = RHS := Matrix.inv_eq_left_inv hverify
-  -- Now RHS is exactly our claimed formula
   simp only [RHS, R, α] at hresult
   exact hresult
 

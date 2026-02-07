@@ -112,7 +112,6 @@ theorem piecewiseSchedule_monotone {n M : Nat} (es : EigenStructure n M) (hM : M
         (sStar - deltaS) + 2 * deltaS * (t - T_left) / T_cross
       else (sStar + deltaS) + (1 - sStar - deltaS) * (t - T_left - T_cross) / T_right
     s t₁ < s t₂ := by
-  -- Setup: extract the key bounds from FullSpectralHypothesis
   simp only
   set sStar := avoidedCrossingPosition es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM)
   set deltaS := avoidedCrossingWindow es hM
@@ -125,7 +124,6 @@ theorem piecewiseSchedule_monotone {n M : Nat} (es : EigenStructure n M) (hM : M
   have hTl := times_pos.1
   have hTc := times_pos.2.1
   have hTr := times_pos.2.2
-  -- Define the schedule function
   let s := fun t =>
     if t <= T_left then (sStar - deltaS) * t / T_left
     else if t <= T_left + T_cross then
@@ -204,8 +202,6 @@ theorem piecewiseSchedule_monotone {n M : Nat} (es : EigenStructure n M) (hM : M
         have hh2 : ¬(t₂ <= T_left) := fun h => by linarith
         have hh2c : ¬(t₂ <= T_left + T_cross) := h2c
         simp only [if_neg hh1, h1c, if_neg hh2, if_neg hh2c, ↓reduceIte]
-        -- s(t₁) <= sStar + deltaS < s(t₂)
-        -- Key: t₂ > T_left + T_cross, so t₂ - T_left - T_cross > 0
         have ht2_gt : t₂ - T_left - T_cross > 0 := by linarith
         have ht1_bound : t₁ - T_left <= T_cross := by linarith
         have hst1_le : (sStar - deltaS) + 2 * deltaS * (t₁ - T_left) / T_cross <=

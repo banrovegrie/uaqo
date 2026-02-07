@@ -324,7 +324,6 @@ theorem secularFun_tendsto_top_from_below {n M : Nat} (es : EigenStructure n M)
         _ = ↑(es.degeneracies k) := by field_simp
     rw [gt_iff_lt]
     rwa [lt_div_iff₀ hgp]
-  -- Assemble: F(s,λ) > 1/ε
   unfold secularFun
   rw [hsplit]
   have h_sum_lb : ↑(es.degeneracies k) / (s * Ek - lambda) +
@@ -458,7 +457,6 @@ theorem secularFun_tendsto_bot_from_above {n M : Nat} (es : EigenStructure n M)
         -(↑(es.degeneracies k) / (lambda - s * Ek)) := by
       rw [show s * Ek - lambda = -(lambda - s * Ek) from by ring, div_neg]
     linarith
-  -- Assemble: F(s,λ) < -(1/ε)
   unfold secularFun; rw [hsplit]
   have h_sum_ub : ↑(es.degeneracies k) / (s * Ek - lambda) +
       others.sum (fun j => ↑(es.degeneracies j) / (s * es.eigenvalues j - lambda)) <

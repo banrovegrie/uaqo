@@ -66,16 +66,7 @@ theorem betaModifiedHam_deg_sum_proof {n M : Nat} (es : EigenStructure n M) (hM 
   rw [qubitDim_succ]
 
   -- Step 3: Reindex the sum
-  -- Sum over Fin (2*M) where f(k) = d_{k/2}
-  -- = Sum over even k of d_{k/2} + Sum over odd k of d_{k/2}
-  -- = Sum over Fin M of d_i + Sum over Fin M of d_i
-  -- = 2 * Sum over Fin M of d_i
-
-  -- Use Fintype.sum_equiv to reindex
   have h2M_pos : 0 < 2 * M := Nat.mul_pos (by norm_num) hM
-
-  -- Show that the sum equals 2 * (sum of degeneracies)
-  -- Each degeneracy d_i appears twice: once for k = 2i (even), once for k = 2i+1 (odd)
   have hSum : Finset.sum Finset.univ (fun k : Fin (2 * M) =>
         es.degeneracies ⟨k.val / 2, div2_lt_of_fin_2M k⟩) =
       2 * Finset.sum Finset.univ es.degeneracies := by
@@ -296,8 +287,6 @@ theorem betaModifiedHam_eigenval_ordered_strict_proof {n M : Nat} (es : EigenStr
     have hOrigLt : i.val / 2 < j.val / 2 := by
       have h1 : i.val / 2 ≤ j.val / 2 := Nat.div_le_div_right (le_of_lt hij)
       omega
-    -- With allGapsGreaterThan (strict), we have consecutive gap > beta/2
-    -- Therefore E_origJ - E_origI >= consecutive gap > beta/2
     have hGapBound : es.eigenvalues ⟨j.val / 2, horigJ⟩ - es.eigenvalues ⟨i.val / 2, horigI⟩ > beta / 2 := by
       -- For consecutive levels, this is exactly the strict gap constraint
       -- For non-consecutive, it's even larger due to strictly increasing eigenvalues
@@ -310,7 +299,6 @@ theorem betaModifiedHam_eigenval_ordered_strict_proof {n M : Nat} (es : EigenStr
         · have hLt : i.val / 2 + 1 < j.val / 2 := by omega
           exact le_of_lt (es.eigenval_ordered ⟨i.val / 2 + 1, hk⟩ ⟨j.val / 2, horigJ⟩ hLt)
       linarith
-    -- Now show E_origI + (shift) < E_origJ where shift <= beta/2
     split_ifs with hiUpper hjUpper
     · -- Both upper: E_origI + beta/2 < E_origJ + beta/2
       linarith

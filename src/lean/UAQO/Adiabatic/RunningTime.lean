@@ -101,9 +101,7 @@ theorem runningTime_ising_bound {n M : Nat} (es : EigenStructure n M)
   intro T d0 N
   obtain ⟨p, hp⟩ := hIsing
   obtain ⟨r, hr⟩ := hA2bound
-  -- Witness: polyFactor m = m^(r + 2*p)
   refine ⟨fun m => (m : Real)^(r + 2 * p), ⟨r + 2 * p, fun m => le_refl _⟩, ?_⟩
-  -- Key bounds from hypotheses
   have hM0 : M > 0 := Nat.lt_of_lt_of_le Nat.zero_lt_two hM
   have hA1_pos : A1 es hM0 > 0 := spectralParam_positive es hM 1 (by norm_num)
   have hA2_pos : A2 es hM0 > 0 := spectralParam_positive es hM 2 (by norm_num)
@@ -113,7 +111,6 @@ theorem runningTime_ising_bound {n M : Nat} (es : EigenStructure n M)
   have hN_pos : (N : Real) > 0 :=
     Nat.cast_pos.mpr (Nat.pow_pos (by norm_num : 0 < 2))
   have heps_pos := heps.1
-  -- A1 > 1 from FullSpectralHypothesis
   have hA1_gt1 : A1 es hM0 > 1 := hscb.cond.1
   -- n >= 1 (from M >= 2 and deg_sum: Σ d_k = 2^n >= M >= 2)
   have hn_pos : n >= 1 := by
@@ -144,14 +141,13 @@ theorem runningTime_ising_bound {n M : Nat} (es : EigenStructure n M)
   -- A1^2 >= 1 (from A1 > 1)
   have hA1sq : (A1 es hM0)^2 >= 1 := by nlinarith
   -- D^2 >= 1/n^(2p) (from D >= 1/n^p, squaring preserves order for positives)
-  have hDsq : (spectralGapDiag es hM)^2 >= 1 / (n : Real)^(2*p) := by
+  have hDsq : (spectralGapDiag es hM) ^ 2 >= 1 / (n : Real) ^ (2 * p) := by
     have hc_pos : 1 / (n : Real)^p > 0 := by positivity
     have h2 : (1 / (n : Real)^p)^2 <= (spectralGapDiag es hM)^2 := by
       nlinarith [sq_nonneg (spectralGapDiag es hM - 1 / (n : Real)^p),
                  mul_nonneg (sub_nonneg.mpr hp) (le_of_lt hc_pos)]
     rw [div_pow, one_pow, ← pow_mul, show p * 2 = 2 * p from by omega] at h2; exact h2
-  -- n^(2p) * (A1^2 * D^2) >= 1
-  have hprod_ge1 : (n : Real)^(2*p) * ((A1 es hM0)^2 * (spectralGapDiag es hM)^2) >= 1 := by
+  have hprod_ge1 : (n : Real) ^ (2 * p) * ((A1 es hM0) ^ 2 * (spectralGapDiag es hM) ^ 2) >= 1 := by
     calc (1 : Real) = (n : Real)^(2*p) * (1 / (n : Real)^(2*p)) := by field_simp
       _ <= (n : Real)^(2*p) * ((A1 es hM0)^2 * (spectralGapDiag es hM)^2) := by
           apply mul_le_mul_of_nonneg_left _ (by positivity)
@@ -159,7 +155,6 @@ theorem runningTime_ising_bound {n M : Nat} (es : EigenStructure n M)
             _ = 1 * (spectralGapDiag es hM)^2 := (one_mul _).symm
             _ <= (A1 es hM0)^2 * (spectralGapDiag es hM)^2 :=
                 mul_le_mul_of_nonneg_right hA1sq (by positivity)
-  -- Key bound: sqrt(A2)/(A1^2*D^2) <= n^(r+2p)
   have hK : Real.sqrt (A2 es hM0) / ((A1 es hM0)^2 * (spectralGapDiag es hM)^2)
       <= (n : Real)^(r + 2*p) := by
     rw [div_le_iff₀ (by positivity : (A1 es hM0)^2 * (spectralGapDiag es hM)^2 > 0)]

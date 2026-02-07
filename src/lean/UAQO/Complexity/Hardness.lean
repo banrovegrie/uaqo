@@ -303,7 +303,6 @@ theorem A1_modification_preserved {n M : Nat} (es : EigenStructure n M) (hM : M 
     simp only [Nat.cast_mul, Nat.cast_ofNat]
     ring
   rw [hsum]
-  -- Now: (1/(2*N)) * (2 * Σ) = (1/N) * Σ
   have hNpos : (qubitDim n : Real) > 0 := Nat.cast_pos.mpr (Nat.pow_pos (by norm_num : 0 < 2))
   field_simp
 
@@ -622,8 +621,6 @@ theorem threeSATDegPositive_ground (f : CNFFormula) (_hf : is_kCNF 3 f)
   apply Finset.card_pos.mpr
   use z
   simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-  -- ha : satisfies a f, hz : finToAssignment f.numVars z = a
-  -- Need: countUnsatisfiedClauses f z = 0
   rw [← hz] at ha
   exact (satisfies_iff_countUnsatisfied_zero f z).mp ha
 
@@ -953,7 +950,6 @@ theorem betaModifiedHam_eigenval_ordered {n M : Nat} (es : EigenStructure n M)
     have hOrigLt : i.val / 2 < j.val / 2 := by
       have h1 : i.val / 2 ≤ j.val / 2 := Nat.div_le_div_right (le_of_lt hij)
       omega
-    -- Use allGapsAtLeast to show E_origI + beta/2 <= E_origJ
     have hGapBound : es.eigenvalues ⟨j.val / 2, horigJ⟩ - es.eigenvalues ⟨i.val / 2, horigI⟩ >= beta / 2 := by
       have hk : i.val / 2 + 1 < M := by omega
       have hConsecGap := hgap (i.val / 2) hk
@@ -964,7 +960,6 @@ theorem betaModifiedHam_eigenval_ordered {n M : Nat} (es : EigenStructure n M)
         · have hLt : i.val / 2 + 1 < j.val / 2 := by omega
           exact le_of_lt (es.eigenval_ordered ⟨i.val / 2 + 1, hk⟩ ⟨j.val / 2, horigJ⟩ hLt)
       linarith
-    -- Now show E_origI + (shift) <= E_origJ + (shift') where shift <= beta/2 + shift'
     split_ifs with hiUpper hjUpper
     · -- Both upper: E_origI + beta/2 <= E_origJ + beta/2
       linarith
@@ -1019,8 +1014,6 @@ theorem betaModifiedHam_eigenval_ordered_strict {n M : Nat} (es : EigenStructure
     have hOrigLt : i.val / 2 < j.val / 2 := by
       have h1 : i.val / 2 ≤ j.val / 2 := Nat.div_le_div_right (le_of_lt hij)
       omega
-    -- With allGapsGreaterThan (strict), we have consecutive gap > beta/2
-    -- Therefore E_origJ - E_origI >= consecutive gap > beta/2
     have hGapBound : es.eigenvalues ⟨j.val / 2, horigJ⟩ - es.eigenvalues ⟨i.val / 2, horigI⟩ > beta / 2 := by
       have hk : i.val / 2 + 1 < M := by omega
       have hConsecGap := hgap (i.val / 2) hk
@@ -1031,7 +1024,6 @@ theorem betaModifiedHam_eigenval_ordered_strict {n M : Nat} (es : EigenStructure
         · have hLt : i.val / 2 + 1 < j.val / 2 := by omega
           exact le_of_lt (es.eigenval_ordered ⟨i.val / 2 + 1, hk⟩ ⟨j.val / 2, horigJ⟩ hLt)
       linarith
-    -- Now show E_origI + (shift) < E_origJ where shift <= beta/2
     split_ifs with hiUpper hjUpper
     · -- Both upper: E_origI + beta/2 < E_origJ + beta/2
       linarith
@@ -1552,12 +1544,8 @@ theorem extractDegeneracy_correct {n M : Nat} (es : EigenStructure n M)
   -- Goal: N * ((d_k / N) * denom) / denom = d_k
   have hN : (qubitDim n : Real) > 0 := Nat.cast_pos.mpr (Nat.pow_pos (by norm_num : 0 < 2))
   have hN_ne : (qubitDim n : Real) ≠ 0 := ne_of_gt hN
-  -- If extractionDenominator is 0, the formula is 0/0 which equals 0.
-  -- But d_k > 0, so we need the denominator to be nonzero.
-  -- For the case where the denominator is nonzero:
   by_cases hdenom : extractionDenominator es hM k = 0
   · -- If denom = 0: the product ∏_{l≠k}(Δ_l - Δ_k) = 0 means some Δ_l = Δ_k for l ≠ k.
-    -- But eigenvalues are strictly ordered, so Δ_l ≠ Δ_k for l ≠ k. Contradiction.
     exfalso
     simp only [extractionDenominator, spectralGaps] at hdenom
     rw [Finset.prod_eq_zero_iff] at hdenom

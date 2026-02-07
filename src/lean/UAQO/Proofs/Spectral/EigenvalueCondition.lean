@@ -33,8 +33,6 @@ theorem isEigenvalue_iff_det_eq_zero {N : Nat} [NeZero N] (A : Matrix (Fin N) (F
     intro ⟨v, hv_ne, hv_eq⟩
     rw [← Matrix.exists_mulVec_eq_zero_iff]
     use v, hv_ne
-    -- Show (λI - A) *ᵥ v = 0
-    -- (λI - A) *ᵥ v = λI *ᵥ v - A *ᵥ v = λv - Av = λv - λv = 0
     simp only [Matrix.sub_mulVec, Matrix.smul_mulVec, Matrix.one_mulVec]
     rw [hv_eq]
     simp
@@ -43,13 +41,8 @@ theorem isEigenvalue_iff_det_eq_zero {N : Nat} [NeZero N] (A : Matrix (Fin N) (F
     rw [← Matrix.exists_mulVec_eq_zero_iff] at hdet
     obtain ⟨v, hv_ne, hv_eq⟩ := hdet
     use v, hv_ne
-    -- Show Av = λv given (λI - A) *ᵥ v = 0
-    -- (λI - A) *ᵥ v = 0 means λv - Av = 0, so Av = λv
     simp only [Matrix.sub_mulVec, Matrix.smul_mulVec, Matrix.one_mulVec] at hv_eq
-    -- hv_eq : lambda • v - A *ᵥ v = 0
-    -- We need: A *ᵥ v = lambda • v
     have h := sub_eq_zero.mp hv_eq
-    -- h : lambda • v = A *ᵥ v
     exact h.symm
 
 /-! ## Structure of the adiabatic Hamiltonian -/
@@ -214,9 +207,7 @@ lemma innerProd_diagonal_equalSuperposition {N : Nat} [NeZero N] (d : Fin N → 
     innerProd (equalSuperposition N) (Matrix.diagonal d *ᵥ equalSuperposition N) =
     (1 / N : ℂ) * Finset.sum Finset.univ d := by
   simp only [innerProd, equalSuperposition, Matrix.mulVec_diagonal]
-  -- LHS = Σ_z conj(1/√N) * (d_z * 1/√N)
-  --     = Σ_z (1/√N) * (d_z * 1/√N)  (since 1/√N is real)
-  --     = (1/N) * Σ_z d_z
+  -- LHS = Σ_z (1/√N) * (d_z * 1/√N) = (1/N) * Σ_z d_z
   have hsqrt_pos : (0 : ℝ) < Real.sqrt N := Real.sqrt_pos.mpr (Nat.cast_pos.mpr (NeZero.pos N))
   have hsqrt_ne : (Real.sqrt N : ℂ) ≠ 0 := by
     simp only [ne_eq, Complex.ofReal_eq_zero]
@@ -224,7 +215,6 @@ lemma innerProd_diagonal_equalSuperposition {N : Nat} [NeZero N] (d : Fin N → 
   have hN_ne : (N : ℂ) ≠ 0 := by
     simp only [ne_eq, Nat.cast_eq_zero]
     exact NeZero.ne N
-  -- conj(1/√N) = 1/√N since √N is real
   have hconj : conj ((1 : ℂ) / (Real.sqrt N : ℂ)) = (1 : ℂ) / (Real.sqrt N : ℂ) := by
     rw [conj_eq_star, Complex.star_def, map_div₀, map_one, Complex.conj_ofReal]
   simp_rw [hconj]
@@ -594,8 +584,6 @@ theorem eigenvalue_condition_proof {n M : Nat} (es : EigenStructure n M)
           have hsqrtN_ne : (Real.sqrt (qubitDim n) : ℂ) ≠ 0 := by
             simp only [ne_eq, Complex.ofReal_eq_zero, Real.sqrt_eq_zero', not_le]
             exact Nat.cast_pos.mpr (Nat.pos_of_ne_zero (NeZero.ne (qubitDim n)))
-          -- From hcomp: s * E_k * v z0 + (-(1-s)) * psi0_v / √N = s * E_k * v z0
-          -- So (-(1-s)) * psi0_v / √N = 0
           have hcancel : (-(1 - (s : ℂ))) * (psi0_v * (1 / (Real.sqrt (qubitDim n) : ℂ))) = 0 := by
             -- hcomp says: s * E_k * v z0 + -(1-s) * psi0_v * (1/√N) = s * E_k * v z0
             -- Rearranging: -(1-s) * psi0_v * (1/√N) = 0
@@ -1061,9 +1049,7 @@ theorem eigenvalue_condition_proof {n M : Nat} (es : EigenStructure n M)
       have h1ms_pos : (1 : ℝ) - s > 0 := by linarith [hs.2]
       have h1ms_ne : (1 : ℝ) - s ≠ 0 := ne_of_gt h1ms_pos
 
-      -- Convert secular equation to the resolvent expectation formula
-      -- hsecular : 1/(1-s) = (1/N) * Σ d_k/(s·E_k - λ)
-      -- We need: (1/N) * Σ d_k/(λ - s·E_k) = -1/(1-s)
+      -- Convert secular equation: negate denominators to get (1/N) * Σ d_k/(λ - s·E_k) = -1/(1-s)
       have hexp_real : (1 : ℝ) / (qubitDim n) *
           Finset.sum Finset.univ (fun k => (es.degeneracies k : ℝ) / (lambda - s * es.eigenvalues k)) =
           -(1 : ℝ) / (1 - s) := by
@@ -1166,10 +1152,8 @@ theorem eigenvalue_condition_proof {n M : Nat} (es : EigenStructure n M)
       use v
       constructor
       · exact ne_zero_imp_normSquared_pos v hv_ne
-      · -- From (λI - H(s)) *ᵥ v = 0, we get H(s) ⬝ v = λ • v
-        rw [applyOp_eq_mulVec]
+      · rw [applyOp_eq_mulVec]
         simp only [Matrix.sub_mulVec, Matrix.smul_mulVec, Matrix.one_mulVec] at hv_eq
-        -- hv_eq : λ • v - H(s) *ᵥ v = 0, so H(s) *ᵥ v = λ • v
         have h := sub_eq_zero.mp hv_eq
         exact h.symm
 

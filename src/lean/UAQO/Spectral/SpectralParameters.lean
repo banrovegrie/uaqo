@@ -128,7 +128,6 @@ theorem A2_upper_bound {n M : Nat} (es : EigenStructure n M) (hM : M >= 2) :
     A2 es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM) <=
     (1 - (es.degeneracies ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_two hM⟩ : Real) / qubitDim n) /
     (spectralGapDiag es hM)^2 := by
-  -- Setup
   simp only [A2, spectralParam, spectralGapDiag]
   have hM0 : M > 0 := Nat.lt_of_lt_of_le Nat.zero_lt_two hM
   have hN : (qubitDim n : Real) > 0 := Nat.cast_pos.mpr (Nat.pow_pos (by norm_num : 0 < 2))
@@ -138,7 +137,6 @@ theorem A2_upper_bound {n M : Nat} (es : EigenStructure n M) (hM : M >= 2) :
     simp only [Fin.mk_lt_mk] at h
     linarith [h Nat.zero_lt_one]
   let Delta := es.eigenvalues ⟨1, hM⟩ - es.eigenvalues ⟨0, hM0⟩
-  -- Key: for k >= 1, (E_k - E_0)^2 >= Delta^2, so d_k/(E_k - E_0)^2 <= d_k/Delta^2
   have hterm_bound : ∀ k ∈ Finset.filter (fun k : Fin M => k.val > 0) Finset.univ,
       (es.degeneracies k : Real) / (es.eigenvalues k - es.eigenvalues ⟨0, hM0⟩)^2 <=
       (es.degeneracies k : Real) / Delta^2 := by
@@ -160,7 +158,6 @@ theorem A2_upper_bound {n M : Nat} (es : EigenStructure n M) (hM : M >= 2) :
     have hEk_sq : (es.eigenvalues k - es.eigenvalues ⟨0, hM0⟩)^2 >= Delta^2 := by
       apply sq_le_sq' (by linarith) hEk
     apply div_le_div_of_nonneg_left hdk hDelta_sq hEk_sq
-  -- Sum of terms is bounded
   have hsum_bound : Finset.sum (Finset.filter (fun k : Fin M => k.val > 0) Finset.univ)
       (fun k => (es.degeneracies k : Real) / (es.eigenvalues k - es.eigenvalues ⟨0, hM0⟩)^2) <=
     Finset.sum (Finset.filter (fun k : Fin M => k.val > 0) Finset.univ)
@@ -173,7 +170,6 @@ theorem A2_upper_bound {n M : Nat} (es : EigenStructure n M) (hM : M >= 2) :
     rw [← Finset.sum_div]
     have hDelta_sq : Delta^2 ≠ 0 := ne_of_gt (sq_pos_of_pos hDelta)
     field_simp
-  -- Sum of degeneracies for k >= 1 is N - d_0
   have hsum_deg : Finset.sum (Finset.filter (fun k : Fin M => k.val > 0) Finset.univ)
       (fun k => (es.degeneracies k : Real)) =
     (qubitDim n : Real) - (es.degeneracies ⟨0, hM0⟩ : Real) := by
@@ -200,7 +196,6 @@ theorem A2_upper_bound {n M : Nat} (es : EigenStructure n M) (hM : M >= 2) :
       ring
     rw [h0_only, Finset.sum_singleton] at hsplit
     linarith [htotal, hsplit]
-  -- Now put it all together
   calc (1 / qubitDim n) * Finset.sum (Finset.filter (fun k => k.val > 0) Finset.univ)
          (fun k => (es.degeneracies k : Real) / (es.eigenvalues k - es.eigenvalues ⟨0, hM0⟩)^2)
       <= (1 / qubitDim n) * Finset.sum (Finset.filter (fun k => k.val > 0) Finset.univ)
@@ -281,13 +276,9 @@ theorem spectralCondition_ising {n M : Nat} (es : EigenStructure n M)
     Nat.cast_pos.mpr (es.deg_positive _)
   have hdenom_pos : A2 es (Nat.lt_of_lt_of_le Nat.zero_lt_two hM) * qubitDim n > 0 :=
     mul_pos hA2pos hNpos
-  -- We need: (1/Δ) * √(d₀/(A₂N)) < c
-  -- Rewrite as: √(d₀/(A₂N)) < Δ * c (note the order after inv_mul_lt_iff₀)
   rw [one_div, inv_mul_lt_iff₀ hDeltaPos]
-  -- Need: √(d₀/(A₂N)) < Δ * c
   have hDeltac_pos : spectralGapDiag es hM * c > 0 := mul_pos hDeltaPos hc
   rw [Real.sqrt_lt' hDeltac_pos]
-  -- Need: d₀/(A₂N) < (Δc)²
   rw [mul_pow, div_lt_iff₀ hdenom_pos]
   calc (es.degeneracies ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_two hM⟩ : Real)
       < c^2 * (spectralGapDiag es hM)^2 *
