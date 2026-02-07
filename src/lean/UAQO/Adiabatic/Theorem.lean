@@ -84,42 +84,57 @@ theorem adiabaticTheorem {n M : Nat} (es : EigenStructure n M)
 
 /-! ## Simplified adiabatic theorem for local schedules -/
 
-/-- For a local schedule with ds/dt ∝ g(s)², the adiabatic theorem simplifies -/
+/-- Local schedule adiabatic theorem: when ds/dt is proportional to g(s)^2,
+    the three-part schedule ensures the evolution remains close to the ground state.
+
+    AXIOM: Connecting totalTimeThreeParts to the adiabatic error requires
+    integration over the three-part schedule regions (slow traversal through
+    the gap region, fast outside). This analysis is beyond the current formalization.
+
+    Citation: Roland, Cerf (2002), Section 3; Jansen et al. (2007), Theorem 3. -/
+axiom adiabaticTheorem_localSchedule_bound {n M : Nat} (es : EigenStructure n M)
+    (hM : M >= 2) (hspec : spectralCondition es hM 0.02 (by norm_num))
+    (T : Real) (hT : T > 0) (sched : LocalSchedule n M es hM T hT)
+    (epsilon : Real) (heps : 0 < epsilon ∧ epsilon < 1)
+    (hT_sufficient : T >= totalTimeThreeParts es hM hspec / epsilon) :
+    ∃ (evol : SchrodingerEvolution n T hT),
+      let finalState := evol.psi T
+      let groundSym := symmetricState es ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_two hM⟩
+      normSquared (fun i => finalState i - groundSym i) <= epsilon
+
+/-- For a local schedule with ds/dt proportional to g(s)^2, the adiabatic theorem
+    guarantees the final state has high overlap with the ground state. -/
 theorem adiabaticTheorem_localSchedule {n M : Nat} (es : EigenStructure n M)
     (hM : M >= 2) (hspec : spectralCondition es hM 0.02 (by norm_num))
-    (T : Real) (hT : T > 0) (_sched : LocalSchedule n M es hM T hT)
+    (T : Real) (hT : T > 0) (sched : LocalSchedule n M es hM T hT)
     (epsilon : Real) (heps : 0 < epsilon ∧ epsilon < 1)
-    (_hT_sufficient : T >= totalTimeThreeParts es hM hspec / epsilon) :
-    ∃ (finalOverlap : Real),
-      finalOverlap >= 1 - epsilon := by
-  -- The adiabatic theorem guarantees high overlap when T is large enough
-  -- Use 1 - epsilon/2 as the overlap, which satisfies the bound
-  use 1 - epsilon / 2
-  have heps_half : epsilon / 2 < epsilon := by linarith
-  linarith
+    (hT_sufficient : T >= totalTimeThreeParts es hM hspec / epsilon) :
+    ∃ (evol : SchrodingerEvolution n T hT),
+      let finalState := evol.psi T
+      let groundSym := symmetricState es ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_two hM⟩
+      normSquared (fun i => finalState i - groundSym i) <= epsilon :=
+  adiabaticTheorem_localSchedule_bound es hM hspec T hT sched epsilon heps hT_sufficient
 
 /-! ## Bounds on the required time -/
 
-/-- The time required for ε-error is polynomial in 1/g_min and 1/ε -/
+/-- The time required for epsilon-error is polynomial in 1/g_min and 1/epsilon.
+
+    The running time T = (1/epsilon) * (1/g_min)^2 satisfies the positivity and
+    upper bound conditions. The actual evolution guarantee (that T is sufficient
+    for epsilon-error) follows from the adiabatic theorem (adiabaticTheorem). -/
 theorem required_time_bound {n M : Nat} (es : EigenStructure n M)
     (hM : M >= 2) (_hspec : spectralCondition es hM 0.02 (by norm_num))
     (epsilon : Real) (heps : 0 < epsilon ∧ epsilon < 1) :
     ∃ (T : Real), T > 0 ∧
-    T <= (1/epsilon) * (1 / minimumGap es hM)^2 ∧
-    ∀ (T' : Real), T' >= T -> ∃ (finalOverlap : Real), finalOverlap >= 1 - epsilon := by
-  -- Use T = (1/epsilon) * (1 / g_min)^2 as the required time
+    T <= (1/epsilon) * (1 / minimumGap es hM)^2 := by
   use (1/epsilon) * (1 / minimumGap es hM)^2
   have hgmin_pos := minimumGap_pos es hM
-  refine ⟨?_, le_refl _, ?_⟩
-  · -- T > 0
-    apply mul_pos
+  constructor
+  · apply mul_pos
     · apply div_pos one_pos heps.1
     · apply pow_pos
       exact div_pos one_pos hgmin_pos
-  · -- For any T' >= T, we can achieve 1 - epsilon overlap
-    intro T' _hT'
-    use 1 - epsilon / 2
-    linarith
+  · exact le_refl _
 
 /-! ## Eigenpath traversal -/
 
@@ -157,15 +172,32 @@ theorem eigenpath_traversal {n M : Nat} (es : EigenStructure n M)
 
 /-! ## Phase randomization extension -/
 
+/-- Phase randomization extends the adiabatic theorem to the continuous-time
+    setting with simpler assumptions on the schedule.
+
+    AXIOM: Requires quantum dynamics analysis (phase randomization technique)
+    beyond the current formalization scope.
+
+    Citation: Cunningham, Grover, Russomanno (2023). -/
+axiom phaseRandomization_bound {n M : Nat} (es : EigenStructure n M)
+    (hM : M >= 2) (hspec : spectralCondition es hM 0.02 (by norm_num))
+    (T : Real) (hT : T > 0)
+    (hT_large : T >= (1 / minimumGap es hM)^2) :
+    ∃ (evol : SchrodingerEvolution n T hT),
+      let finalState := evol.psi T
+      let groundSym := symmetricState es ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_two hM⟩
+      normSquared (fun i => finalState i - groundSym i) <= 0.01
+
 /-- Phase randomization (Cunningham et al.) extends the adiabatic theorem
-    to the continuous-time setting with simpler assumptions -/
+    to the continuous-time setting with simpler assumptions. -/
 theorem phaseRandomization {n M : Nat} (es : EigenStructure n M)
-    (hM : M >= 2) (_hspec : spectralCondition es hM 0.02 (by norm_num))
-    (T : Real) (_hT : T > 0)
-    (_hT_large : T >= (1 / minimumGap es hM)^2) :
-    ∃ (finalFidelity : Real), finalFidelity >= 0.99 := by
-  -- The actual fidelity would come from quantum evolution analysis
-  -- Here we just assert the existence
-  exact ⟨0.99, by norm_num⟩
+    (hM : M >= 2) (hspec : spectralCondition es hM 0.02 (by norm_num))
+    (T : Real) (hT : T > 0)
+    (hT_large : T >= (1 / minimumGap es hM)^2) :
+    ∃ (evol : SchrodingerEvolution n T hT),
+      let finalState := evol.psi T
+      let groundSym := symmetricState es ⟨0, Nat.lt_of_lt_of_le Nat.zero_lt_two hM⟩
+      normSquared (fun i => finalState i - groundSym i) <= 0.01 :=
+  phaseRandomization_bound es hM hspec T hT hT_large
 
 end UAQO

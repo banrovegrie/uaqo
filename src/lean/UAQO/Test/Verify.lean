@@ -23,6 +23,7 @@ import UAQO.Complexity.Encoding
 import UAQO.Complexity.NP
 import UAQO.Complexity.SharpP
 import UAQO.Complexity.Hardness
+import UAQO.Experiments.CircumventingBarrier
 
 namespace UAQO.Test
 
@@ -156,11 +157,11 @@ example {n M : Nat} (es : EigenStructure n M) (hM : M > 0) (k : Fin M)
 #check @eigenpath_traversal
 
 /-! ## Axiom audit -/
--- 12 explicit axioms (Lean `axiom` keyword), 0 sorry
+-- 15 explicit axioms (Lean `axiom` keyword), 0 sorry, 0 vacuous True proofs
 -- All axioms visible via `#print axioms`
 -- See Proofs/ProofVerify.lean for complete inventory
 
--- Verify mainResult2 has no custom axioms (genuine proof via classical case split)
+-- Verify mainResult2 depends on gareyJohnsonEncoding (genuine two-query proof)
 #print axioms UAQO.Complexity.mainResult2
 
 -- Verify mainResult3 has no custom axioms (genuine proof via extraction formula)
@@ -171,5 +172,17 @@ example {n M : Nat} (es : EigenStructure n M) (hM : M > 0) (k : Fin M)
 
 -- Verify adiabaticTheorem depends on adiabatic_evolution_bound
 #print axioms adiabaticTheorem
+
+-- Verify adiabaticTheorem_localSchedule depends on its axiom
+#print axioms adiabaticTheorem_localSchedule
+
+-- Verify phaseRandomization depends on phaseRandomization_bound
+#print axioms phaseRandomization
+
+-- Verify experiment theorems are GENUINE (no custom axioms)
+-- theorem3: should only show propext/Classical.choice/Quot.sound
+#print axioms UAQO.Experiments.theorem3_coupled_nonconstant
+-- theorem4: should only show propext/Classical.choice/Quot.sound
+#print axioms UAQO.Experiments.theorem4_multisegment_rigidity
 
 end UAQO.Test

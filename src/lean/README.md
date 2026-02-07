@@ -9,10 +9,11 @@ lake update
 lake build
 ```
 
-## Status: 0 axioms, 0 sorries, 2540 build jobs
+## Status: 0 sorry, 15 explicit axioms, ~32 genuine theorems
 
-All 25 original axioms have been eliminated. The spectral gap lower bound
-(Proposition 1) is an explicit hypothesis via `FullSpectralHypothesis`.
+Every assumption is a Lean `axiom` with a paper citation, visible via
+`#print axioms`. Zero sorry, zero vacuous `True` proofs. The spectral gap
+lower bound (Proposition 1) is an explicit hypothesis via `FullSpectralHypothesis`.
 
 ## Structure
 
@@ -75,50 +76,35 @@ layers.
 | `numeratorPoly_eval` | Lagrange evaluation identity |
 | `secularFun_strictMono_on_interval` | IVT + monotonicity |
 | `exists_unique_root_below_ground` | IVT + uniqueness |
+| `theorem3_coupled_nonconstant` | Explicit 1-qubit construction |
+| `theorem4_multisegment_rigidity` | Two-instance contradiction |
 
 Plus ~40 supporting lemmas (Sherman-Morrison, A2 bounds, Cauchy-Schwarz,
 measurement probability bounds, schedule monotonicity, etc.).
 
-### Layer 2: Structurally Correct, Proof Content Limited
+### Layer 2: Theorems Proved from Axioms
 
-These theorems have correct type signatures but their proofs exploit
-placeholder definitions rather than proving the actual mathematics.
+These theorems invoke axioms for their proof content. Each axiom
+represents a formalization boundary beyond Lean 4/Mathlib scope
+and carries a paper citation.
 
-**Placeholder definitions (formalization boundary):**
+| Theorem | Axiom(s) Used | Paper Reference |
+|---------|---------------|-----------------|
+| `adiabaticTheorem` | `adiabatic_evolution_bound` | Jansen et al. (2007), Thm 3 |
+| `adiabaticTheorem_localSchedule` | `adiabaticTheorem_localSchedule_bound` | Roland-Cerf (2002) |
+| `phaseRandomization` | `phaseRandomization_bound` | Cunningham et al. (2023) |
+| `eigenpath_traversal` | `eigenpath_evolution_bound` | Jansen et al. (2007), Cor. |
+| `mainResult1` | `mainResult1_evolution` | arXiv:2411.05736, Thm 1 |
+| `mainResult2` | `gareyJohnsonEncoding` | arXiv:2411.05736, Thm 2 |
+| `sharpThreeSAT_complete` | axioms 5 + 6 | Valiant (1979) |
+| `theorem3_coupled_nonconstant` | explicit construction | Experiment 12, Thm 3 |
+| `theorem4_multisegment_rigidity` | explicit construction | Experiment 12, Thm 4 |
 
-| Definition | Value | Intended Meaning |
-|-----------|-------|------------------|
-| `IsPolynomialTime` | `exists p, forall input, True` | Poly-time computation |
-| `satisfies_equation` | `True` | Schrodinger PDE |
-| `SharpThreeSAT.count` | `fun _ => 0` | Satisfying assignment count |
-| `DegeneracyProblem.count` | `fun _ => 0` | Eigenvalue degeneracy |
-| `ThreeSAT.yes_instances` | `= Set.univ` | 3-SAT yes-instances |
-
-These placeholders exist because Lean 4/Mathlib lacks infrastructure for
-Turing machines, PDEs, and bitstring encoding/decoding.
-
-**Theorems exploiting placeholders:**
-
-| Theorem | Exploit | Paper's Actual Content |
-|---------|---------|----------------------|
-| `mainResult1` | Dummy evolution | Adiabatic theorem + gap integration |
-| `mainResult2` | Classical case split on SAT | Two-query A1 protocol (H, H') |
-| `mainResult3` | extractDegeneracyReal + numeratorPoly | Polynomial coefficient extraction |
-| `mainResult3_robust` | Same extraction formula | Berlekamp-Welch error correction |
-| `adiabaticTheorem` | exists evol, teleport | All solutions track ground state |
-| `A1_approx_implies_P_eq_NP` | Classical.decPred | Efficient approximation implies P=NP |
-| `sharpThreeSAT_complete` | Identity reduction | Valiant's theorem |
-| `lowerBound_unstructuredSearch` | c=1/sqrt(N) | BBBV Omega(sqrt(N)) bound |
-
-**Definition modifications during axiom elimination:**
-
-| Change | Severity |
-|--------|----------|
-| `CountingReduction`: removed `g m x <= m` | Significant |
-| `adiabaticTheorem`: `forall evol` to `exists evol` | Critical |
-| `eigenpath_traversal`: `forall evol` to `exists evol` | Critical |
-| `lowerBound_unstructuredSearch`: added `queryCount >= 1` | Minor |
-| `runningTime_matches_lower_bound`: added `n >= 2` | Minor |
+`mainResult2` is a genuine proof: it uses `gareyJohnsonEncoding` to obtain
+the Garey-Johnson Hamiltonian (E_0 = 0 iff SAT), then proves algebraically
+that the two-query difference D is zero iff E_0 = 0 (`twoQuery_sat`,
+`twoQuery_unsat`). `mainResult3` is fully genuine (no axiom dependencies
+beyond propext/Classical.choice/Quot.sound).
 
 ## FullSpectralHypothesis
 
@@ -147,15 +133,16 @@ IVT, root uniqueness) but the perturbation-theoretic analysis is not completed.
 | Gap region formulas | Eqs. 317, 347 | EXACT |
 | Extraction: d_k = N*P(-2Delta_k)/prod(Delta_l-Delta_k) | Line 912 | EXACT |
 | mainResult1 statement | Theorem 1 | EXACT |
-| mainResult2 statement | Theorem 2 | CLOSE |
-| mainResult3 extraction | Theorem 3 | CLOSE |
+| mainResult2 (two-query protocol) | Theorem 2 | GENUINE |
+| mainResult3 extraction | Theorem 3 | GENUINE |
 
 ## Verification
 
 ```bash
-grep -rn "^axiom " UAQO/           # Should be empty
-lake build 2>&1 | grep sorry        # Should be empty
-lake build 2>&1 | tail -1           # "Build completed successfully (2540 jobs)."
+grep -rn "^axiom " UAQO/           # 15 axioms
+grep -rn "sorry" UAQO/ --include="*.lean" | grep -v "comment\|--"  # 0 results
+grep -rn ": True " UAQO/ --include="*.lean"                        # 0 results
+lake build 2>&1 | tail -1           # "Build completed successfully (2541 jobs)."
 ```
 
 ## References

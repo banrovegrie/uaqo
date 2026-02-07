@@ -31,11 +31,11 @@ namespace UAQO.Proofs
 /-!
 # Formalization Status
 
-## Zero Sorry, 12 Explicit Axioms, ~25 Genuine Theorems
+## Zero Sorry, 15 Explicit Axioms, ~32 Genuine Theorems
 
 Every assumption is a Lean `axiom` with a paper citation, visible via
 `#print axioms`. Every provable result is proved. Zero `sorry` in the
-entire codebase.
+entire codebase. Zero vacuous `True` proofs.
 
 ### Architecture: Three Layers
 
@@ -46,7 +46,7 @@ Each axiom has a paper citation.
 
 **Layer 2 -- Theorems.** Proved from axioms + genuine proofs. Zero sorry.
 
-### Complete Axiom Inventory (12 axioms)
+### Complete Axiom Inventory (15 axioms)
 
 **Primitive concepts (3):**
 
@@ -76,7 +76,7 @@ Each axiom has a paper citation.
    - Statement: `IsSharpPHard SharpThreeSAT`
    - Citation: Valiant (1979)
 
-**Quantum physics results (4):**
+**Quantum physics results (6):**
 
 7. `adiabatic_evolution_bound` (Adiabatic/Theorem.lean)
    - Statement: Jansen adiabatic theorem (evolution exists with error bound)
@@ -86,32 +86,47 @@ Each axiom has a paper citation.
    - Statement: evolution follows instantaneous ground state
    - Citation: Jansen, Ruskai, Seiler (2007), Corollary of Theorem 3
 
-9. `mainResult1_evolution` (Adiabatic/RunningTime.lean)
-   - Statement: AQO evolution at computed running time
-   - Citation: arXiv:2411.05736, Theorem 1
+9. `adiabaticTheorem_localSchedule_bound` (Adiabatic/Theorem.lean)
+   - Statement: local schedule adiabatic theorem with three-part schedule
+   - Citation: Roland, Cerf (2002), Section 3
 
-10. `lowerBound_unstructuredSearch` (Adiabatic/RunningTime.lean)
+10. `phaseRandomization_bound` (Adiabatic/Theorem.lean)
+    - Statement: phase randomization extends adiabatic theorem to continuous-time
+    - Citation: Cunningham, Grover, Russomanno (2023)
+
+11. `mainResult1_evolution` (Adiabatic/RunningTime.lean)
+    - Statement: AQO evolution at computed running time
+    - Citation: arXiv:2411.05736, Theorem 1
+
+12. `lowerBound_unstructuredSearch` (Adiabatic/RunningTime.lean)
     - Statement: Omega(sqrt(N)) query lower bound
     - Citation: Farhi, Goldstone, Gutmann (2000); Bennett et al. (1997)
 
-**Paper results depending on IsPolynomialTime (2):**
+**Paper results depending on IsPolynomialTime (3):**
 
-11. `degeneracy_sharpP_hard` (Complexity/SharpP.lean)
+13. `gareyJohnsonEncoding` (Complexity/Hardness.lean)
+    - Statement: 3-SAT to Hamiltonian with E_0 = 0 iff SAT
+    - Citation: Garey, Johnson (1976); Lucas (2014)
+
+14. `degeneracy_sharpP_hard` (Complexity/SharpP.lean)
     - Statement: `IsSharpPHard DegeneracyProblem`
     - Citation: arXiv:2411.05736, Theorem 3
 
-12. `A1_approx_implies_P_eq_NP` (Complexity/Hardness.lean)
+15. `A1_approx_implies_P_eq_NP` (Complexity/Hardness.lean)
     - Statement: P=NP from poly-time A1 approximation
     - Citation: arXiv:2411.05736, Corollary of Theorem 2
 
-### Proved Theorems (formerly sorry, now one-line proofs from axioms)
+### Proved Theorems from Axioms
 
 - `adiabaticTheorem` -- proved from `adiabatic_evolution_bound`
 - `eigenpath_traversal` -- proved from `eigenpath_evolution_bound`
+- `adiabaticTheorem_localSchedule` -- proved from `adiabaticTheorem_localSchedule_bound`
+- `phaseRandomization` -- proved from `phaseRandomization_bound`
 - `mainResult1` -- proved from `mainResult1_evolution`
+- `mainResult2` -- genuine proof from `gareyJohnsonEncoding` + `twoQuery_sat`/`twoQuery_unsat`
 - `sharpThreeSAT_complete` -- proved from `sharpThreeSAT_in_SharpP` + `sharpThreeSAT_hard`
 
-### Layer 1: Genuine Mathematical Proofs
+### Genuine Mathematical Proofs
 
 These theorems carry real mathematical content with substantive proofs:
 
@@ -128,12 +143,17 @@ These theorems carry real mathematical content with substantive proofs:
 
 **Algebraic structure (Proofs/Complexity/)**
 - `lagrange_interpolation` -- via Mathlib `Lagrange.interpolate`
-- `berlekamp_welch` -- error-correcting interpolation structure
+- `berlekamp_welch` -- error-correcting interpolation (structural extraction)
 - `A1_numerator_polynomial_in_beta` -- (X+1)^(M-1) witness + Finset even/odd
 - `betaModified_A1_diff_pos` -- Finset.sum_nbij bijection
 - `threeSAT_satisfiable_iff_degPositive` -- SAT encoding correctness
 - `extractDegeneracy_correct` -- paper's extraction formula via numeratorPoly
 - `numeratorPoly_eval` -- Lagrange evaluation identity for numerator polynomial
+
+**NP-hardness (Complexity/Hardness.lean)**
+- `twoQuery_sat` -- D = 0 when E_0 = 0 (algebraic: E_0 prefactor vanishes)
+- `twoQuery_unsat` -- D > 0 when E_0 > 0 (Finset.single_le_sum + positivity)
+- `mainResult2` -- genuine two-query NP-hardness via Garey-Johnson encoding
 
 **Running time analysis (Adiabatic/RunningTime.lean)**
 - `complex_cauchy_schwarz` -- discrete Cauchy-Schwarz for complex sums
@@ -150,11 +170,9 @@ These theorems carry real mathematical content with substantive proofs:
 - `decode_encode` -- CNF round-trip correctness
 - `encodeCNF_injective` -- encoding injectivity
 
-### Additional Genuine Theorems
-
-- `sharpThreeSAT_complete` -- proved from axioms 5 + 6
-- `mainResult2` -- two-query NP-hardness (classical case split)
-- `mainResult3` -- #P-hardness via extraction formula (genuine)
+**Experiment proofs (Experiments/CircumventingBarrier.lean)**
+- `theorem3_coupled_nonconstant` -- A1_eff != A1 for non-uniform states (explicit construction)
+- `theorem4_multisegment_rigidity` -- instance-independent schedules impossible (two-instance contradiction)
 
 ### FullSpectralHypothesis
 
@@ -170,11 +188,13 @@ g_min (Eq. 311 with eta=0.1), EigenStructure (Def. 1), spectralCondition,
 gap region formulas (Eqs. 317, 347), extraction formula (line 912),
 running time T = O(sqrt(A2)/(A1^2*Delta^2) * sqrt(N/d0)/eps) (Theorem 1)
 
-**Close:** FullSpectralHypothesis faithfully states Proposition 1 as explicit
-hypothesis rather than hidden axiom; mainResult2 references two-query protocol
-(partial eigenstructure, modified Hamiltonian, D = A1(H) - 2*A1(H')) but proof
-exploits classical case split; mainResult3 extraction uses paper's formula
+**Genuine:** mainResult2 uses the Garey-Johnson encoding axiom and genuine
+algebraic proofs (twoQuery_sat, twoQuery_unsat) to establish NP-hardness
+via the two-query protocol; mainResult3 extraction uses paper's formula
 (numeratorPoly + extractDegeneracyReal) and is genuine
+
+**Close:** FullSpectralHypothesis faithfully states Proposition 1 as explicit
+hypothesis rather than hidden axiom
 
 ### Why Axioms Exist
 

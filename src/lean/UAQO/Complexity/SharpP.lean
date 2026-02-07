@@ -203,7 +203,14 @@ theorem lagrange_interpolation (d : Nat) (points : Fin (d + 1) -> Real)
     -- Contradiction: d + 1 <= hroots_card <= (p-q).natDegree <= d
     omega
 
-/-- Berlekamp-Welch algorithm for error-correcting polynomial interpolation -/
+/-- Berlekamp-Welch algorithm for error-correcting polynomial interpolation.
+
+    NOTE ON PROOF CONTENT: The conclusion follows structurally from the hypothesis
+    by extracting existential components. The mathematical content of Berlekamp-Welch
+    (uniqueness of the recovered polynomial under bounded errors, the key error-locator
+    polynomial construction) is encoded in the hypothesis, not the proof. The theorem
+    serves as a structural interface for the error-correcting interpolation step in
+    the #P-hardness reduction (mainResult3_robust). -/
 theorem berlekamp_welch (d e : Nat) (points : Fin (d + 2 * e + 1) -> Real)
     (values : Fin (d + 2 * e + 1) -> Real)
     (_hdistinct : ∀ i j, i ≠ j -> points i ≠ points j)
