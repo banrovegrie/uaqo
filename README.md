@@ -30,7 +30,7 @@ The chapters should be written in this order:
 
 4. Formalization (**10**): Documents the Lean proofs. Best written after all mathematical content is stable, so the formalization section accurately reflects what was proven and also expresses our formalization efforts best and their usefulness.
 
-5. Framing last (**1, 11**: Introduction and Conclusion are written last because they must reflect actual content. The Introduction previews results that exist; the Conclusion summarizes what was achieved. Writing them early leads to promises the thesis doesn't keep. Note that they are to serve as introduction and conclusion to the entire thesis (not paper or extensions or original work but rather the whole).
+5. Framing last (**1, 11**): Introduction and Conclusion are written last because they must reflect actual content. The Introduction previews results that exist; the Conclusion summarizes what was achieved. Writing them early leads to promises the thesis doesn't keep. Note that they are to serve as introduction and conclusion to the entire thesis (not paper or extensions or original work but rather the whole).
 
 Detailed chapter sketches for the remaining unwritten chapters (1, 2, 3, 4, 9, 10, 11) are in [`CHAPTERS.md`](CHAPTERS.md).
 
