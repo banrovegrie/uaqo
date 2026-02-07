@@ -26,11 +26,14 @@ and identifies the precise structural property (spectral complexity) that contro
 - The paper’s hardness results show $A_1$ is hard in the worst case. This experiment
   adds *positive structure*: $A_1$ can be computed exactly for bounded-treewidth local
   energy functions via a partition-function DP (Prop 8) and approximated via
-  partition-function evaluation over a temperature window (Props 10-14).
+  partition-function evaluation over a temperature window (Props 10-15).
 - Propositions 10–13 make a new bridge explicit: additive approximation of $A_1$ can
   avoid computing $d_0$ (the counting-hard quantity) by anchoring at $Z(\varepsilon)$
   or $Z(B)$, turning “estimate $A_1$” into “estimate $Z$ on a grid” with explicit
   truncation/quadrature error bounds.
+- Proposition 15 adds a new boundary theorem: the bridge is one-way. Even exact
+  $A_1$ with matched coarse drivers $(\rho_0,\Delta_{\min},R)$ does not determine
+  low-temperature $Z(\beta)$.
 - Guo–An (2025) studies schedule optimality under gap-measure conditions. These
   results are complementary: they take the gap profile as a given object, while this
   experiment isolates and formalizes the *information* needed to obtain that profile
@@ -92,7 +95,8 @@ counting complexity while optimization tracks decision complexity. See Propositi
 | Prop 11 | Laplace proxy: approximate A_1 from Z(β) without d_0 | Proved |
 | Prop 12 | Oracle reduction: approximate Z on a grid ⇒ additive A_1 | Proved |
 | Prop 13 | Ferromagnetic Ising + multiplicative Z approximation ⇒ additive A_1 (explicit error drivers) | Proved |
-| Prop 14 | Schedule-level A_1 precision: η_A1 = Θ(sqrt(d_0 A_2 / N)) | Proved |
+| Prop 14 | Schedule-level A_1 sufficient condition: \(\eta_{A_1}\le \min\{(1+A_1)/2,\sqrt{d_0A_2/N}\}\); worst-case target \(\Theta(2^{-n/2})\) | Proved |
+| Prop 15 | Reverse-bridge obstruction: exact A_1 does not determine low-temperature Z(β) even with matched (ρ_0, Δ_min, R) | Proved |
 
 ### Key Conclusions
 
@@ -111,24 +115,31 @@ implies additive approximation of A_1 with explicit dependence on energy scale R
 minimum excitation Delta_min, and ground mass d_0/N (Prop 13).
 
 Precision is the real boundary: to place the crossing at window scale, A_1 must be
-estimated to additive precision eta_A1 = Theta(sqrt(d_0 A_2 / N)) (Prop 14), which is
-Theta(2^{-n/2}) in the worst case. Coarse inverse-polynomial precision can be
-tractable while schedule-level precision can still be intractable.
+estimated to additive precision at least on the scale
+\(\eta_{A_1}\le \min\{(1+A_1)/2,\sqrt{d_0A_2/N}\}\) (Prop 14), with worst-case target
+\(\Theta(2^{-n/2})\). Coarse inverse-polynomial precision can be tractable while
+schedule-level precision can still be intractable.
+
+The reverse direction is provably blocked: low-temperature partition information is
+not identifiable from $A_1$ alone (Prop 15), so "recover hard $Z$ from easy $A_1$" is
+not a valid generic reduction route.
 
 
 ## Remaining Open Questions
 
-1. **Necessary conditions for easy A_1.** Proposition 3 gives sufficient conditions.
-   What is the weakest structural assumption that makes A_1 tractable? The Grover
-   case shows individual d_k need not be known if the sum collapses.
-
-2. **Natural NP-hard problems with simple spectra.** Grover is the only known example
+1. **Natural NP-hard problems with simple spectra.** Grover is the only known example
    of a hard search problem with easy A_1. Do natural combinatorial NP-hard problems
    (not oracle search) ever have simple enough spectra?
 
-3. **Boundary at schedule precision.** We now know the target precision scale
-   eta_A1 = Theta(sqrt(d_0 A_2 / N)) (Prop 14). Which natural families still admit
-   polynomial-time approximation at that scale, not just at inverse-polynomial error?
+2. **Boundary at schedule precision.** We now know the target precision scale
+   \(\eta_{A_1}\le \min\{(1+A_1)/2,\sqrt{d_0A_2/N}\}\), with worst-case
+   \(\Theta(2^{-n/2})\) (Prop 14). Which natural families still admit polynomial-time
+   approximation at that schedule-relevant scale, not just at inverse-polynomial error?
+
+3. **Tight converse conditions for partition data.** Proposition 15 shows a
+   non-identifiability obstruction for recovering $Z(\beta)$ from $A_1$. What minimal
+   additional statistics (for example a short list of moments or proxy values) are
+   sufficient to make a reverse reconstruction possible on natural families?
 
 4. **Quantum computation of A_1.** Phase estimation on H_z could estimate A_1
    quantumly. Classical hardness does not rule out efficient quantum computation.
@@ -151,6 +162,7 @@ Quantitative sanity checks verified in `lib/verify_a1.py` and
 - Proposition 1 (n=4, N=16): A_1 = 9/8 = 1.125, vs 1/Delta = 4
 - Hamming n=4: A_1 = 103/192 = 0.537
 - Hamming asymptotic: A_1 * n/2 -> 1 (verified to n=128)
+- Proposition 15 families: matched A_1 but |Z_U(B)-Z_S(B)|/N > 1/100 for B >= 3
 
 Structured-family demo (bounded width): `lib/variable_elimination_a1.py` computes
 $Z(t)$ and $A_1$ exactly by variable elimination and checks against brute force on toy
@@ -170,7 +182,18 @@ compares to the exact value for a toy structured instance.
 
 Ferromagnetic bridge verification: `lib/verify_ising_bridge.py` checks the full
 Proposition 13 bound numerically (tail + oracle + quadrature terms) and validates the
-Proposition 14 crossing-sensitivity identity.
+Proposition 14 crossing-sensitivity identity and min-condition criterion.
+
+Reverse-bridge obstruction verification: `lib/verify_a1.py` checks Proposition 15
+analytically and by brute force on a toy $n$.
+
+Lean formal verification: `lean/StructuredTractability08/Prop13.lean`,
+`lean/StructuredTractability08/Prop14.lean`, and
+`lean/StructuredTractability08/Prop15.lean` machine-check key deterministic identities
+and bound lemmas for Propositions 13-15, including Proposition 13's error-budget core
+plus tail/oracle/quadrature aggregation lemmas, and the Proposition 15 quantitative
+gap core;
+`cd lean && lake build` succeeds.
 
 
 ## References
@@ -187,8 +210,13 @@ Proposition 14 crossing-sensitivity identity.
 **Phase**: Resolved
 
 All conjectures resolved. All results are propositions (no unjustified "theorem"
-labels). Sufficient conditions established; necessary conditions remain open. Numerics
-verified. Honest about caveats (contrived counterexample, promise model for Grover).
+labels). Positive structure, precision bridge, and a nontrivial boundary obstruction
+are established. Numerics verified. Honest caveats remain (promise model for Grover;
+no full hardness converse from A_1-approximation to Z-approximation). Key identities
+and quantitative bound cores for Props 13-15 are additionally Lean-checked.
+Full absolute formalization would still require importing/formalizing external
+results used as assumptions (notably the Ising FPRAS guarantee and the paper's
+Section-4 schedule framework).
 
 **Next:** see `todo.md` (task tree + progress) for publication-grade directions
-beyond the current (mostly boundary-setting) propositions.
+beyond the current theorem set.

@@ -1,0 +1,3 @@
+import StructuredTractability08.Prop13
+import StructuredTractability08.Prop14
+import StructuredTractability08.Prop15

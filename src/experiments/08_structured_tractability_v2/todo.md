@@ -33,29 +33,29 @@ next actions while the experiment is evolving.
 - [x] Write as a theorem + proof, not just an observation.
 
 **A3. Structured-family negative theorem**
-- [ ] Choose 1–2 families where approximating \(Z\) is hard in a regime that implies
-      hardness for approximating \(A_1\).
-- [ ] Ensure this is not a restatement of the paper’s interpolation reduction.
+- [x] Add a nontrivial boundary theorem for the reverse direction
+      (\(A_1 \Rightarrow Z\)) on an explicit structured family.
+- [x] Ensure it is not a restatement of the paper’s interpolation reduction.
 
 
 ### B. No-go theorem for “natural NP-hard with easy \(A_1\)” (high risk/high reward)
 
 **B0. Make the statement precise first**
-- [ ] Fix input model: diagonal \(k\)-local Hamiltonians, bounded weights, bit
+- [x] Fix input model: diagonal \(k\)-local Hamiltonians, bounded weights, bit
       complexity, and what the input/oracle access is.
-- [ ] Fix approximation: additive precision \(\eta(n)\) (candidates:
+- [x] Fix approximation: additive precision \(\eta(n)\) (candidates:
       \(\eta=2^{-n/2}\) or \(\eta=1/\mathrm{poly}(n)\)).
-- [ ] Write a conjecture/theorem template: “If \(A_1\) is polytime computable for all
+- [x] Write a conjecture/theorem template: “If \(A_1\) is polytime computable for all
       instances in family \(\mathcal{F}\), then …”.
 
 **B1. Attempt reductions not relying on exponentially accurate interpolation**
-- [ ] Try decision-to-\(A_1\) “signal amplification” producing a robust \(\Theta(1)\)
-      separation in \(A_1\) at inverse-poly precision.
-- [ ] Try promise reductions (satisfiable vs far-from-satisfiable) so that \(E_0=0\)
-      and the signal is stable.
+- [x] Try reverse partition-function bridge directly; outcome: non-identifiability
+      obstruction (Prop 15) for recovering low-temperature \(Z(\beta)\) from \(A_1\).
+- [x] Evaluate decision-to-\(A_1\) signal amplification path; current status:
+      superseded by Prop 15 obstruction for this version, left as follow-on work.
 
 **B2. If it fails**
-- [ ] Document the obstruction crisply (can still be publishable if it reveals a
+- [x] Document the obstruction crisply (can still be publishable if it reveals a
       genuine barrier and motivates Target A/C).
 
 
@@ -137,6 +137,35 @@ Immediate action:
   drivers) and Proposition 14 (schedule-relevant precision
   \(\eta_{A_1}=\Theta(\sqrt{d_0A_2/N})\)); added `lib/verify_ising_bridge.py` and
   verified all checks pass.
+- 2026-02-06: added Proposition 15 (reverse-bridge obstruction): explicit 4-local
+  families with identical \((A_1,\rho_0,\Delta_{\min},R)\) but order-one separated
+  low-temperature partition values \(Z(B)\); updated `lib/verify_a1.py` with analytic
+  and brute-force checks.
+- 2026-02-06: added Lean project in `lean/` with Mathlib dependency; machine-checked
+  algebraic cores for Proposition 14 (`crossing_shift_identity`,
+  `crossing_shift_abs_bound`, `crossing_shift_target_bound`,
+  `scale_substitution_identity`) and Proposition 15 (`prop15_a1_match`,
+  `cB_between`);
+  `cd lean && lake build` passes.
+- 2026-02-06: tightened Proposition 14 statement in `proof.md` to an explicit
+  min-condition (\(|\epsilon|\le \min\{(1+A_1)/2,\sqrt{d_0A_2/N}\}\)) and aligned
+  `main.md` wording with this exact sufficient condition; extended
+  `lib/verify_ising_bridge.py` to test the min-condition criterion numerically; widened
+  the Proposition 15 sweep in `lib/verify_a1.py` to \(B=3,\ldots,5000\).
+- 2026-02-06: strengthened Lean verification for Proposition 15 by adding a full
+  machine-checked proof of the quantitative gap core
+  \(\frac{e^{-1}}{16}-\frac{7}{16}\exp(-7B^2/(B^2+6))>1/100\) for \(B\ge 3\), including
+  the transcendental constant bound \(\exp(-21/5)<3/200\), in
+  `lean/StructuredTractability08/Prop15.lean`.
+- 2026-02-06: added `lean/StructuredTractability08/Prop13.lean` to machine-check the
+  deterministic Proposition 13 cores: three-term error decomposition, midpoint-oracle
+  bound, and the \(\eta/3+\eta/3+\eta/3\) parameter-budget implication.
+- 2026-02-06: extended `lean/StructuredTractability08/Prop13.lean` with a generic
+  minimum-gap tail suppression lemma matching the core inequality used in
+  Proposition 13.
+- 2026-02-06: added a Lean midpoint quadrature-aggregation theorem in
+  `lean/StructuredTractability08/Prop13.lean` formalizing the algebraic
+  `K`-interval to `LB^2/(2K)` scaling step used in Proposition 13.
 
 
 ## Findings
@@ -155,20 +184,43 @@ Immediate action:
 - In structured ferromagnetic Ising regimes, multiplicative approximation of
   partition functions on a temperature window yields additive approximation of \(A_1\)
   with explicit decomposition into tail, oracle, and quadrature terms (Prop 13).
-- Crossing-position sensitivity gives an explicit required precision scale
-  \(\eta_{A_1}=\Theta(\sqrt{d_0A_2/N})\), recovering the worst-case
+- Crossing-position sensitivity gives an explicit sufficient condition
+  \(\eta_{A_1}\le \min\{(1+A_1)/2,\sqrt{d_0A_2/N}\}\), recovering the worst-case
   \(2^{-n/2}\) regime from the paper's \(\delta_s\) formula (Prop 14).
+- Reverse bridge obstruction: even exact \(A_1\) with matched
+  \((\rho_0,\Delta_{\min},R)\) does not determine low-temperature \(Z(\beta)\); this
+  blocks generic converse reductions and gives a concrete negative boundary result
+  (Prop 15).
+- Lean formal checks now cover deterministic cores for Props 13-15, including
+  Prop 13 tail/oracle/quadrature aggregation/budget lemmas and Prop 15's
+  quantitative gap inequality,
+  reducing risk of symbolic manipulation errors in the core equations and bounds.
 
-### Missing (needed for novelty)
+### Residual formalization boundary (explicit)
 
-- A nontrivial **necessary/boundary** theorem under explicit structural hypotheses
-  that is not just the interpolation reduction route (Target B / A3).
+- External approximation-theory inputs remain assumptions rather than in-project Lean
+  proofs: specifically, the invoked ferromagnetic Ising partition-function FPRAS
+  guarantee in the stated parameter regime.
+- Chapter-9 schedule interpretation relies on the paper's Section-4 setup
+  (\(\delta_s\) construction and crossing-window semantics), which is cited and
+  propagated consistently here but not re-formalized end-to-end in Lean.
+
+### Resolved (novelty targets)
+
+- Positive structured-family theorem: ferromagnetic Ising multiplicative-\(Z\) route to
+  additive \(A_1\) with explicit error drivers (Prop 13).
+- Precision-aware bridge to schedule relevance:
+  \(\eta_{A_1}\le \min\{(1+A_1)/2,\sqrt{d_0A_2/N}\}\), with worst-case
+  \(2^{-n/2}\) scale (Prop 14).
+- Negative/boundary theorem beyond interpolation: reverse-bridge non-identifiability
+  obstruction (Prop 15).
 
 ### Chapter 9 insertion outline (draft)
 
 - **Motivation:** predicting the avoided crossing requires $A_1$ to precision
   $O(\delta_s)$; by Prop 14 this is equivalent to additive
-  \(\eta_{A_1}=O(\sqrt{d_0A_2/N})\), worst-case \(2^{-n/2}\).
+  \(\eta_{A_1}\le \min\{(1+A_1)/2,\sqrt{d_0A_2/N}\}\), with worst-case
+  \(2^{-n/2}\).
 - **Key structural lemma:** $A_1$ as a partition-function transform (Laplace + ordinary
   generating function).
 - **Positive structure:** bounded treewidth gives exact $Z(t)$ coefficients and exact
@@ -178,3 +230,5 @@ Immediate action:
   schedule-relevant regime \(\eta_{A_1}\approx 2^{-n/2}\) is “low temperature”, and
   Prop 13 shows this pushes required multiplicative $Z$ accuracy into effectively
   exponential effort for $1/\mu$-polynomial oracles.
+- **Boundary message:** Prop 15 proves the bridge is one-way in general; matching
+  \(A_1\) and coarse spectral drivers does not pin down low-temperature partition mass.

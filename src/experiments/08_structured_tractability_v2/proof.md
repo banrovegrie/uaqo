@@ -740,11 +740,13 @@ $$\widehat{s}^*-s^*=\frac{\epsilon}{(1+A_1)(1+A_1+\epsilon)}.$$
 In particular, if $|\epsilon|\le (1+A_1)/2$, then
 $$|\widehat{s}^*-s^*|\le \frac{2|\epsilon|}{(1+A_1)^2}.$$
 So a sufficient condition for $|\widehat{s}^*-s^*|\le \delta_s$ is
-$$|\epsilon|\le \frac{(1+A_1)^2}{2}\,\delta_s.$$
+$$|\epsilon|\le \min\!\left\{\frac{1+A_1}{2},\;\frac{(1+A_1)^2}{2}\,\delta_s\right\}.$$
 
 Using the paper's crossing-window scale
 $$\delta_s=\frac{2}{(1+A_1)^2}\sqrt{\frac{d_0A_2}{N}},$$
 it suffices to estimate $A_1$ to additive precision
+$$|\epsilon|\le \min\!\left\{\frac{1+A_1}{2},\;\sqrt{\frac{d_0A_2}{N}}\right\}.$$
+Whenever $\sqrt{d_0A_2/N}\le (1+A_1)/2$, this simplifies to
 $$|\epsilon|\le \sqrt{\frac{d_0A_2}{N}}.$$
 In the worst case $d_0=\Theta(1)$ and $A_2=\Theta(1)$, this is
 $\Theta(2^{-n/2})$.
@@ -764,6 +766,110 @@ $1+A_1+\epsilon\ge (1+A_1)/2$, hence
 The sufficient condition follows by requiring the right-hand side be at most
 $\delta_s$, and substituting the paper's formula for $\delta_s$ yields the final
 expression. $\square$
+
+
+## Gap 2 Setup (Model and Approximation Target)
+
+For the boundary result below, the input model is diagonal $k$-local Hamiltonians on
+$n$ bits, given by an explicit list of local terms with rational coefficients of
+bit-complexity $\mathrm{poly}(n)$. Energies satisfy $E(x)\in[0,R]$ with
+$R=\mathrm{poly}(n)$, and $A_1$ is approximated in additive error
+$|\widehat{A}_1-A_1|\le \eta(n)$.
+
+The attempted reverse strategy in Todo-B1(a) was: recover low-temperature partition
+information from accurate $A_1$ estimates. Proposition 15 gives a sharp obstruction.
+
+
+## Proposition 15: Reverse-Bridge Obstruction (Exact $A_1$ Does Not Determine Low-Temperature $Z$)
+
+Fix integers $B\ge 3$ and $n\ge 4$. Let $N=2^n$ and define two diagonal Hamiltonians
+on $x\in\{0,1\}^n$:
+\[
+E_U(x)\defeq x_1\!\left(B-\left(B-\frac{1}{B}\right)(1-x_2)(1-x_3)\right),
+\]
+\[
+c_B\defeq \frac{7B}{B^2+6},\qquad
+E_S(x)\defeq x_1\!\left(c_B-\left(c_B-\frac{1}{B}\right)
+(1-x_2)(1-x_3)(1-x_4)\right).
+\]
+Then:
+
+1. $E_0=0$, $d_0/N=1/2$, $\Delta_{\min}=1/B$, and both families have
+   $E(x)\in[0,B]$.
+2. $A_1(E_U)=A_1(E_S)=\frac{B^2+3}{8B}$.
+3. At inverse temperature $\beta=B$,
+   \[
+   \frac{|Z_U(B)-Z_S(B)|}{N}\ge \frac{1}{100}.
+   \]
+
+Hence even exact knowledge of $A_1$ does not determine low-temperature partition
+values. Any reverse reduction "$A_1$ approximation $\Rightarrow$ $Z(\beta)$
+approximation" fails on this family without additional information.
+
+**Proof.** Both Hamiltonians are diagonal and at most $4$-local by construction.
+
+For $E_U$:
+- $x_1=0$ gives energy $0$ on $2^{n-1}$ states;
+- $x_1=1$, $x_2=x_3=0$ gives energy $1/B$ on $2^{n-3}$ states;
+- the remaining $3\cdot 2^{n-3}$ excited states have energy $B$.
+
+For $E_S$:
+- $x_1=0$ gives energy $0$ on $2^{n-1}$ states;
+- $x_1=1$, $x_2=x_3=x_4=0$ gives energy $1/B$ on $2^{n-4}$ states;
+- the remaining $7\cdot 2^{n-4}$ excited states have energy $c_B$.
+
+So both have $d_0/N=1/2$ and $\Delta_{\min}=1/B$. Also $c_B\in(1/B,B)$ for $B>1$,
+hence both spectra lie in $[0,B]$.
+
+Compute $A_1$:
+\[
+A_1(E_U)=\frac{1}{N}\!\left(2^{n-3}B+3\cdot 2^{n-3}\frac{1}{B}\right)
+=\frac{1}{8}\!\left(B+\frac{3}{B}\right)=\frac{B^2+3}{8B}.
+\]
+\[
+A_1(E_S)=\frac{1}{N}\!\left(2^{n-4}B+7\cdot 2^{n-4}\frac{1}{c_B}\right)
+=\frac{1}{16}\!\left(B+7\frac{B^2+6}{7B}\right)
+=\frac{1}{8}\!\left(B+\frac{3}{B}\right)=\frac{B^2+3}{8B}.
+\]
+Hence $A_1(E_U)=A_1(E_S)$ exactly.
+
+Now evaluate partition functions at $\beta=B$:
+\[
+\frac{Z_U(B)}{N}
+=\frac{1}{2}+\frac{1}{8}e^{-1}+\frac{3}{8}e^{-B^2},
+\]
+\[
+\frac{Z_S(B)}{N}
+=\frac{1}{2}+\frac{1}{16}e^{-1}
++\frac{7}{16}\exp\!\left(-B\,c_B\right)
+=\frac{1}{2}+\frac{1}{16}e^{-1}
++\frac{7}{16}\exp\!\left(-\frac{7B^2}{B^2+6}\right).
+\]
+Therefore
+\[
+\frac{Z_U(B)-Z_S(B)}{N}
+= \frac{e^{-1}}{16}+\frac{3e^{-B^2}}{8}
+-\frac{7}{16}\exp\!\left(-\frac{7B^2}{B^2+6}\right).
+\]
+For $B\ge 3$,
+\[
+\frac{7B^2}{B^2+6}\ge \frac{63}{15}=4.2
+\quad\Rightarrow\quad
+\exp\!\left(-\frac{7B^2}{B^2+6}\right)\le e^{-4.2}<0.015.
+\]
+Hence
+\[
+\frac{Z_U(B)-Z_S(B)}{N}
+\ge \frac{e^{-1}}{16}-\frac{7}{16}e^{-4.2}
+>0.016>\frac{1}{100}.
+\]
+So $|Z_U(B)-Z_S(B)|/N\ge 1/100$. $\square$
+
+**Remark (precise failure mode of Todo-B1(a)).** Proposition 12 is a one-way map
+($Z$-window approximation implies additive $A_1$ approximation). Proposition 15 shows
+the reverse direction is non-identifiable from a single $A_1$ value: two instances can
+share all coarse drivers $(\rho_0,\Delta_{\min},R)$ and exact $A_1$, yet differ by an
+order-one amount in low-temperature partition mass.
 
 
 ## Sanity Checks
@@ -797,8 +903,32 @@ All quantitative claims verified numerically (`lib/verify_a1.py`,
 
 **Proposition 14 (schedule sensitivity).**
 - Direct numerical checks confirm
-  $|\widehat{s}^*-s^*|\le 2|\epsilon|/(1+A_1)^2$ in the stated regime. $\checkmark$
+  $|\widehat{s}^*-s^*|\le 2|\epsilon|/(1+A_1)^2$ in the stated regime and validate
+  the explicit min-condition sufficient criterion. $\checkmark$
   (`lib/verify_ising_bridge.py`)
+
+**Proposition 15 (reverse-bridge obstruction).**
+- Explicit families with equal $(A_1,\rho_0,\Delta_{\min},R)$ but order-one separated
+  low-temperature partition values satisfy
+  $|Z_U(B)-Z_S(B)|/N > 1/100$ for $B\ge 3$. $\checkmark$
+  (`lib/verify_a1.py`)
+
+**Lean formalization (Props 13-15 bounds).**
+- Proposition 13 deterministic cores are machine-checked in
+  `lean/StructuredTractability08/Prop13.lean`:
+  minimum-gap tail suppression lemma, three-term absolute-value decomposition,
+  midpoint-oracle contribution bound, midpoint quadrature-aggregation algebra, and the explicit
+  $\eta/3+\eta/3+\eta/3$ parameter-budget lemma.
+- Proposition 14 crossing-shift identity, local absolute-error bound, target-bound
+  lemma (with the explicit min-condition), and scale-substitution identity are
+  machine-checked in `lean/StructuredTractability08/Prop14.lean`.
+- Proposition 15 exact $A_1$ matching identity and the parameter inequality
+  $1/B<c_B<B$ are machine-checked in `lean/StructuredTractability08/Prop15.lean`.
+- Proposition 15's quantitative gap core
+  $\frac{e^{-1}}{16}-\frac{7}{16}\exp\!\left(-\frac{7B^2}{B^2+6}\right)>1/100$ for
+  $B\ge 3$ is also machine-checked in
+  `lean/StructuredTractability08/Prop15.lean`.
+- Project builds successfully with `cd lean && lake build`.
 
 
 ## Summary Table
@@ -819,12 +949,13 @@ All quantitative claims verified numerically (`lib/verify_a1.py`,
 | Prop 11 | Laplace proxy: approximate $A_1$ from $Z(\beta)$ without $d_0$ | Proved |
 | Prop 12 | Oracle reduction: approximate $Z$ on a grid $\Rightarrow$ additive $A_1$ | Proved |
 | Prop 13 | Ferromagnetic Ising (multiplicative $Z$ approximation) $\Rightarrow$ additive $A_1$ with explicit $(R,\Delta_{\min},\rho_0)$ error drivers | Proved |
-| Prop 14 | Schedule-relevant $A_1$ precision is $\Theta(\sqrt{d_0A_2/N})$ via $s^*=A_1/(1+A_1)$ sensitivity | Proved |
+| Prop 14 | Schedule-level sufficient condition: $|A_1-\widehat{A}_1|\le \min\{(1+A_1)/2,\sqrt{d_0A_2/N}\}$; worst-case target $\Theta(2^{-n/2})$ | Proved |
+| Prop 15 | Reverse-bridge obstruction: exact $A_1$ does not determine low-temperature $Z(\beta)$ even with matched $(\rho_0,\Delta_{\min},R)$ | Proved |
 
 
 ## Information-Gap Interpretation (Chapter 9 hook)
 
-The paper's "information gap" phenomenon can be reframed using Propositions 10--14:
+The paper's "information gap" phenomenon can be reframed using Propositions 10--15:
 
 - **Coarse accuracy is a moderate-temperature object.** For additive
   $\eta=1/\mathrm{poly}(n)$ and $\Delta_{\min}\ge 1/\mathrm{poly}(n)$, Proposition 11
@@ -834,9 +965,9 @@ The paper's "information gap" phenomenon can be reframed using Propositions 10--
   randomized polynomial-time additive approximation for $A_1$.
 
 - **Schedule-relevant accuracy is low-temperature.** Proposition 14 makes the required
-  scale explicit: to localize $s^*$ at crossing-window scale, we need
-  $|A_1-\widehat{A}_1|=\Theta(\sqrt{d_0A_2/N})$, which is $\Theta(2^{-n/2})$ in the
-  worst case. At that precision:
+  scale explicit: a sufficient condition is
+  $|A_1-\widehat{A}_1|\le \min\{(1+A_1)/2,\sqrt{d_0A_2/N}\}$, which becomes
+  $\Theta(2^{-n/2})$ in the worst case. At that precision:
   - Proposition 11 requires $B=\Theta(n/\Delta_{\min})$;
   - Proposition 10 requires $\varepsilon\approx 2^{-n/2}/\mathrm{poly}(n)$;
   - Proposition 13 requires multiplicative partition-function accuracy
@@ -846,6 +977,8 @@ The paper's "information gap" phenomenon can be reframed using Propositions 10--
 In other words: **the information barrier corresponds to the need for low-temperature
 partition-function information** (or equivalently, fine-grained density-of-states
 information), even though the adiabatic evolution itself is "zero-temperature".
+Proposition 15 shows this is also a one-way phenomenon: $A_1$ alone cannot reconstruct
+that low-temperature partition information.
 
 
 ## What Remains Open

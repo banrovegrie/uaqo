@@ -6,6 +6,7 @@ Verifies all quantitative claims in proof.md.
 import math
 from math import comb, log2
 from fractions import Fraction
+from itertools import product
 
 
 def a1_grover(N, d0):
@@ -40,6 +41,80 @@ def a1_hamming(n):
 def optimal_crossing(a1):
     """s* = A_1 / (1 + A_1) for Grover-type Hamiltonians."""
     return a1 / (1 + a1)
+
+
+def prop15_family_a1(B):
+    """
+    Proposition 15 families:
+      U: masses (d0,d1/B,dB)/N = (1/2,1/8,3/8)
+      S: masses (d0,d1/B,dcB)/N = (1/2,1/16,7/16), cB = 7B/(B^2+6)
+    Returns exact-rational A_1 values and cB.
+    """
+    cB = Fraction(7 * B, B * B + 6)
+    a1_u = Fraction(1, 8) * B + Fraction(3, 8) * Fraction(1, B)
+    a1_s = Fraction(1, 16) * B + Fraction(7, 16) * Fraction(1, cB)
+    return a1_u, a1_s, cB
+
+
+def prop15_partition_gap(B):
+    """
+    Returns Z_U(B)/N, Z_S(B)/N, and absolute gap using closed forms.
+    """
+    cB = 7.0 * B / (B * B + 6.0)
+    z_u = 0.5 + 0.125 * math.exp(-1.0) + 0.375 * math.exp(-B * B)
+    z_s = 0.5 + 0.0625 * math.exp(-1.0) + 0.4375 * math.exp(-B * cB)
+    return z_u, z_s, abs(z_u - z_s)
+
+
+def prop15_bruteforce_check(n, B):
+    """
+    Brute-force sanity check of Proposition 15 construction on n bits.
+    Energies are defined directly from the formulas in proof.md.
+    """
+    if n < 4:
+        raise ValueError("n must be at least 4.")
+    cB = Fraction(7 * B, B * B + 6)
+    N = 2**n
+
+    # Distributions keyed by exact rational energies.
+    d_u = {}
+    d_s = {}
+
+    for bits in product([0, 1], repeat=n):
+        x1, x2, x3, x4 = bits[0], bits[1], bits[2], bits[3]
+
+        if x1 == 0:
+            e_u = Fraction(0, 1)
+            e_s = Fraction(0, 1)
+        else:
+            e_u = Fraction(1, B) if (x2 == 0 and x3 == 0) else Fraction(B, 1)
+            e_s = Fraction(1, B) if (x2 == 0 and x3 == 0 and x4 == 0) else cB
+
+        d_u[e_u] = d_u.get(e_u, 0) + 1
+        d_s[e_s] = d_s.get(e_s, 0) + 1
+
+    # A_1 from brute-force distributions
+    def a1_from_dist(d):
+        total = Fraction(0, 1)
+        for e, cnt in d.items():
+            if e == 0:
+                continue
+            total += Fraction(cnt, 1) * Fraction(1, 1) / e
+        return total / N
+
+    a1_u = a1_from_dist(d_u)
+    a1_s = a1_from_dist(d_s)
+
+    # Partition values at beta=B
+    def z_over_n(d):
+        acc = 0.0
+        for e, cnt in d.items():
+            acc += (cnt / N) * math.exp(-float(B * e))
+        return acc
+
+    z_u = z_over_n(d_u)
+    z_s = z_over_n(d_s)
+    return a1_u, a1_s, z_u, z_s, d_u, d_s
 
 
 def main():
@@ -161,6 +236,49 @@ def main():
     assert diff >= -1e-12, "Expected A_1 - A_1^[B] >= 0"
     assert diff <= bound + 1e-12, "Proposition 11 bound violated (numerics)"
     print("  [PASS] bound holds")
+
+    # --- Proposition 15: reverse-bridge obstruction ---
+    print("\n--- Proposition 15: reverse-bridge obstruction ---")
+    for B in [3, 4, 6, 10]:
+        a1_u, a1_s, cB = prop15_family_a1(B)
+        check(f"A_1(U)=A_1(S) at B={B}", a1_u, a1_s)
+        assert Fraction(1, B) < cB < Fraction(B, 1), "Expected 1/B < cB < B"
+        z_u, z_s, gap = prop15_partition_gap(B)
+        print(
+            f"  B={B:2d}: Z_U(B)/N={z_u:.6f}, Z_S(B)/N={z_s:.6f}, "
+            f"gap={gap:.6f}"
+        )
+        assert gap > 0.01, "Expected order-one low-temperature partition separation"
+
+    # Stress sweep over a wide B-range to guard against arithmetic mistakes.
+    min_gap = float("inf")
+    min_gap_B = None
+    for B in range(3, 5001):
+        a1_u, a1_s, cB = prop15_family_a1(B)
+        assert a1_u == a1_s, "Expected exact A_1 match for all B >= 3"
+        assert Fraction(1, B) < cB < Fraction(B, 1), "Expected 1/B < cB < B"
+        _, _, gap = prop15_partition_gap(B)
+        if gap < min_gap:
+            min_gap = gap
+            min_gap_B = B
+        assert gap > 0.01, "Expected |Z_U(B)-Z_S(B)|/N > 1/100"
+    print(
+        f"  Sweep B=3..5000: min gap = {min_gap:.6f} at B={min_gap_B}"
+    )
+
+    # brute-force structural check on a concrete n
+    n = 8
+    B = 3
+    a1_u_bf, a1_s_bf, z_u_bf, z_s_bf, d_u, d_s = prop15_bruteforce_check(n, B)
+    a1_u_cf, a1_s_cf, _ = prop15_family_a1(B)
+    check(f"Brute-force A_1(U), n={n}, B={B}", a1_u_bf, a1_u_cf)
+    check(f"Brute-force A_1(S), n={n}, B={B}", a1_s_bf, a1_s_cf)
+    gap_bf = abs(z_u_bf - z_s_bf)
+    print(
+        f"  Brute-force n={n}, B={B}: |Z_U(B)-Z_S(B)|/N = {gap_bf:.6f}"
+    )
+    assert gap_bf > 0.01, "Brute-force Proposition 15 gap should exceed 1/100"
+    print("  [PASS] Proposition 15 obstruction numerically validated")
 
     # --- Proposition 5: Grover sweet spot ---
     print("\n--- Proposition 5: Grover sweet spot for various N ---")
