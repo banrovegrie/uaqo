@@ -10,6 +10,7 @@ Proposition 13 check:
 Proposition 14 check:
 - Verify the exact crossing-shift identity numerically.
 - Verify the stated linear sensitivity bound in the admissible error regime.
+- Verify the explicit min-condition sufficient criterion for target crossing error.
 """
 
 from __future__ import annotations
@@ -164,8 +165,26 @@ def check_proposition_14() -> None:
                     f"Sensitivity bound failed for A={A}, eps={eps}: {lhs} > {rhs}"
                 )
 
+    # Check explicit sufficient condition:
+    # if |eps| <= min((1+A)/2, ((1+A)^2/2)*delta_s), then |s_hat-s| <= delta_s.
+    rng = random.Random(11)
+    for A in [0.2, 0.75, 2.0, 5.0]:
+        for delta_s in [1e-3, 2e-3, 5e-3, 1e-2]:
+            cap = min((1.0 + A) / 2.0, ((1.0 + A) ** 2) * delta_s / 2.0)
+            for _ in range(30):
+                eps = rng.uniform(-cap, cap)
+                s = A / (1.0 + A)
+                s_hat = (A + eps) / (1.0 + A + eps)
+                if abs(s_hat - s) > delta_s + 1e-12:
+                    raise AssertionError(
+                        "Min-condition bound failed: "
+                        f"A={A}, delta_s={delta_s}, eps={eps}, "
+                        f"|shift|={abs(s_hat - s)}"
+                    )
+
     # Check the paper-scale substitution:
-    # eta_A1 = ((1+A1)^2 / 2) * delta_s = sqrt(d0 A2 / N)
+    # eta_A1 = ((1+A1)^2 / 2) * delta_s, and with the paper delta_s this equals
+    # sqrt(d0 A2 / N). (This is the second arm of the min-condition.)
     A1 = 0.75
     d0 = 1.0
     A2 = 1.0
@@ -176,7 +195,7 @@ def check_proposition_14() -> None:
     if abs(eta_required - rhs) > 1e-12:
         raise AssertionError("Scale identity check failed.")
 
-    print("[PASS] Numerical checks satisfy Proposition 14 bounds.")
+    print("[PASS] Numerical checks satisfy Proposition 14 bounds and min-condition.")
     print(f"Sample scale check: eta_required={eta_required:.6e}, rhs={rhs:.6e}")
 
 
