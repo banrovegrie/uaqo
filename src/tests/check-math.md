@@ -459,7 +459,7 @@ When checking a file for notation consistency:
 
 **Runtime:**
 ```
-T = O((1/epsilon) * (sqrt(A_2)/(A_1^2 * Delta^2)) * sqrt(2^n/d_0))
+T = O((1/epsilon) * (sqrt(A_2)/(A_1(A_1+1) * Delta^2)) * sqrt(2^n/d_0))
 ```
 
 **Gap bounds:**

@@ -8,7 +8,9 @@
 
 The adiabatic version of Grover's algorithm, due to Roland and Cerf \cite{roland2004quantum}, finds a single marked item among $N = 2^n$ by slowly interpolating between a uniform superposition and a problem Hamiltonian that penalizes all unmarked items. The crossing between the two lowest energy levels occurs at $s = 1/2$, its position independent of the Hamiltonian's spectrum. The minimum spectral gap scales as $1/\sqrt{N}$, and a schedule that slows near the crossing achieves the optimal $O(\sqrt{N})$ runtime.
 
-Consider a cost function encoded in an $n$-qubit Hamiltonian diagonal in the computational basis, with $M$ distinct energy levels, arbitrary degeneracies, and a spectral gap that may vary with the number of qubits. The ground states encode solutions to a combinatorial optimization problem. Can the adiabatic approach still match the $\Theta(\sqrt{N})$ lower bound for unstructured search \cite{farhi2008fail}? The bound applies directly to our setup: Farhi et al.\ proved that when $H_0$ is a rank-one projector onto the uniform superposition, no schedule can find the ground state in time $o(\sqrt{N/d_0})$, regardless of the cost function. Their proof constructs $N$ equivalent Hamiltonians related by Fourier shifts and applies a continuous-time analogue of the BBBV argument \cite{bennett1997strengths}. Partial answers exist: \v{Z}nidari\v{c} and Horvat \cite{horvat2006exponential} showed via analytical and heuristic arguments that the minimum gap scales as $\sqrt{d_0/2^n}$ for 3-SAT instances and identified the crossing position, but did not rigorously bound the runtime. Hen \cite{hen2014continuous} proved a quadratic speedup for a random Hamiltonian whose energy distribution ensures a crossing position independent of the spectrum, avoiding the central difficulty.
+Consider a cost function encoded in an $n$-qubit Hamiltonian diagonal in the computational basis, with $M$ distinct energy levels, arbitrary degeneracies, and a spectral gap that may vary with the number of qubits. The ground states encode solutions to a combinatorial optimization problem. Can the adiabatic approach still match the $\Theta(\sqrt{N})$ lower bound for unstructured search \cite{farhi2008fail}?
+
+The bound applies directly to our setup: Farhi et al.\ proved that when $H_0$ is a rank-one projector onto the uniform superposition, no schedule can find the ground state in time $o(\sqrt{N/d_0})$, regardless of the cost function. Their proof constructs $N$ equivalent Hamiltonians related by Fourier shifts and applies a continuous-time analogue of the BBBV argument \cite{bennett1997strengths}. Partial answers exist: \v{Z}nidari\v{c} and Horvat \cite{horvat2006exponential} showed via analytical and heuristic arguments that the minimum gap scales as $\sqrt{d_0/2^n}$ for 3-SAT instances and identified the crossing position, but did not rigorously bound the runtime. Hen \cite{hen2014continuous} proved a quadratic speedup for a random Hamiltonian whose energy distribution ensures a crossing position independent of the spectrum, avoiding the central difficulty.
 
 The answer in full generality is yes, but with complications that do not arise in the single-marked-item case. The spectrum of the interpolated Hamiltonian is far richer: instead of a two-level system plus a degenerate bulk, there are $M$ interacting energy levels in a symmetric subspace, with avoided crossings between higher excited states that obscure the gap between the two lowest. The position of the ground-state avoided crossing depends nontrivially on the degeneracy structure of the problem Hamiltonian. And the minimum gap, while still scaling as $\Theta(1/\sqrt{N})$ up to spectral factors, occurs at a position that must be known to exponential precision for the schedule to be correct.
 
@@ -41,7 +43,7 @@ A concrete and important instance is the 2-local Ising Hamiltonian
 \label{eq:Ising-Ham}
 H_\sigma = \sum_{\langle i,j \rangle} J_{ij} \sigma_z^i \sigma_z^j + \sum_{j=1}^{n} h_j \sigma_z^j,
 \end{equation}
-where $J_{ij}, h_j \in \{-m, -m+1, \ldots, m\}$ for some constant positive integer $m$. After normalization, $H_\sigma$ has $M \in \text{poly}(n)$ distinct eigenvalues and a spectral gap $\Delta \geq 1/\text{poly}(n)$. Solutions to NP-hard problems such as MaxCut and QUBO encode directly in the ground states of $H_\sigma$ with minimal overhead \cite{barahona1982computational, lucas2014ising}.
+where $J_{ij}, h_j \in \{-m, -m+1, \ldots, m\}$ for some constant positive integer $m$. Since each eigenvalue is an integer linear combination of at most $\binom{n}{2} + n$ couplings bounded by $m$, the eigenvalues lie in $\{-L, -L+1, \ldots, L\}$ for $L = O(mn^2)$, giving at most $2L + 1 \in \mathrm{poly}(n)$ distinct energy levels. After normalization to unit operator norm, consecutive eigenvalues differ by at least $1/(2L) \geq 1/\mathrm{poly}(n)$, so the spectral gap satisfies $\Delta \geq 1/\mathrm{poly}(n)$. Solutions to NP-hard problems such as MaxCut and QUBO encode directly in the ground states of $H_\sigma$ with minimal overhead \cite{barahona1982computational, lucas2014ising}.
 
 For the running example, take unstructured search: $M = 2$ energy levels, a single ground state ($d_0 = 1$) with energy $E_0 = 0$, and $N - 1$ excited states ($d_1 = N - 1$) at energy $E_1 = 1$. The ground state is the ``marked item.'' Classical search requires $\Theta(N)$ queries; Grover's circuit algorithm requires $\Theta(\sqrt{N})$ \cite{Grover1996, bennett1997strengths}.
 
@@ -59,7 +61,7 @@ H(s) = -(1 - s)\ket{\psi_0}\bra{\psi_0} + s H_z, \qquad s \in [0, 1].
 \end{equation}
 At $s = 0$, the ground state is $\ket{\psi_0}$ with energy $-1$, and all other states have energy $0$. At $s = 1$, the Hamiltonian is $H_z$ itself, and its ground states encode the solutions. The adiabatic theorem guarantees that if the schedule $s(t)$ traverses $[0, 1]$ slowly enough, the evolved state remains close to the instantaneous ground state throughout, arriving at the end in a state with high overlap with the ground space of $H_z$.
 
-The choice of a rank-one projector for $H_0$, rather than a more general Hamiltonian, has a structural consequence. At $s = 0$, the spectrum of $H(s)$ has a single non-degenerate eigenvalue at $-1$ (the ground state) and an $(N-1)$-fold degenerate eigenvalue at $0$. As $s$ increases, the degeneracy splits according to the spectrum of $H_z$, but the ground state can only interact with one effective excited state at a time. This produces a single avoided crossing between the two lowest energy levels, in contrast to generic AQC Hamiltonians that may exhibit multiple crossings requiring different analytical techniques \cite{albash2018adiabatic, arthurthesis}. The single-crossing structure is what makes a complete spectral analysis tractable.
+The choice of a rank-one projector for $H_0$, rather than a more general Hamiltonian, has a structural consequence. At $s = 0$, the spectrum of $H(s)$ has a single non-degenerate eigenvalue at $-1$ (the ground state) and an $(N-1)$-fold degenerate eigenvalue at $0$. As $s$ increases, the degeneracy splits according to the spectrum of $H_z$. Because $H_0 = -\ket{\psi_0}\bra{\psi_0}$ has rank one, the coupling between any two eigenstates of $sH_z$ factors through $\ket{\psi_0}$: the matrix element $\bra{k}H_0\ket{j} = -\sqrt{d_k d_j}/N$ is nonzero for all pairs, but the perturbation has only one degree of freedom, so the eigenvalues repel through a single channel. This produces a single avoided crossing between the two lowest energy levels, in contrast to generic AQC Hamiltonians that may exhibit multiple crossings requiring different analytical techniques \cite{albash2018adiabatic, arthurthesis}. The single-crossing structure is what makes a complete spectral analysis tractable.
 
 For the running example, $H(s) = -(1-s)\ket{\psi_0}\bra{\psi_0} + s(I - \ket{w}\bra{w})$, where $\ket{w}$ is the marked item. Up to a global energy shift of $s$, this is the Roland-Cerf Hamiltonian \cite{roland2004quantum}. The spectrum has $N - 2$ states at energy $s$ (degenerate, orthogonal to both $\ket{\psi_0}$ and $\ket{w}$) and two states whose energies depend on $s$ and undergo an avoided crossing near $s = 1/2$.
 
@@ -67,7 +69,7 @@ For the running example, $H(s) = -(1-s)\ket{\psi_0}\bra{\psi_0} + s(I - \ket{w}\
 \section{Spectral Parameters}
 \label{sec:spectral-parameters}
 
-In the Roland-Cerf setting, the crossing position ($s^* = 1/2$), its width, and the minimum gap are all determined by a single quantity: $N$. For a general problem Hamiltonian $H_z$ with $M$ energy levels and arbitrary degeneracies, no single number suffices. The relevant information is captured by a family of spectral parameters that aggregate the degeneracy structure weighted by inverse energy gaps.
+In the Roland-Cerf setting, the crossing position ($s^* = 1/2$), its width, and the minimum gap are all determined by a single quantity: $N$. For a general problem Hamiltonian $H_z$ with $M$ energy levels and arbitrary degeneracies, no single number suffices. The crossing position depends on the full eigenvalue structure of $H_z$ --- not just $E_0$ and $E_1$, but all $M$ levels and their degeneracies. We need quantities that distill this $M$-dimensional information into numbers that directly control the algorithm's behavior: where the crossing occurs, how sharp the gap minimum is, and how fast the gap reopens. The relevant information is captured by a family of spectral parameters that aggregate the degeneracy structure weighted by inverse energy gaps.
 
 \begin{definition}[Spectral parameters]
 \label{def:spectral-parameters}
@@ -78,7 +80,7 @@ A_p = \frac{1}{N} \sum_{k=1}^{M-1} \frac{d_k}{(E_k - E_0)^p}, \qquad p \in \math
 \end{equation}
 \end{definition}
 
-Each excited level contributes its degeneracy $d_k$ weighted by the inverse $p$-th power of its distance to the ground energy. Higher values of $p$ emphasize levels closer to the ground state. The normalization by $N = 2^n$ makes $A_p$ an average over the full Hilbert space.
+Each excited level contributes its degeneracy $d_k$ weighted by the inverse $p$-th power of its distance to the ground energy. Higher values of $p$ emphasize levels closer to the ground state: $A_1$ weights each level by $1/(E_k - E_0)$, giving most influence to levels just above the ground energy, while $A_2$ weights by $1/(E_k - E_0)^2$, amplifying this emphasis so that a level at energy $E_0 + \varepsilon$ contributes $O(1/\varepsilon^2)$ to $A_2$ but only $O(1/\varepsilon)$ to $A_1$. As we will see, $A_1$ controls where the crossing occurs (it sets $s^*$), while $A_2$ controls how sharp the crossing is (it appears in $g_{\min}$ and $\delta_s$). The normalization by $N = 2^n$ makes $A_p$ an average over the full Hilbert space.
 
 For the running example ($M = 2$, $d_0 = 1$, $d_1 = N-1$, $E_0 = 0$, $E_1 = 1$):
 \begin{equation}
@@ -89,7 +91,7 @@ since $E_1 - E_0 = 1$. The spectral parameters are trivial in this case, which i
 
 For a general Ising Hamiltonian with $\Delta \geq 1/\text{poly}(n)$ and $M \in \text{poly}(n)$, the bound $A_1 \leq (1-d_0/N)/\Delta$ gives $A_1 = O(\text{poly}(n))$, while $A_2 \geq 1 - d_0/N$ ensures $A_2 = \Theta(1)$ at minimum.
 
-The parameter $A_1$ determines the position of the avoided crossing: $s^* = A_1/(A_1 + 1)$. The parameter $A_2$ enters the minimum spectral gap: $g_{\min} = \Theta(\sqrt{d_0/(N A_2)})$. Both appear in the runtime: $T = O((\sqrt{A_2}/A_1^2 \Delta^2) \sqrt{N/d_0})$.
+The parameter $A_1$ determines the position of the avoided crossing: $s^* = A_1/(A_1 + 1)$. That $s^*$ depends only on $A_1$ --- a single spectral summary --- is the structural reason the schedule has a closed form. The parameter $A_2$ enters the minimum spectral gap: $g_{\min} = \Theta(\sqrt{d_0/(N A_2)})$. The gap scales as $\sqrt{d_0/N}$: more ground states strengthen the coupling and widen the crossing. Both parameters appear in the runtime: $T = O((\sqrt{A_2}/(A_1(A_1+1) \Delta^2)) \sqrt{N/d_0})$.
 
 Since every eigenvalue gap satisfies $E_k - E_0 \leq 1$ and the total excited degeneracy is $\sum_{k \geq 1} d_k = N - d_0$, we have
 \begin{equation}
@@ -98,7 +100,7 @@ A_2 \geq \frac{1}{N} \sum_{k=1}^{M-1} d_k = 1 - \frac{d_0}{N}.
 \end{equation}
 For $d_0 \ll N$ (few solutions), $A_2 \geq 1 - 1/N$ is close to $1$. Also, $A_1 \leq (1 - d_0/N)/\Delta$, since $(E_k - E_0)^{-1} \leq \Delta^{-1}$ for all $k \geq 1$. Since $E_k - E_0 \geq \Delta$ for all $k \geq 1$, termwise comparison gives $A_1 \geq A_2 \Delta$. Since $E_k - E_0 \leq 1$, we also have $A_1 \leq A_2$. Together: $A_2 \Delta \leq A_1 \leq A_2$.
 
-The behavior of the adiabatic Hamiltonian is well-controlled only when the avoided crossing region is narrow compared to the interval $[0, 1]$. This is ensured by a spectral condition on $H_z$.
+The two-level approximation near the crossing is accurate only when the crossing window $\delta_s = O(\sqrt{d_0 A_2/N})$ is narrow compared to $[0,1]$. Since $\delta_s/s^* = O((1/\Delta)\sqrt{d_0/(A_2 N)})$, this requires the spectral parameters to be polynomially bounded relative to $N$ --- a condition we now make explicit.
 
 \begin{definition}[Spectral condition]
 \label{def:spectral-condition}
@@ -109,7 +111,7 @@ The problem Hamiltonian $H_z$ satisfies the spectral condition if there exists a
 \end{equation}
 \end{definition}
 
-The quantity on the left is the ratio of the crossing width parameter to the spectral gap, up to constant factors. When it is small, the two-level approximation near the crossing is accurate (the higher levels do not interfere), and the crossing window occupies a negligible fraction of $[0, 1]$. The appendix of the published paper shows that $c \approx 0.02$ suffices \cite{braida2024unstructured}.
+The quantity on the left is the ratio of the crossing width parameter to the spectral gap, up to constant factors. When it is small, the two-level approximation near the crossing is accurate (the higher levels do not interfere), and the crossing window occupies a negligible fraction of $[0, 1]$. The appendix of the published paper shows that $c \approx 0.02$ suffices \cite{braida2024unstructured}. When the condition fails, the crossing window is no longer narrow, higher energy levels interfere with the two-level dynamics, and the gap bounds of this chapter no longer apply.
 
 For any $H_z$ with $\Delta > (1/c)\sqrt{d_0/N}$, the condition holds, using $A_2 \geq 1 - d_0/N$. For the Ising Hamiltonian with $\Delta \geq 1/\text{poly}(n)$ and $d_0$ not scaling with $N$, the left side is exponentially small in $n$, so the condition is easily satisfied. For the running example with $\Delta = 1$ and $d_0 = 1$, the left side is $1/\sqrt{N}$, well below any constant $c$ for $N \geq 2$.
 
@@ -386,7 +388,7 @@ T \propto \int_0^1 \frac{ds}{g(s)^2},
 \end{equation}
 split across the three regions. In the left and right regions, the linear growth $g(s) \propto |s - s^*|$ makes $1/g(s)^2 \propto 1/(s - s^*)^2$, which integrates to a logarithmic contribution. In the window, $g(s) = \Theta(g_{\min})$ is approximately constant, giving a contribution proportional to $2\delta_s/g_{\min}^2$. The window dominates:
 \begin{equation}
-\frac{\delta_s}{g_{\min}^2} \propto \frac{\sqrt{A_2}}{A_1^2 \Delta^2} \sqrt{\frac{N}{d_0}},
+\frac{\delta_s}{g_{\min}^2} \propto \frac{\sqrt{A_2}}{A_1(A_1+1) \Delta^2} \sqrt{\frac{N}{d_0}},
 \end{equation}
 yielding the runtime of Theorem 1 in the published paper \cite{braida2024unstructured}. For the Ising Hamiltonian with $A_1, A_2 = O(\text{poly}(n))$ and $\Delta \geq 1/\text{poly}(n)$, this gives $T = \widetilde{O}(\sqrt{N/d_0})$, matching the Grover lower bound up to polylogarithmic factors. Chapter 7 carries out this calculation rigorously.
 
@@ -401,7 +403,7 @@ The gap bounds in the left and right regions have been stated but not proved. Th
 Given the complete gap profile, the optimal runtime is
 \begin{equation}
 \label{eq:runtime-preview}
-T = O\left(\frac{1}{\varepsilon} \cdot \frac{\sqrt{A_2}}{A_1^2 \Delta^2} \cdot \sqrt{\frac{N}{d_0}}\right),
+T = O\left(\frac{1}{\varepsilon} \cdot \frac{\sqrt{A_2}}{A_1(A_1+1) \Delta^2} \cdot \sqrt{\frac{N}{d_0}}\right),
 \end{equation}
 where $\varepsilon$ is the target error. For Ising Hamiltonians, this is $\widetilde{O}(\sqrt{N/d_0})$, matching the lower bound of Farhi, Goldstone, and Gutmann \cite{farhi2008fail}. Adiabatic quantum optimization achieves the Grover speedup. Chapter 7 derives this rigorously.
 

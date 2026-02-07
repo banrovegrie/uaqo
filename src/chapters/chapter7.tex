@@ -98,7 +98,11 @@ Integrating from $0$ to $1$ gives $\mathrm{Tr}[P\rho]\big|_0^1 = i\int_0^1 (K')^
 \mathrm{Tr}[P\rho]\big|_0^1 = i(K'(1))^{-1}\,\mathrm{Tr}\!\left[\left[P'(1),\, (H(1)-\lambda_0(1))^+\right]\rho(1)\right] \\
 - i\int_0^1 \mathrm{Tr}\!\left[\left((K')^{-1}\left[P',\, (H-\lambda_0)^+\right]' + \left((K')^{-1}\right)'\!\left[P',\, (H-\lambda_0)^+\right]\right)\rho\right]ds.
 \end{multline}
-The boundary term at $s = 0$ vanishes: since $\rho(0) = P(0)$, $\mathrm{Tr}\!\left[\left[P',\,(H-\lambda_0)^+\right]P\right] = \mathrm{Tr}[P'(H-\lambda_0)^+P] - \mathrm{Tr}[(H-\lambda_0)^+P'P]$. The first summand is zero because $(H-\lambda_0)^+P = 0$, and the second equals $\mathrm{Tr}[P(H-\lambda_0)^+P'] = 0$ by the same identity. Taking absolute values and bounding $|\mathrm{Tr}[A\rho]| \leq \lVert A\rVert$ for any density matrix $\rho$ yields~\eqref{eq:error-bound}.
+The boundary term at $s = 0$ vanishes. Since $\rho(0) = P(0)$, the commutator trace expands as
+\[
+\mathrm{Tr}\!\left[\left[P',\,(H-\lambda_0)^+\right]P\right] = \mathrm{Tr}[P'(H-\lambda_0)^+P] - \mathrm{Tr}[(H-\lambda_0)^+P'P].
+\]
+For the first summand, $(H-\lambda_0)^+P = 0$ (the pseudoinverse annihilates the ground-space projector), so $\mathrm{Tr}[P'(H-\lambda_0)^+P] = 0$. For the second, cyclicity of the trace gives $\mathrm{Tr}[(H-\lambda_0)^+P'P] = \mathrm{Tr}[P(H-\lambda_0)^+P'] = 0$ by the same identity. Taking absolute values and bounding $|\mathrm{Tr}[A\rho]| \leq \lVert A\rVert$ for any density matrix $\rho$ yields~\eqref{eq:error-bound}.
 \end{proof}
 
 The error bound depends on $H(s)$ only through the commutator $[P', (H-\lambda_0)^+]$ and its derivative. The following bounds express these in terms of the Hamiltonian derivatives $H'$, $H''$ and the spectral gap $g$.
@@ -378,7 +382,7 @@ c = O(B_2).
 Let $H_z$ satisfy the spectral condition (Definition~\ref{def:spectral-condition}). For any $\varepsilon > 0$, the adaptive schedule~\eqref{eq:adaptive-schedule} with the gap lower bound~\eqref{eq:g0-def} prepares the ground state of $H_z$ with fidelity at least $1 - \varepsilon$ in time
 \begin{equation}
 \label{eq:main-runtime}
-T = O\!\left(\frac{1}{\varepsilon}\cdot\frac{\sqrt{A_2}}{\Delta^2\, A_1(A_1+1)}\cdot\sqrt{\frac{N}{d_0}}\right).
+T = O\!\left(\frac{1}{\varepsilon}\cdot\frac{\sqrt{A_2}}{\Delta^2\, A_1(A_1+1)}\cdot\sqrt{\frac{N}{d_0}}\right).\footnote{The published paper~\cite{braida2024unstructured} states $A_1^2$ in Theorem~1. The expression $A_1(A_1+1)$ follows from the proof derivation in Appendix~A-IV of the same paper. For Ising Hamiltonians with $A_1 = O(\mathrm{poly}(n))$, the distinction is absorbed by the $O(\cdot)$ notation, since $A_1(A_1+1) = A_1^2 + A_1 = \Theta(A_1^2)$.}
 \end{equation}
 \end{theorem}
 
