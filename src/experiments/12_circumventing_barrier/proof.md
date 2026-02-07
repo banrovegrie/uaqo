@@ -95,7 +95,7 @@ Therefore, the restriction of $H_{\text{ext}}(s)$ to $\mathcal{V}_\phi$ is unita
 
 (b) The values $\{sE(z)\}$ with multiplicities $2^m - 1$ each (from states orthogonal to $|\phi\rangle$).
 
-The two eigenvalue branches that undergo the avoided crossing are in set (a) — they are identical to the bare system's branches. The extra eigenvalues in set (b) are at $sE_k$ for each level $k$, which are exactly the unperturbed eigenvalues of $sH_z$. These do not participate in the avoided crossing.
+The two eigenvalue branches that undergo the avoided crossing are in set (a) - they are identical to the bare system's branches. The extra eigenvalues in set (b) are at $sE_k$ for each level $k$, which are exactly the unperturbed eigenvalues of $sH_z$. These do not participate in the avoided crossing.
 
 **Step 4: The crossing position.** Since the crossing branches are identical to the bare system, the secular equation (SE) is unchanged, and $s^* = A_1/(A_1+1)$. $\square$
 
@@ -169,7 +169,7 @@ where $A_1^{\text{eff}} = \sum_{j: \tilde{E}_j > \tilde{E}_0} |\langle\Psi|\tild
 
 **Step 1: $V$ changes the spectrum of $H_f$.** Since $V$ is instance-independent, it acts the same way regardless of $H_z$. The eigenvalues $\tilde{E}_j$ of $H_z \otimes I + V$ depend on both $V$ and the spectrum of $H_z$. Weyl's inequality gives $|\tilde{E}_j - E_j^{(0)}| \leq \|V\|$, where $E_j^{(0)}$ are eigenvalues of $H_z \otimes I$. The coupling can split degenerate levels and mix system-ancilla states, but the resulting spectrum still carries the information of $\{E_k, d_k\}$.
 
-**Step 2: The effective $A_1$ depends on the spectrum.** The weights $\tilde{w}_j = |\langle\Psi|\tilde{E}_j\rangle|^2$ and energies $\tilde{E}_j$ are functions of both $V$ and $H_z$. Since $V$ is fixed and $H_z$ varies across instances, $A_1^{\text{eff}}$ is a function $A_1^{\text{eff}} = F(V, \{E_k, d_k\})$. The function $F$ depends on the full spectrum of $H_z$, not just through $A_1$ — different spectra with the same $A_1$ may give different $A_1^{\text{eff}}$. But crucially, $A_1^{\text{eff}}$ is NOT independent of the spectrum.
+**Step 2: The effective $A_1$ depends on the spectrum.** The weights $\tilde{w}_j = |\langle\Psi|\tilde{E}_j\rangle|^2$ and energies $\tilde{E}_j$ are functions of both $V$ and $H_z$. Since $V$ is fixed and $H_z$ varies across instances, $A_1^{\text{eff}}$ is a function $A_1^{\text{eff}} = F(V, \{E_k, d_k\})$. The function $F$ depends on the full spectrum of $H_z$, not just through $A_1$ - different spectra with the same $A_1$ may give different $A_1^{\text{eff}}$. But crucially, $A_1^{\text{eff}}$ is NOT independent of the spectrum.
 
 **Step 3: Instance-independent $V$ cannot cancel the dependence.** For $s^*_{\text{ext}}$ to be independent of the spectrum, we would need $A_1^{\text{eff}} = \text{const}$ across all problem instances. We show this is impossible for any fixed $V$ by exhibiting a one-parameter family of spectra along which $A_1^{\text{eff}}$ varies.
 
@@ -179,7 +179,7 @@ Consider the two-level family parametrized by $\Delta > 0$: $E_0 = 0$, $E_1 = \D
 
 Since the $\Theta(1/\Delta)$ term varies with $\Delta$, $A_1^{\text{eff}}(\Delta)$ is non-constant across the family. Different spectra give different $A_1^{\text{eff}}$, hence different $s^*_{\text{ext}}$. $\square$
 
-**Remark.** This argument does not give a quantitative bound on how much $V$ shifts $s^*$. For couplings that split the ground level of $H_z$ (e.g., $V = \lambda |z_0\rangle\langle z_0| \otimes \sigma_x$), the effective $A_1^{\text{eff}}$ can change drastically — the split creates new levels near $E_0$ with small gaps, adding terms of order $1/\lambda$ to $A_1^{\text{eff}}$. Such couplings make the algorithm slower, not faster. Couplings that do not mix energy levels (e.g., $V$ commuting with $H_z \otimes I$) reduce to the uncoupled case by Theorem 1.
+**Remark.** This argument does not give a quantitative bound on how much $V$ shifts $s^*$. For couplings that split the ground level of $H_z$ (e.g., $V = \lambda |z_0\rangle\langle z_0| \otimes \sigma_x$), the effective $A_1^{\text{eff}}$ can change drastically - the split creates new levels near $E_0$ with small gaps, adding terms of order $1/\lambda$ to $A_1^{\text{eff}}$. Such couplings make the algorithm slower, not faster. Couplings that do not mix energy levels (e.g., $V$ commuting with $H_z \otimes I$) reduce to the uncoupled case by Theorem 1.
 
 **Numerical verification.** For the instance-independent coupling $V = \lambda (I_N \otimes \sigma_x)$, we compute $s^*_{\text{ext}}$ across four different spectra (Grover $N=4$ and $N=8$ with varying $d_0$, three-level $N=8$) for coupling strengths $\lambda \in \{0.01, 0.05, 0.1, 0.5, 1.0\}$. In every case, the spread of $s^*_{\text{ext}}$ across instances remains nonzero: the coupling shifts all crossing positions but does not collapse them to a single value. For $\lambda = 0.05$, the spread is comparable to the bare spread. For $\lambda = 1.0$, the spread decreases but remains positive ($> 0.01$), confirming the non-constancy proved above.
 
@@ -253,7 +253,7 @@ What modifications COULD circumvent the barrier? We classify approaches by which
 
 ### Breaking Condition 1: Higher-Rank Initial Hamiltonians
 
-Replace $H_0 = -|\psi_0\rangle\langle\psi_0|$ with a rank-$r$ projector $H_0 = -P$ where $P = \sum_{j=1}^r |\psi_j\rangle\langle\psi_j|$. The secular equation changes structure: instead of a single avoided crossing, there are $r$ interacting branches. The crossing position now depends on $r$ parameters, potentially allowing more freedom. However, preparing the ground state of a rank-$r$ projector requires knowing its ground space, which re-introduces a preparation problem. The no-go does not apply here, and whether higher-rank $H_0$ can circumvent the barrier is genuinely open.
+Replace $H_0 = -|\psi_0\rangle\langle\psi_0|$ with a rank-$r$ projector $H_0 = -P$ where $P = \sum_{j=1}^r |\psi_j\rangle\langle\psi_j|$. The secular equation changes structure: instead of one scalar equation, one gets an $r \times r$ determinant condition. Part VIII resolves: (i) the first nontrivial case $r=2$, (ii) the general two-level rank-$k$ scaling law, (iii) a multilevel commuting-block extension, and (iv) a noncommuting multilevel root-set no-go via trace drift. The remaining unresolved point is explicit branch-level decoupling in the noncommuting multilevel regime.
 
 ### Breaking Condition 2: Time-Dependent Coupling
 
@@ -277,7 +277,224 @@ Quantum walks, variational algorithms, and hybrid classical-quantum methods may 
 
 ### Outside the Framework: Structured Problems
 
-The entire analysis assumes unstructured problems (no knowledge of which $z$ maps to which $E_k$). For structured problems where the energy landscape has exploitable features (e.g., local structure, symmetry, planted solutions), the optimal schedule might not require $s^*$ at all — the spectral gap profile could be qualitatively different.
+The entire analysis assumes unstructured problems (no knowledge of which $z$ maps to which $E_k$). For structured problems where the energy landscape has exploitable features (e.g., local structure, symmetry, planted solutions), the optimal schedule might not require $s^*$ at all - the spectral gap profile could be qualitatively different.
+
+
+## Part VIII: Higher-Rank Initial Hamiltonians
+
+We now analyze the primary escape route from Part VII: higher-rank initial projectors.
+
+### Rank-$k$ secular determinant
+
+Let
+$$H_k(s) = sH_z - (1-s)P, \quad P = UU^\dagger,$$
+where $U \in \mathbb{C}^{N \times k}$ has orthonormal columns and $\mathrm{rank}(P) = k$.
+
+For $\lambda$ not equal to any eigenvalue of $sH_z$, set
+$$D(\lambda,s) = sH_z - \lambda I,\quad G(\lambda,s) = U^\dagger D(\lambda,s)^{-1}U \in \mathbb{C}^{k \times k}.$$
+
+By the matrix determinant lemma:
+$$\det(H_k(s)-\lambda I)=\det(D)\det\!\big(I_k-(1-s)G(\lambda,s)\big).$$
+Hence the nontrivial eigenvalue condition is
+$$\det\!\big(I_k-(1-s)G(\lambda,s)\big)=0. \tag{SE-k}$$
+
+For $k=1$, (SE-k) reduces to the scalar secular equation (SE). For $k>1$, crossings are controlled by a matrix condition.
+
+### Rank-2 specialization
+
+Take
+$$P = |\psi_0\rangle\langle\psi_0| + |\phi\rangle\langle\phi|,$$
+where $|\phi\rangle \perp |\psi_0\rangle$, $\|\phi\|=1$. In basis $\{|\psi_0\rangle,|\phi\rangle\}$:
+$$G(\lambda,s)=
+\begin{pmatrix}
+g_{11} & g_{12}\\
+\overline{g_{12}} & g_{22}
+\end{pmatrix},$$
+with
+$$
+g_{11}=\sum_z \frac{1/N}{sE(z)-\lambda},\quad
+g_{22}=\sum_z \frac{|\phi_z|^2}{sE(z)-\lambda},\quad
+g_{12}=\sum_z \frac{\phi_z/\sqrt{N}}{sE(z)-\lambda}.
+$$
+Therefore:
+$$\big(1-(1-s)g_{11}\big)\big(1-(1-s)g_{22}\big) - (1-s)^2|g_{12}|^2=0. \tag{SE-2}$$
+
+As in Part I, evaluate the reduced crossing proxy at $\lambda=sE_0$ and drop the $k=0$ pole term. Define
+$$B_1(\phi)=\sum_{k\ge 1}\frac{b_k}{E_k-E_0},\quad
+b_k=\sum_{z\in\Omega_k}|\phi_z|^2,$$
+$$C_1(\phi)=\frac{1}{\sqrt{N}}\sum_{k\ge 1}\frac{c_k}{E_k-E_0},\quad
+c_k=\sum_{z\in\Omega_k}\phi_z,$$
+and $x=(1-s)/s$. Then (SE-2) becomes
+$$1 - x(A_1+B_1) + x^2\big(A_1B_1-|C_1|^2\big)=0. \tag{R2}$$
+
+The quadratic coefficient is nonnegative:
+$$A_1B_1-|C_1|^2 \ge 0,$$
+by Cauchy applied to $\sqrt{w_z}$ and $\sqrt{w_z}\phi_z$ on excited states, where $w_z=(E(z)-E_0)^{-1}$.
+
+### Proposition 6 (Rank-2 Obstruction on Two-Level Families)
+
+Fix $N\ge 3$, a degeneracy $d_0$ with $1\le d_0 < N$, and a normalized state $|\phi\rangle\perp|\psi_0\rangle$, independent of the instance. Consider the two-level family
+$$E_0=0,\quad E_1=\Delta,\quad d_1=N-d_0,\quad \Delta>0,$$
+with fixed ground set $\Omega_0$ of size $d_0$ and excited set $\Omega_1=\Omega_0^c$.
+For the rank-2 projector $P=|\psi_0\rangle\langle\psi_0|+|\phi\rangle\langle\phi|$, every positive reduced crossing root of (R2) has form
+$$x(\Delta)=\kappa \Delta,\qquad \kappa>0\ \text{independent of }\Delta,$$
+hence
+$$s(\Delta)=\frac{1}{1+\kappa\Delta}
+=\frac{A_1}{A_1+\kappa\frac{N-d_0}{N}},\qquad A_1=\frac{N-d_0}{N\Delta}.$$
+Therefore $s(\Delta)$ is non-constant in $\Delta$ (equivalently non-constant in $A_1$). No fixed instance-independent rank-2 projector can make the crossing position spectrum-independent even on this one-parameter family.
+
+**Proof.** Define
+$$a=\frac{N-d_0}{N},\quad p=\sum_{z\in\Omega_0}|\phi_z|^2,\quad q=\sum_{z\in\Omega_1}\phi_z.$$
+Then
+$$A_1=\frac{a}{\Delta},\quad B_1=\frac{1-p}{\Delta},\quad C_1=\frac{q}{\sqrt{N}\,\Delta}.$$
+Substitute in (R2):
+$$1-\frac{\alpha}{\Delta}x+\frac{\beta}{\Delta^2}x^2=0,\quad
+\alpha=a+1-p>0,\quad
+\beta=a(1-p)-\frac{|q|^2}{N}\ge 0.$$
+The inequality $\beta\ge 0$ follows from
+$$|q|^2 \le (N-d_0)\sum_{z\in\Omega_1}|\phi_z|^2=(N-d_0)(1-p)=Na(1-p).$$
+
+Case 1: $\beta>0$. The positive roots are
+$$x_\pm(\Delta)=\Delta\cdot\frac{\alpha\pm\sqrt{\alpha^2-4\beta}}{2\beta}
+=\kappa_\pm\Delta,\quad \kappa_\pm>0.$$
+
+Case 2: $\beta=0$. The equation is linear:
+$$1-\frac{\alpha}{\Delta}x=0,\quad x(\Delta)=\frac{\Delta}{\alpha}=\kappa\Delta,\ \kappa>0.$$
+
+In both cases, $x(\Delta)=\kappa\Delta$ with $\kappa$ independent of $\Delta$, so
+$$s(\Delta)=\frac{1}{1+x(\Delta)}=\frac{1}{1+\kappa\Delta}.$$
+This depends on $\Delta$. Since $A_1=a/\Delta$, rewrite
+$$s(\Delta)=\frac{A_1}{A_1+\kappa a},$$
+which depends nontrivially on $A_1$. $\square$
+
+**Scope note.** Proposition 6 extends the no-go boundary beyond rank one for the first higher-rank case ($k=2$) on all fixed-degeneracy two-level families. It does not resolve arbitrary multilevel spectra or $k\ge 3$.
+
+**Numerical verification.** `lib/ancilla_spectrum.py` now includes `verify_theorem6_rank2`, which checks two fixed rank-2 projectors on $N=8$ across $\Delta \in \{0.5,1,2,4,8\}$ and ground-set sizes $d_0 \in \{1,2,3\}$. It verifies: (i) reduced roots satisfy the quadratic residual to $<10^{-10}$, (ii) branch constants $\kappa$ are $\Delta$-independent, (iii) each branch has nonzero spread in $s(\Delta)$, (iv) the explicit identity $s=A_1/(A_1+\kappa(N-d_0)/N)$ holds numerically on each branch, and (v) reduced roots agree with full exact diagonalization crossing locations (second branch crossing $\lambda=0$) to numerical tolerance. A randomized stress test `deep_verify_theorem6_rank2` checks 1920 random cases over $N\in\{6,8,10,12\}$ and multiple $\Delta$, all passing.
+
+### Proposition 6A (Rank-$k$ Two-Level Scaling Law)
+
+Fix $N\ge 3$, $1\le d_0 < N$, and a fixed rank-$k$ projector $P=UU^\dagger$ with $U\in\mathbb{C}^{N\times k}$ orthonormal columns. On the two-level family
+$$E_0=0,\quad E_1=\Delta,\quad d_1=N-d_0,\quad \Delta>0,$$
+with fixed ground set $\Omega_0$ and excited set $\Omega_1=\Omega_0^c$, define
+$$U_{\mathrm{exc}}=\Pi_{\Omega_1}U,\qquad B=U_{\mathrm{exc}}^\dagger U_{\mathrm{exc}}\succeq 0,\qquad x=\frac{1-s}{s}.$$
+Then the reduced crossing equation (ground-pole removed, at $\lambda=sE_0=0$) is
+$$\det\!\Big(I_k-\frac{x}{\Delta}B\Big)=0. \tag{Rk-2lvl}$$
+Hence for each positive eigenvalue $\mu$ of $B$, there is a reduced root
+$$x(\Delta)=\frac{\Delta}{\mu},\qquad
+s(\Delta)=\frac{1}{1+\Delta/\mu}
+=\frac{A_1}{A_1+\frac{N-d_0}{N\mu}},\qquad
+A_1=\frac{N-d_0}{N\Delta}.$$
+Therefore every branch with $\mu>0$ is non-constant in $\Delta$ (equivalently in $A_1$). So fixed rank-$k$ projectors cannot make crossing positions spectrum-independent on fixed-degeneracy two-level families unless $B=0$ (the projector has no support on excited states).
+
+**Proof.** Start from the rank-$k$ determinant condition (SE-k):
+$$\det(I_k-(1-s)G(\lambda,s))=0,\qquad G(\lambda,s)=U^\dagger(sH_z-\lambda I)^{-1}U.$$
+At $\lambda=0$, each excited basis state contributes denominator $s\Delta$ and each ground basis state contributes a pole $1/0^+$. Removing the ground-pole part gives the reduced matrix
+$$\widetilde{G}(0,s)=\sum_{z\in\Omega_1}\frac{u_z u_z^\dagger}{s\Delta}
+=\frac{1}{s\Delta}U_{\mathrm{exc}}^\dagger U_{\mathrm{exc}}
+=\frac{1}{s\Delta}B.$$
+So the reduced determinant is
+$$\det(I_k-(1-s)\widetilde{G}(0,s))
+=\det\!\Big(I_k-\frac{1-s}{s\Delta}B\Big)
+=\det\!\Big(I_k-\frac{x}{\Delta}B\Big),$$
+which is (Rk-2lvl). If $\mu>0$ is an eigenvalue of $B$, then
+$$\det\!\Big(I_k-\frac{x}{\Delta}B\Big)=0
+\iff 1-\frac{x}{\Delta}\mu=0
+\iff x=\frac{\Delta}{\mu}.$$
+Hence
+$$s=\frac{1}{1+x}=\frac{1}{1+\Delta/\mu}.$$
+Since $A_1=(N-d_0)/(N\Delta)$, substitute $\Delta=(N-d_0)/(NA_1)$ to obtain
+$$s=\frac{A_1}{A_1+\frac{N-d_0}{N\mu}}.$$
+For fixed $\mu>0$, this is strictly increasing in $A_1$ and non-constant. $\square$
+
+**Numerical verification.** `lib/ancilla_spectrum.py` includes `verify_proposition6A_rankk`, which checks a fixed rank-4 projector on $N=10$, ground-set sizes $d_0\in\{1,2,3\}$, and $\Delta\in\{0.5,1,2,4,8\}$. It verifies constant $\kappa=1/\mu$ across $\Delta$, reduced-matrix residuals below $10^{-10}$, nonzero spread in each branch $s(\Delta)$, and the closed-form identity $s=A_1/(A_1+\kappa(N-d_0)/N)$ branchwise. A randomized stress test `deep_verify_proposition6A_rankk` checks 1296 random cases over $N\in\{8,10,12\}$ and multiple $\Delta$, all passing.
+
+### Proposition 6B (Commuting Multilevel Extension)
+
+Fix a multilevel family with $L \ge 2$ excited levels:
+$$E_0 < E_1 < \cdots < E_L,\qquad \Delta_\ell := E_\ell - E_0 > 0,$$
+fixed level sets $\Omega_\ell$, and a fixed rank-$k$ projector $P=UU^\dagger$.
+Define
+$$U_\ell := \Pi_{\Omega_\ell}U,\qquad B_\ell := U_\ell^\dagger U_\ell \succeq 0\quad (\ell=1,\dots,L).$$
+Assume the excited blocks commute pairwise:
+$$[B_\ell,B_m]=0\quad\forall \ell,m.$$
+Then the reduced crossing equation at $\lambda=sE_0$ is
+$$\det\!\Big(I_k - x\sum_{\ell=1}^{L}\frac{1}{\Delta_\ell}B_\ell\Big)=0,\qquad x=\frac{1-s}{s}. \tag{Rk-multi}$$
+There exists a unitary $W$ and nonnegative coefficients $\mu_{\ell r}$ such that
+$$W^\dagger B_\ell W=\mathrm{diag}(\mu_{\ell 1},\dots,\mu_{\ell k}).$$
+Hence each active branch $r$ with
+$$G_r(\Delta):=\sum_{\ell=1}^{L}\frac{\mu_{\ell r}}{\Delta_\ell}>0$$
+has
+$$x_r(\Delta)=\frac{1}{G_r(\Delta)},\qquad
+s_r(\Delta)=\frac{G_r(\Delta)}{1+G_r(\Delta)}.$$
+If one gap $\Delta_j$ varies while others are fixed, then
+$$\frac{\partial s_r}{\partial \Delta_j}
+=-\frac{\mu_{jr}}{\Delta_j^2(1+G_r)^2}\le 0,$$
+with strict inequality whenever $\mu_{jr}>0$. Therefore any active branch with support on a varied level remains spectrum-dependent.
+
+In particular, fixed instance-independent rank-$k$ projectors cannot make all crossing branches spectrum-independent on this commuting multilevel class unless every active branch has zero support on all varied levels.
+
+**Proof.** The reduced form (Rk-multi) follows from (SE-k) exactly as in Proposition 6A, but with level-dependent denominators. Since the $B_\ell$ are Hermitian and commuting, they are simultaneously diagonalizable by a unitary $W$. Conjugating (Rk-multi):
+$$\det\!\Big(I_k - x\,W^\dagger\!\Big(\sum_{\ell}\frac{1}{\Delta_\ell}B_\ell\Big)W\Big)
+=\prod_{r=1}^{k}\Big(1-x\sum_{\ell=1}^{L}\frac{\mu_{\ell r}}{\Delta_\ell}\Big)=0.$$
+So branch $r$ satisfies $x_r=1/G_r$ whenever $G_r>0$, and
+$$s_r=\frac{1}{1+x_r}=\frac{G_r}{1+G_r}.$$
+If only $\Delta_j$ varies, $G_r(\Delta_j)=C_r+\mu_{jr}/\Delta_j$ with constant $C_r\ge 0$, so
+$$\frac{\partial G_r}{\partial \Delta_j}=-\frac{\mu_{jr}}{\Delta_j^2},\qquad
+\frac{\partial s_r}{\partial G_r}=\frac{1}{(1+G_r)^2}>0,$$
+hence
+$$\frac{\partial s_r}{\partial \Delta_j}
+=\frac{\partial s_r}{\partial G_r}\frac{\partial G_r}{\partial \Delta_j}
+=-\frac{\mu_{jr}}{\Delta_j^2(1+G_r)^2}.$$
+This is strictly negative if $\mu_{jr}>0$, so the branch is non-constant in $\Delta_j$. $\square$
+
+**Numerical verification.** `lib/ancilla_spectrum.py` now includes `verify_proposition6B_commuting_multilevel`, which constructs an explicit commuting multilevel projector decomposition with $L=3$, $k=3$, verifies commutators $\|[B_\ell,B_m]\|_F<10^{-10}$, checks reduced residuals below $10^{-10}$, and confirms branchwise monotone dependence on a varied gap whenever $\mu_{jr}>0$. The randomized stress routine `deep_verify_proposition6B_commuting_multilevel` checks 140 random commuting instances (with explicit synthesized projectors), with all cases passing.
+
+### Proposition 6C (General Multilevel Trace No-Go)
+
+Keep the same multilevel setup, but drop the commutation assumption. Define
+$$A(\Delta):=\sum_{\ell=1}^{L}\frac{1}{\Delta_\ell}B_\ell,\qquad
+\det(I_k-xA(\Delta))=0.$$
+Let $\{\lambda_r(\Delta)\}_{r=1}^{k}$ be eigenvalues of $A(\Delta)$ (with multiplicity), and positive reduced roots $x_r(\Delta)=1/\lambda_r(\Delta)$ for $\lambda_r(\Delta)>0$.
+
+If one gap $\Delta_j$ varies and $B_j\neq 0$ (equivalently $\mathrm{tr}(B_j)>0$), then the multiset of positive reduced roots cannot remain constant in $\Delta_j$.
+
+**Proof.** Since $A(\Delta)$ is Hermitian PSD, its eigenvalues are real nonnegative and satisfy
+$$\mathrm{tr}(A(\Delta))=\sum_{r=1}^{k}\lambda_r(\Delta)
+=\sum_{\ell=1}^{L}\frac{\mathrm{tr}(B_\ell)}{\Delta_\ell}.$$
+If all positive roots were constant as $\Delta_j$ varies, then all positive eigenvalues $\lambda_r(\Delta)=1/x_r(\Delta)$ would be constant, so $\mathrm{tr}(A(\Delta))$ would be constant. But
+$$\frac{\partial}{\partial \Delta_j}\mathrm{tr}(A(\Delta))
+=-\frac{\mathrm{tr}(B_j)}{\Delta_j^2}<0$$
+when $\mathrm{tr}(B_j)>0$. Contradiction. Therefore at least one positive reduced root changes with $\Delta_j$. $\square$
+
+**Numerical verification.** `lib/ancilla_spectrum.py` includes `verify_proposition6C_multilevel_trace_nogo`, which uses a noncommuting multilevel instance and checks: (i) commutator norm is nonzero, (ii) exact trace identity $\mathrm{tr}(A)=\sum_\ell \mathrm{tr}(B_\ell)/\Delta_\ell$, (iii) strict trace drift under a varied gap with nonzero trace weight, and (iv) corresponding non-constancy of the reduced root set. The randomized stress routine `deep_verify_proposition6C_multilevel_trace_nogo` checks 140 noncommuting random instances, all passing.
+
+### Remaining obstruction: noncommuting branch-level decoupling
+
+Proposition 6C removes full multiset invariance in the noncommuting regime. The remaining unresolved point is finer branch-level decoupling without commutation: noncommuting blocks can mix eigenspaces as gaps vary, so explicit closed forms for individual branches (like Proposition 6B) are not generally available.
+
+
+## Part IX: Circumvention Landscape Across Experiments
+
+**Proposition 7 (Circumvention Landscape).** For unstructured ground-state finding, the status of barrier circumvention is:
+
+1. **Can circumvent by leaving fixed-schedule rank-one AQO:**
+   (a) Circuit model minimum finding: zero spectral side information and $\Theta(\sqrt{N/d_0})$ queries (Experiment 10, Theorem 2).
+   (b) Adaptive adiabatic measurement: zero communicated classical bits and $O(n)$ measurements with $T=O(T_{\inf})$ (Experiment 05, Theorem 1).
+   (c) Quantum pre-estimation of $A_1$: additive precision via $O(2^{n/2}\mathrm{poly}(n))$ quantum queries/time in the algorithmically relevant regime (Experiment 13, Theorem 2).
+   (d) Structured instances where $A_1$ is tractable classically (for example, exact bounded-treewidth DP and ferromagnetic partition-function bridge; Experiment 08, Propositions 8 and 13; also coarse approximation in Proposition 9).
+
+2. **Cannot circumvent inside fixed instance-independent Hamiltonian engineering analyzed here:**
+   (a) Product ancilla extensions (Theorem 1).
+   (b) Non-uniform fixed initial states under instance-independence (Theorem 2).
+   (c) Fixed instance-independent couplings (Theorem 3).
+   (d) Multi-segment rank-one paths (Theorem 4).
+   (e) Any rank-one instance-independent modification in aggregate (Theorem 5).
+   (f) Rank-2 fixed projector on the fixed-degeneracy two-level families analyzed in Part VIII (Proposition 6).
+   (g) More generally, fixed rank-$k$ projectors on fixed-degeneracy two-level families whenever the projector has excited support (Proposition 6A).
+   (h) Fixed rank-$k$ projectors on commuting multilevel block families whenever an active branch has support on a varied level (Proposition 6B).
+   (i) Even without commutation, full positive-root-set invariance across varied supported multilevel gaps is impossible by trace drift (Proposition 6C).
+
+Hence the barrier is not absolute across computational models, but it is rigid within fixed instance-independent Hamiltonian engineering in the rank-one framework and its higher-rank two-level/multilevel extensions (commuting branchwise and noncommuting root-set level).
 
 
 ## Corollary: Non-Adiabatic Oscillation

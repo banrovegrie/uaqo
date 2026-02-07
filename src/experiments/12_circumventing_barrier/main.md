@@ -4,9 +4,9 @@
 
 The paper proves that the optimal adiabatic schedule requires knowledge of $s^* = A_1 / (A_1 + 1)$, and that computing $A_1$ is NP-hard. The Discussion section explicitly poses the question: can we modify the adiabatic Hamiltonian (adding ancilla qubits, intermediate Hamiltonians) so that $s^*$ no longer depends on the problem spectrum?
 
-**Central Question**: Can tensor product ancilla extensions or multi-segment adiabatic paths eliminate the dependence of $s^*$ on $A_1(H_z)$?
+**Central Question**: Can Hamiltonian modifications (ancillas, multi-segment paths, higher-rank initial projectors) eliminate the dependence of $s^*$ on $A_1(H_z)$?
 
-**Answer**: No, within the rank-one framework with instance-independent design.
+**Answer**: No, within rank-one instance-independent design (Theorems 1-5). Higher-rank fixed projectors also fail on fixed-degeneracy two-level families (Propositions 6 and 6A), on a multilevel commuting-block class (Proposition 6B), and in general multilevel root-set invariance via trace no-go (Proposition 6C).
 
 
 ## Why Novel
@@ -42,6 +42,36 @@ For a multi-segment adiabatic path, the crossing in the final segment depends on
 ### Theorem 5 (No-Go)
 For any adiabatic algorithm using rank-one initial Hamiltonian, encoding the same unstructured optimization problem, with instance-independent design: the crossing position cannot be made spectrum-independent. In the uncoupled case, $\partial s^*/\partial A_1 = 1/(A_1+1)^2 > 0$ quantitatively. In the coupled case, $A_1^{\text{eff}}$ is non-constant across instances (Theorem 3).
 
+### Proposition 6 (Rank-2 Obstruction on Two-Level Families)
+For $H_0 = -(|\psi_0\rangle\langle\psi_0| + |\phi\rangle\langle\phi|)$ with fixed instance-independent $|\phi\rangle \perp |\psi_0\rangle$, and any fixed-degeneracy two-level family $E_0=0$, $E_1=\Delta$ with $1 \le d_0 < N$, the reduced crossing equation has roots $x(\Delta)=\kappa\Delta$ with $\kappa>0$ independent of $\Delta$. Hence $s(\Delta)=1/(1+\kappa\Delta)$ is non-constant in $\Delta$ (equivalently non-constant in $A_1$). Fixed rank-2 projectors do not make crossing position spectrum-independent on these two-level families.
+
+### Proposition 6A (Rank-k Two-Level Scaling Law)
+For any fixed rank-$k$ projector $P=UU^\dagger$ and fixed-degeneracy two-level family, the reduced crossing equation is $\det(I_k - xB/\Delta)=0$ with $B=U_{\mathrm{exc}}^\dagger U_{\mathrm{exc}}$ and $x=(1-s)/s$. Every branch with $\mu>0$ eigenvalue of $B$ has $x(\Delta)=\Delta/\mu$ and $s(\Delta)=1/(1+\Delta/\mu)$, hence depends nontrivially on $\Delta$ and $A_1$. Only the degenerate case $B=0$ (projector entirely in ground subspace) removes this dependence.
+
+### Proposition 6B (Commuting Multilevel Extension)
+For multilevel families, if the excited Gram blocks $B_\ell = U_\ell^\dagger U_\ell$ commute pairwise, the reduced determinant diagonalizes branchwise: each active branch satisfies $x_r(\Delta)=1/G_r(\Delta)$ with $G_r(\Delta)=\sum_{\ell\ge1}\mu_{\ell r}/(E_\ell-E_0)$ and $s_r=G_r/(1+G_r)$. Varying any level gap with coefficient $\mu_{\ell r}>0$ changes $s_r$ monotonically, so crossing positions remain spectrum-dependent in this commuting multilevel class.
+
+### Proposition 6C (General Multilevel Trace No-Go)
+Without any commutation assumption, the reduced matrix is $A(\Delta)=\sum_{\ell\ge1}(E_\ell-E_0)^{-1}B_\ell$. If a varied level has $B_j \neq 0$, then $\mathrm{tr}(A(\Delta))=\sum_\ell \mathrm{tr}(B_\ell)/(E_\ell-E_0)$ changes strictly with that gap, so the multiset of positive reduced roots cannot remain constant. Thus full root-set spectrum-independence is impossible even in noncommuting multilevel families.
+
+### Remaining Multilevel Obstruction
+For noncommuting multilevel spectra, Proposition 6C rules out full root-set invariance, but closed-form branchwise decoupling (as in Proposition 6B) is still unavailable in general.
+
+### Proposition 7 (Circumvention Landscape)
+The barrier can be circumvented by leaving fixed-schedule rank-one instance-independent AQO (Experiment 10, Theorem 2; Experiment 05, Theorem 1; Experiment 13, Theorem 2; Experiment 08, Propositions 8/9/13), but cannot be circumvented by product ancillas, non-uniform fixed initial states, fixed couplings, multi-segment rank-one paths, or any rank-one instance-independent Hamiltonian modification (Theorems 1-5), nor by fixed rank-2/rank-$k$ projectors on fixed-degeneracy two-level families (Propositions 6 and 6A), nor by fixed rank-$k$ projectors on commuting multilevel block families with varied supported levels (Proposition 6B), nor by full noncommuting multilevel root-set flattening under varied supported levels (Proposition 6C).
+
+### Lean Formalization (Statement-Level Core)
+Created `lean/` with local buildable files for this experiment:
+- `CircumventingBarrier/Basic.lean`: spectral data, weights, crossing map
+- `CircumventingBarrier/Universality.lean`: Theorem 2 core proved (singleton-assignment permutation form), with singleton-invariance iff uniform characterization under normalization
+- `CircumventingBarrier/NoGo.lean`: Theorem 5 core composition proved from component core abstractions
+- `CircumventingBarrier/Rank2TwoLevel.lean`: Proposition 6 algebraic core (reduced equation normalization and linear scaling form)
+- `CircumventingBarrier/RankKTwoLevel.lean`: Proposition 6A algebraic core (branch rewrite and non-constancy)
+- `CircumventingBarrier/RankKMultilevelCommuting.lean`: Proposition 6B algebraic core (single-gap variation non-constancy in commuting multilevel branch form)
+- `CircumventingBarrier/RankKMultilevelTraceNoGo.lean`: Proposition 6C algebraic core (trace-drift contradiction against root-multiset invariance)
+- `CircumventingBarrier/OperatorCore134.lean`: operator-reduction cores for Theorems 1/3/4 (product-sector invariance, coupled asymptotic non-constancy, segment rigidity map)
+- `lean/README.md`: build instructions and formalization scope notes (zero-axiom local package)
+
 ### Corollary (Non-Adiabatic Oscillation)
 The $A_1$ barrier applies to the non-adiabatic oscillation algorithm (forthcoming [Eduardo]) since it uses the same Hamiltonian $H(s) = -(1-s)|\psi_0\rangle\langle\psi_0| + sH_z$.
 
@@ -70,7 +100,8 @@ Non-uniform states can change the effective $A_1$, but computing the right state
 1. Subspace decomposition of the extended Hamiltonian (Theorem 1)
 2. Permutation argument for universality (Theorem 2)
 3. Secular equation analysis throughout
-4. Numerical verification for all theorems via exact diagonalization
+4. Matrix determinant lemma for rank-$k$ secular reduction and explicit rank-2 quadratic analysis
+5. Numerical verification for all theorems/propositions via exact diagonalization
 
 ### What Changed from Original Plan
 1. The original perturbative analysis for Theorem 3 was wrong: naive $O(\|V\|/\Delta)$ bounds fail because coupling can split ground levels, creating $1/\|V\|$ divergences in $A_1^{\text{eff}}$. Replaced with a qualitative argument showing instance-independent $V$ cannot collapse $s^*$.
@@ -79,20 +110,22 @@ Non-uniform states can change the effective $A_1$, but computing the right state
 
 ## Open Questions
 
-1. Can higher-rank initial Hamiltonians ($H_0 = -P$ with $\text{rank}(P) > 1$) circumvent the barrier?
-2. Can time-dependent couplings $V(s)$ eliminate the $A_1$ dependence? (Theorem 3 only covers fixed $V$.)
-3. Can non-rank-one intermediate Hamiltonians circumvent Theorem 4? (The secular equation analysis requires rank one.)
-4. Is there a polynomial-time quantum algorithm that estimates $A_1$ to sufficient precision?
-5. Can non-adiabatic protocols (beyond oscillation) bypass the barrier entirely?
-6. For structured problems, does the barrier persist or does exploitable structure change the picture?
+1. Can Proposition 6B be extended from commuting multilevel blocks to the fully noncommuting multilevel regime?
+2. In the noncommuting multilevel regime, can one classify which individual branches can remain constant despite Proposition 6C root-set drift?
+3. Can time-dependent couplings $V(s)$ eliminate the $A_1$ dependence? (Theorem 3 covers fixed $V$ only.)
+4. Can non-rank-one intermediate Hamiltonians circumvent Theorem 4? (The rank-one secular form is essential there.)
+5. Is there a polynomial-time quantum algorithm that estimates $A_1$ to algorithmically useful precision?
+6. Can non-adiabatic protocols (beyond oscillation with the same Hamiltonian family) bypass the barrier entirely?
+7. For structured problems, which structural classes make the barrier operationally irrelevant?
 
 
 ## Connection to Other Experiments
 
-- Subsumes 08 (structured tractability): if ancillas could eliminate $A_1$ dependence, tractability becomes irrelevant
-- Complements 13 (intermediate hardness): circumvention fails, so the complexity question becomes more urgent
-- Informs 05 (adaptive schedules): adaptive measurement may be the only escape from the barrier
-- Applies to non-adiabatic oscillation: same Hamiltonian, same $A_1$ barrier
+- Experiment 05, Theorem 1: adaptive measurement circumvents within the adiabatic model with $O(n)$ measurements and $T=O(T_{\inf})$.
+- Experiment 10, Theorem 2: circuit-model minimum finding achieves $\Theta(\sqrt{N/d_0})$ without spectral side information.
+- Experiment 13, Theorem 2: quantum estimation of $A_1$ at precision $2^{-n/2}$ in $O(2^{n/2}\mathrm{poly}(n))$.
+- Experiment 08, Propositions 8/9/13: bounded-treewidth exact tractability and partition-function based additive approximation regimes for $A_1$.
+- This experiment (Theorems 1-5, Propositions 6/6A/6B/6C): fixed instance-independent Hamiltonian engineering does not eliminate spectrum dependence.
 
 
 ## References
@@ -105,6 +138,6 @@ Non-uniform states can change the effective $A_1$, but computing the right state
 
 ## Status
 
-**Phase**: Complete
+**Phase**: Complete (extended with rank-2 higher-rank analysis and cross-experiment landscape)
 
 **Open problem note**: Directly addresses the paper's central open problem (Discussion, p.983). The answer is negative within the rank-one framework. Also applies as a corollary to the non-adiabatic oscillation setting (same $A_1$ barrier).
