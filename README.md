@@ -22,7 +22,7 @@ This thesis aims to be a single coherent path from first principles to the main 
 
 The chapters should be written in this order:
 
-1. Core chapters first (**5 to 8**): These are the heart of the thesis, directly exposing the published paper's main results. Chapter 5 sets up AQO, Chapter 6 does spectral analysis, Chapter 7 derives the optimal runtime, Chapter 8 proves hardness. Writing these first ensures the technical spine is solid before anything else.
+1. Core chapters first (**5 to 8**): These are the heart of the thesis, directly exposing the published paper's main results and any background relevant (that is not supposed to be covered in chapters 2-4). Chapter 5 sets up AQO, Chapter 6 does spectral analysis, Chapter 7 derives the optimal runtime, Chapter 8 proves hardness. Writing these first ensures the technical spine is solid before anything else.
 
 2. Extensions and original contributions next (**9**): Chapter 9 contains original contributions building directly on Chapters 5-8 and should be written while that content is fresh.
 
@@ -67,3 +67,32 @@ Sometimes the spine does not hold. The proof stays broken. The theorem you wante
 Agents generate fast and err without grounding. They simulate understanding without possessing it. Asking for pages and hoping they are true is the fastest way to destroy a thesis. Give them artifacts: the one-page story, a theorem skeleton, claims paired with proofs. Feed sources and demand lifted statements, not invention. Require explicit assumptions, named failure modes, forward references. Reject "it is known" without pointers. You may outsource production. You cannot outsource judgment.
 
 The only question that matters is what the reader can do afterward that they could not do before. When you doubt a section, ask this. If the answer is nothing, delete it. What remains after the cutting is the work. The cycle begins again.
+
+### Summary
+
+The writing should:
+
+- Read as though written by someone who spent months inside the problem — with opinions about which results matter, who knows where they got stuck, which lemma is the real engine and which theorem is packaging
+- Make an argument, not catalog results — the chapter title is the claim, each experiment is evidence in that argument, and the reader should feel the thread connecting them
+- Be specific and concrete — state exact bounds, name techniques, give scalings. A person who did the work knows the numbers
+- Build intuition before formalism: the concrete example that makes the reader want the abstraction, then the abstraction as relief not overhead
+- Separate the intuitive story from full technical detail when both are needed, and be explicit about which you're doing
+- Slow down where the actual insight lives and compress routine verification — taste is knowing which is which
+- Make definitions and proofs illuminate, not just verify — why this is the right definition, what goes wrong otherwise, what the proof teaches beyond the truth of the statement
+- State what it doesn't achieve as clearly as what it does — gaps, limitations, failed approaches presented with the same care as results
+- Anticipate objections head-on ("there is a catch, though") rather than hoping the reader won't notice
+- Carry content in transitions: what changed, what we now know, what question that opens
+- Distinguish contributions from tools — say plainly when using a known technique, slow down when doing something new with it
+- Own editorial judgments in first person ("in our view," "as we see it") — the alternative is passive hedging where no one seems responsible for the claims
+- Treat notation as interface design: consistent across chapters, never introduced for single use
+- Say each thing once, well — not restated across introduction, body, and conclusion in three slightly different phrasings
+- Vary the rhythm — short sentence after long, direct claim after complex argument, informal aside after formal passage
+- Let negative results in when they sharpen understanding of why the approach that works is the right one
+- Let moments of genuine surprise land — sparingly, without decoration, only when warranted
+
+The writing should NOT have:
+
+- Structure failures: no coherent narrative arc, premature formalism, uniform template and pacing regardless of the material, equal weight given to everything when some results are harder and some contributions more significant
+- Rigor failures: hand-waving past the hard parts, appearing complete while eliding the most interesting pieces, shallow or circular motivation ("X is important because X is widely studied"), over-attribution to convention, vague claims hedged into vapor where a clean claim with stated conditions would serve
+- Voice failures: signaling rather than showing, narrating its own rhetorical moves ("we now make a crucial observation"), hedging filler where insight should be ("it is worth noting"), treating a surprising result and a routine calculation at identical emotional temperature, sycophantic citation language ("the seminal work of") — just state the result and cite it, symmetric treatment of related work where every citation gets the same template
+- Taste failures: throat-clearing openings that could appear in any thesis on the topic, redundant previews of what's two paragraphs away (chapter-level orientation is fine — section-level "we will now show" is not), generic transitions carrying no content, notation introduced once and never reused, rhythmic monotony — uniform sentence structure, paragraph length, and register — that reads as generated rather than written
