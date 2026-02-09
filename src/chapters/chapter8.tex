@@ -6,7 +6,7 @@ The runtime of \autoref{thm:aqo-runtime},
 \[
 T = O\!\left(\frac{1}{\varepsilon}\cdot\frac{\sqrt{A_2}}{\Delta^2\, A_1(A_1+1)}\cdot\sqrt{\frac{N}{d_0}}\right),
 \]
-makes this dependence explicit. The adaptive schedule places a slow phase in the window $[s^* - \delta_s,\, s^*)$ centered at the crossing position $s^* = A_1/(A_1+1)$, where the spectral gap reaches its minimum, and accelerates elsewhere. The parameters $A_2$ and $d_0$ enter only through the ratio $\sqrt{A_2/d_0}$ and can be replaced by conservative bounds ($A_2 \geq 1$, $d_0 = 1$) at the cost of polynomial slowdown. The critical parameter is $A_1$: it determines where the crossing occurs, and the window width $\delta_s = O(\sqrt{d_0 A_2/N}) = O(2^{-n/2})$ sets the required precision. An error larger than $\delta_s$ in the crossing position causes the algorithm to evolve rapidly through the gap minimum, destroying the ground-state fidelity. Throughout this chapter, we write $A_1(H)$ to make the dependence on the Hamiltonian explicit when multiple Hamiltonians are under consideration.
+makes this dependence explicit. The adaptive schedule places a slow phase in the window $[s^* - \delta_s,\, s^*)$ centered at the crossing position $s^* = A_1/(A_1+1)$, where the spectral gap reaches its minimum, and accelerates elsewhere. The parameters $A_2$ and $d_0$ enter only through the ratio $\sqrt{A_2/d_0}$. Using conservative bounds ($A_2 \geq 1 - d_0/N$ from Eq.~\eqref{eq:A2-lower-bound}, and $d_0 = 1$ for worst-case search) changes only polynomial prefactors in the hard-search regime $d_0 \ll N$. The critical parameter is $A_1$: it determines where the crossing occurs, and the window width $\delta_s = O(\sqrt{d_0 A_2/N}) = O(2^{-n/2})$ sets the required precision. An error larger than $\delta_s$ in the crossing position causes the algorithm to evolve rapidly through the gap minimum, destroying the ground-state fidelity. Throughout this chapter, we write $A_1(H)$ to make the dependence on the Hamiltonian explicit when multiple Hamiltonians are under consideration.
 
 The hardness of computing $A_1$ is not the only obstacle to adiabatic optimization for hard problems. Even if $A_1$ were known exactly, the single-crossing framework of Chapters 5--7 applies only to the rank-one projector $H_0 = -\ket{\psi_0}\bra{\psi_0}$. For the transverse-field driver (Chapter~5), the multi-crossing regime renders the single-crossing analysis inapplicable, and knowing $A_1$ does not help because the schedule would need to navigate exponentially many crossings rather than one. The information-theoretic barrier (computing $A_1$ is hard) and the spectral-structural barrier (the single-crossing framework does not apply) are complementary: the first limits the adiabatic approach with the rank-one driver when the problem Hamiltonian has rich spectral structure, while the second limits alternative drivers even when spectral information is available.
 
@@ -260,7 +260,7 @@ This amplification is not specific to the construction above. The exponential gr
 
 \begin{theorem}[Generic extrapolation barrier]
 \label{thm:generic-barrier}
-Let $x_1, \ldots, x_d$ be any $d$ distinct nodes in an interval $[a,b]$, and let $x^*$ satisfy $\mathrm{dist}(x^*, [a,b]) \geq b - a$. The Lebesgue function at $x^*$ satisfies $\Lambda_d(x^*) \geq 2^{d-1}$. Consequently, any polynomial extrapolation scheme that evaluates a degree-$(d-1)$ interpolant at $x^*$ from samples with pointwise error $\delta$ incurs error at least $\delta \cdot 2^{d-1}$ at $x^*$.
+Let $x_1, \ldots, x_d$ be any $d$ distinct nodes in an interval $[a,b]$, and let $x^*$ satisfy $\mathrm{dist}(x^*, [a,b]) \geq b - a$. The Lebesgue function at $x^*$ satisfies $\Lambda_d(x^*) \geq 2^{d-1}$. Consequently, any polynomial extrapolation scheme that evaluates a degree-$(d-1)$ interpolant at $x^*$ from samples with pointwise error $\delta$ can incur worst-case error at least $\delta \cdot 2^{d-1}$ at $x^*$.
 \end{theorem}
 
 \begin{proof}
@@ -268,7 +268,15 @@ Assume $x^* \leq a - (b-a)$ (the case $x^* \geq b + (b-a)$ follows by symmetry).
 \[
 |\ell_{(1)}(x^*)| = \prod_{i:\, x_i \neq x_{(1)}} \frac{|x_i - x^*|}{|x_i - x_{(1)}|} = \prod_{i:\, x_i \neq x_{(1)}} \left(1 + \frac{x_{(1)} - x^*}{x_i - x_{(1)}}\right).
 \]
-Each factor has numerator shift $x_{(1)} - x^* \geq a - (a - (b-a)) = b - a$ and denominator $x_i - x_{(1)} \leq b - a$, so every factor is at least $2$. With $d - 1$ such factors, $|\ell_{(1)}(x^*)| \geq 2^{d-1}$. Since $\Lambda_d(x^*) = \sum_j |\ell_j(x^*)| \geq |\ell_{(1)}(x^*)|$, the bound follows. For an interpolant $\tilde{P}$ constructed from values with pointwise error $\delta$, the worst-case error satisfies $|\tilde{P}(x^*) - P(x^*)| \leq \delta \cdot \Lambda_d(x^*)$. Since $\Lambda_d(x^*) \geq 2^{d-1}$, this error guarantee cannot be improved below $\delta \cdot 2^{d-1}$.
+Each factor has numerator shift $x_{(1)} - x^* \geq a - (a - (b-a)) = b - a$ and denominator $x_i - x_{(1)} \leq b - a$, so every factor is at least $2$. With $d - 1$ such factors, $|\ell_{(1)}(x^*)| \geq 2^{d-1}$. Since $\Lambda_d(x^*) = \sum_j |\ell_j(x^*)| \geq |\ell_{(1)}(x^*)|$, the bound follows. For perturbed samples $y_j = P(x_j) + e_j$ with $|e_j| \leq \delta$, the extrapolation error is
+\[
+\tilde{P}(x^*) - P(x^*) = \sum_{j=1}^d e_j\,\ell_j(x^*).
+\]
+Choosing adversarial signs $e_j = \delta\,\mathrm{sign}(\ell_j(x^*))$ gives
+\[
+|\tilde{P}(x^*) - P(x^*)| = \delta \sum_{j=1}^d |\ell_j(x^*)| = \delta\,\Lambda_d(x^*) \geq \delta \cdot 2^{d-1},
+\]
+so the worst-case error can be at least $\delta \cdot 2^{d-1}$.
 \end{proof}
 
 \autoref{thm:generic-barrier} closes the door on rescuing the $\#$P-hardness argument through better interpolation schemes. No rearrangement of nodes --- equispaced, Chebyshev, or otherwise --- no alternative polynomial basis, and no change of variables can reduce the amplification below $2^{d-1}$. At $d = M = \text{poly}(n)$ levels, the required precision remains $\varepsilon = 2^{-\Omega(n)}$, exponentially below $2^{-n/2}$. The same structural obstacle appears in quantum computational advantage proposals: the polynomial interpolation techniques used to prove hardness of boson sampling \cite{aaronson2011bosonsampling} and random circuit sampling \cite{bouland2019complexity} face analogous amplification barriers when extending hardness from exponentially small to moderate error regimes.

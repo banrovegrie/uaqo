@@ -12,7 +12,7 @@ The two proofs use different techniques, reflecting different spectral structure
 \section{Gap to the Left of the Crossing}
 \label{sec:gap-left}
 
-The eigenvalue equation (\autoref{lem:eigenvalue-equation}) places the ground state energy at $\lambda_0(s) < sE_0$ and the first excited energy at $\lambda_1(s) \in (sE_0, sE_1)$. The gap $g(s) = \lambda_1(s) - \lambda_0(s)$ is therefore positive, but these bounds alone give only the trivial estimate $g(s) < s\Delta$. For the runtime integral, we need a tight lower bound that captures the linear growth of the gap as $s$ decreases away from $s^*$.
+The eigenvalue equation (\autoref{lem:eigenvalue-equation}) places the ground state energy at $\lambda_0(s) < sE_0$ and the first excited energy at $\lambda_1(s) \in (sE_0, sE_1)$. The gap $g(s) = \lambda_1(s) - \lambda_0(s)$ is therefore positive, but this ordering alone does not provide a useful quantitative bound for the runtime integral. We need a tight lower bound that captures the linear growth of the gap as $s$ decreases away from $s^*$.
 
 The strategy is to tighten the upper bound on $\lambda_0(s)$. Two approaches give the same result. The first uses the variational principle: for any normalized state $\ket{\phi}$, the ground energy satisfies $\lambda_0(s) \leq \bra{\phi}H(s)\ket{\phi}$, so a well-chosen ansatz produces a quantitative upper bound. The second uses concavity: since $\lambda_0(s) = \min_{\ket{\psi}} \bra{\psi} H(s) \ket{\psi}$ is the pointwise minimum of affine functions in $s$, it is concave, and any tangent line lies above it. The variational approach is more direct --- it produces the bound in a single calculation --- so we present it here.
 
@@ -283,7 +283,7 @@ Combining the results of this chapter with those of Chapter 5, the spectral gap 
 
 \begin{theorem}[Complete gap profile]
 \label{thm:complete-profile}
-Let $H_z$ satisfy the spectral condition (Definition~\ref{def:spectral-condition}). The spectral gap of $H(s) = -(1-s)\ket{\psi_0}\bra{\psi_0} + sH_z$ satisfies, for all $s \in [0, 1]$:
+Let $H_z$ satisfy the spectral condition (Definition~\ref{def:spectral-condition}) and assume $A_1 \geq 1/2$ (equivalently $s^* \geq 1/3$). The spectral gap of $H(s) = -(1-s)\ket{\psi_0}\bra{\psi_0} + sH_z$ satisfies, for all $s \in [0, 1]$:
 \begin{equation}
 \label{eq:piecewise-bound}
 g(s) \geq

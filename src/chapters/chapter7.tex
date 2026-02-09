@@ -212,6 +212,7 @@ Let $H(s)$ satisfy the conditions of \autoref{lem:error-bound}, and let $g_0: [0
 \label{eq:B1-condition}
 \int_0^1 \frac{ds}{g_0(s)^p} \leq B_1\, g_{\min}^{1-p} \qquad \text{and} \qquad \int_0^1 \frac{ds}{g_0(s)^{3-p}} \leq B_2\, g_{\min}^{p-2}.
 \end{equation}
+Assume additionally that $g_0(1) \geq g_{\min}$, that there exists $b \in (0,1]$ with $g_0(s) \geq b\, g_{\min}$ for all $s \in [0,1]$, and that $\sup_{s \in [0,1]} |g_0'(s)| < \infty$.
 Define
 \begin{equation}
 \label{eq:c-constant}
@@ -241,7 +242,7 @@ Let $\varepsilon_0$ denote the actual error. Substituting~\eqref{eq:adaptive-sch
 \begin{equation}
 g_{\min}^{2-p}\, g_0(1)^p \cdot \frac{4\lVert H'(1)\rVert}{g(1)^2} \leq 4\lVert H'(1)\rVert\, g_{\min}^{2-p}\, g_0(1)^{p-2} \leq 4\lVert H'\rVert,
 \end{equation}
-since $g_0(1) = \Delta/30 \geq g_{\min}$ and $p - 2 < 0$ imply $g_0(1)^{p-2} \leq g_{\min}^{p-2}$.
+since $g_0(1) \geq g_{\min}$ and $p - 2 < 0$ imply $g_0(1)^{p-2} \leq g_{\min}^{p-2}$.
 
 \textbf{Commutator derivative integral.} Using bound~\eqref{eq:commutator-deriv-bound} and splitting:
 \begin{align}
@@ -251,18 +252,18 @@ where $g_0^p/g^3 \leq g_0^p/g_0^3 = 1/g_0^{3-p}$ since $g_0 \leq g$, and the $B_
 \begin{equation}
 g_{\min}^{2-p}\int_0^1 g_0^p \cdot \frac{4\lVert H''\rVert}{g^2}\,ds \leq 4\lVert H''\rVert\, g_{\min}^{2-p}\int_0^1 \frac{ds}{g_0^{2-p}} \leq 4\lVert H''\rVert, \label{eq:proof-term-H-double-prime}
 \end{equation}
-since $g_0 \geq b\, g_{\min}$ and $p - 2 < 0$ imply $g_0^{p-2} \leq b^{p-2} g_{\min}^{p-2}$, giving $\int g_0^{p-2}\,ds = O(g_{\min}^{p-2})$ with the constant $b^{p-2} = 10^{2-p}$ absorbed into the $O$-notation.
+since $g_0 \geq b\, g_{\min}$ and $p - 2 < 0$ imply $g_0^{p-2} \leq b^{p-2} g_{\min}^{p-2}$, giving $\int g_0^{p-2}\,ds = O(g_{\min}^{p-2})$ with the constant $b^{p-2}$ absorbed into the $O$-notation.
 
 \textbf{Schedule variation integral.} Using bound~\eqref{eq:commutator-bound}:
 \begin{align}
 g_{\min}^{2-p}\int_0^1 p\, g_0^{p-1}|g_0'| \cdot \frac{4\lVert H'\rVert}{g^2}\,ds &\leq 4p\,\lVert H'\rVert\, g_{\min}^{2-p}\int_0^1 \frac{g_0^{p-1}\,|g_0'|}{g_0^2}\,ds \nonumber \\
 &= 4p\,\lVert H'\rVert\, g_{\min}^{2-p}\int_0^1 g_0^{p-3}\,|g_0'|\,ds. \label{eq:proof-schedule-variation}
 \end{align}
-For piecewise linear $g_0$, the derivative $|g_0'|$ is constant on each piece, so $\int g_0^{p-3}|g_0'|\,ds \leq \sup|g_0'|\cdot \int g_0^{p-3}\,ds \leq \sup|g_0'|\cdot B_2\, g_{\min}^{p-2}$. The resulting bound is $4p\,\sup|g_0'|\,\lVert H'\rVert\, B_2$. The constant $c$ in~\eqref{eq:c-constant} uses the factor $6p$ rather than $4p$; this is a valid overestimate that simplifies the expression without affecting the asymptotic result.
+Using $\sup|g_0'| < \infty$, we have $\int g_0^{p-3}|g_0'|\,ds \leq \sup|g_0'|\cdot \int g_0^{p-3}\,ds \leq \sup|g_0'|\cdot B_2\, g_{\min}^{p-2}$. The resulting bound is $4p\,\sup|g_0'|\,\lVert H'\rVert\, B_2$. The constant $c$ in~\eqref{eq:c-constant} uses the factor $6p$ rather than $4p$; this is a valid overestimate that simplifies the expression without affecting the asymptotic result.
 
 \textbf{Collecting.} Summing all contributions:
 \begin{equation}
-\varepsilon_0 \leq \frac{\varepsilon}{c}\left(4\lVert H'\rVert + 40\lVert H'\rVert^2 B_2 + 4\lVert H''\rVert + 6p\,|g_0'|\,\lVert H'\rVert\, B_2\right) \leq \frac{\varepsilon}{c}\cdot c = \varepsilon.
+\varepsilon_0 \leq \frac{\varepsilon}{c}\left(4\lVert H'\rVert + 40\lVert H'\rVert^2 B_2 + 4\lVert H''\rVert + 6p\,\sup|g_0'|\,\lVert H'\rVert\, B_2\right) \leq \frac{\varepsilon}{c}\cdot c = \varepsilon.
 \end{equation}
 
 \textbf{Runtime.} The total evolution time is
@@ -379,7 +380,7 @@ c = O(B_2).
 
 \begin{theorem}[Runtime of AQO --- Main Result 1 {\cite{braida2024unstructured}}]
 \label{thm:aqo-runtime}
-Let $H_z$ satisfy the spectral condition (Definition~\ref{def:spectral-condition}). For any $\varepsilon > 0$, the adaptive schedule~\eqref{eq:adaptive-schedule} with the gap lower bound~\eqref{eq:g0-def} prepares the ground state of $H_z$ with fidelity at least $1 - \varepsilon$ in time
+Let $H_z$ satisfy the spectral condition (Definition~\ref{def:spectral-condition}) and assume $A_1 \geq 1/2$ (equivalently $s^* \geq 1/3$). For any $\varepsilon > 0$, the adaptive schedule~\eqref{eq:adaptive-schedule} with the gap lower bound~\eqref{eq:g0-def} prepares the ground state of $H_z$ with fidelity at least $1 - \varepsilon$ in time
 \begin{equation}
 \label{eq:main-runtime}
 T = O\!\left(\frac{1}{\varepsilon}\cdot\frac{\sqrt{A_2}}{\Delta^2\, A_1(A_1+1)}\cdot\sqrt{\frac{N}{d_0}}\right).\footnote{The published paper~\cite{braida2024unstructured} states $A_1^2$ in Theorem~1. The expression $A_1(A_1+1)$ follows from the proof derivation in Appendix~A-IV of the same paper. For Ising Hamiltonians with $A_1 = O(\mathrm{poly}(n))$, the distinction is absorbed by the $O(\cdot)$ notation, since $A_1(A_1+1) = A_1^2 + A_1 = \Theta(A_1^2)$.}
@@ -409,4 +410,4 @@ A general framework due to Guo and An~\cite{GuoAn2025} places the adaptive sched
 
 To run the adaptive schedule, one must know $g_0(s)$, which requires knowing $s^*$, $\delta_s$, and $g_{\min}$. All three depend on the spectral parameter $A_1$. In the crossing window $[s^* - \delta_s, s^*)$, the schedule is constant: $K' = c/(\varepsilon\, b^p\, g_{\min}^2)$. This rate does not depend on $A_1$ beyond $g_{\min}$. But the window's location is $[s^* - \delta_s, s^*)$, and $s^* = A_1/(A_1+1)$ must be known to accuracy $O(\delta_s) = O(2^{-n/2})$ to ensure the slow phase occurs at the right place. Outside the window, the schedule depends linearly on the distance from $s^*$, so a small error in $s^*$ introduces a proportionally small error in $K'$, absorbed by the polynomial factors. But the window itself is exponentially narrow in $n$: placing it incorrectly causes the algorithm to evolve rapidly through the crossing, destroying the ground-state fidelity.
 
-Imprecision in $A_2$ and $d_0$ costs only polynomial slowdown. Replacing $A_2$ with the constant lower bound $1$ (valid for all Hamiltonians with at least two energy levels) and setting $d_0 = 1$ (the worst case) introduces at most a $\mathrm{poly}(n)$ slowdown in the runtime, since these parameters enter only through the ratio $\sqrt{A_2/d_0}$ and the bound $B_1$. The critical parameter is $A_1$: it must be computed to additive accuracy $O(\delta_s) = O(2^{-n/2})$ before the evolution begins. How hard is this computation? The precision needed is exponential in $n$, while the problem Hamiltonian $H_z$ is specified by $\mathrm{poly}(n)$ bits. Approximating $A_1$ to the far coarser precision $1/\mathrm{poly}(n)$ is already NP-hard; computing it exactly is $\#$P-hard. Chapter~8 proves both results.
+Imprecision in $A_2$ and $d_0$ costs only polynomial slowdown. Replacing $A_2$ with the general lower bound $1 - d_0/N$ (Eq.~\eqref{eq:A2-lower-bound}) and setting $d_0 = 1$ (the worst-case search regime) introduces at most a $\mathrm{poly}(n)$ slowdown in the runtime, since these parameters enter only through the ratio $\sqrt{A_2/d_0}$ and the bound $B_1$. The critical parameter is $A_1$: it must be computed to additive accuracy $O(\delta_s) = O(2^{-n/2})$ before the evolution begins. How hard is this computation? The precision needed is exponential in $n$, while the problem Hamiltonian $H_z$ is specified by $\mathrm{poly}(n)$ bits. Approximating $A_1$ to the far coarser precision $1/\mathrm{poly}(n)$ is already NP-hard; computing it exactly is $\#$P-hard. Chapter~8 proves both results.

@@ -201,7 +201,7 @@ which is equivalent to Eq.~\eqref{eq:eigenvalue-equation}. Each step is reversib
 
 Viewed as a function of $\lambda$, the right-hand side of Eq.~\eqref{eq:eigenvalue-equation} is a sum of $M$ terms, each decreasing with a vertical asymptote at $\lambda = s E_k$. Between consecutive poles $s E_{k-1}$ and $s E_k$, the function decreases monotonically from $+\infty$ to $-\infty$, producing exactly one root per interval. Below the lowest pole $s E_0$, there is one additional root. The total count is $M$ eigenvalues in $\mathcal{H}_S$, consistent with the dimension.
 
-The two lowest eigenvalues are $\lambda_0(s) < s E_0$ (ground state) and $\lambda_1(s) \in (s E_0, s E_1)$ (first excited state). The spectral gap is $g(s) = \lambda_1(s) - \lambda_0(s) > 0$. However, the eigenvalue equation alone gives only the trivial bound $0 < g(s) < s \Delta$, since $\lambda_0(s)$ could be arbitrarily close to $s E_0$ from below while $\lambda_1(s)$ could be close to $s E_0$ from above. Extracting tight bounds requires analyzing the eigenvalue equation in the vicinity of the crossing.
+The two lowest eigenvalues are $\lambda_0(s) < s E_0$ (ground state) and $\lambda_1(s) \in (s E_0, s E_1)$ (first excited state). The spectral gap is $g(s) = \lambda_1(s) - \lambda_0(s) > 0$. However, this ordering information alone does not yield a useful quantitative upper bound on $g(s)$ uniformly over $s \in [0,1]$. Extracting tight bounds requires analyzing the eigenvalue equation in the vicinity of the crossing.
 
 For $M = 2$, Eq.~\eqref{eq:eigenvalue-equation} becomes
 \begin{equation}
@@ -361,7 +361,7 @@ which concentrates amplitude on levels close to the ground energy, yielding a ti
 
 \begin{lemma}[Gap to the right of the crossing]
 \label{lem:gap-right-preview}
-Let $k = 1/4$, $a = 4k^2 \Delta/3$, and
+Assume $A_1 \geq 1/2$ (equivalently $s^* \geq 1/3$). Let $k = 1/4$, $a = 4k^2 \Delta/3$, and
 \begin{equation}
 \label{eq:s0-def}
 s_0 = s^* - \frac{k \, g_{\min}(1 - s^*)}{a - k \, g_{\min}}.
