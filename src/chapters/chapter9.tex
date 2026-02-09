@@ -147,7 +147,7 @@ where $\delta_{A_1} = 2\sqrt{d_0 A_2/N}$ is the precision threshold for optimali
 \end{equation}
 yields $T(\varepsilon)/T_{\mathrm{inf}} \geq \Theta(\varepsilon/\delta_{A_1})$. For $\varepsilon < \delta_{A_1}$, the trivial bound $T(\varepsilon) \geq T_{\mathrm{inf}}$ holds regardless of precision.
 
-\emph{Upper bound.} For $\varepsilon \geq \delta_{A_1}$, construct a schedule with crossing velocity $v_{\mathrm{slow}} = \Theta(\varepsilon\,\Delta_*^2)$ throughout the uncertainty interval $[s_L(\varepsilon), s_R(\varepsilon)]$ and fast velocity $v_{\mathrm{fast}} = O(1)$ outside. The slow region has width $W(\varepsilon) = \Theta(\varepsilon/\delta_{A_1}) \cdot \delta_s$, so the total time is $T = W(\varepsilon)/v_{\mathrm{slow}} + O(1) = \Theta(T_{\mathrm{inf}} \cdot \varepsilon/\delta_{A_1})$, since $T_{\mathrm{inf}} = \Theta(\delta_s/v_{\mathrm{slow}})$. For $\varepsilon < \delta_{A_1}$, the optimal informed schedule achieves $T = O(T_{\mathrm{inf}})$.
+\emph{Upper bound.} For $\varepsilon \geq \delta_{A_1}$, construct a schedule with crossing velocity $v_{\mathrm{slow}} = \Theta(\epsilon_{\mathrm{ad}}\,\Delta_*^2)=\Theta(\Delta_*^2)$ throughout the uncertainty interval $[s_L(\varepsilon), s_R(\varepsilon)]$, where $\epsilon_{\mathrm{ad}}$ is the fixed adiabatic error parameter from \autoref{def:rc-admissible}, and fast velocity $v_{\mathrm{fast}} = O(1)$ outside. The slow region has width $W(\varepsilon) = \Theta(\varepsilon/\delta_{A_1}) \cdot \delta_s$, so the total time is $T = W(\varepsilon)/v_{\mathrm{slow}} + O(1) = \Theta(T_{\mathrm{inf}} \cdot \varepsilon/\delta_{A_1})$, since $T_{\mathrm{inf}} = \Theta(\delta_s/v_{\mathrm{slow}})$. For $\varepsilon < \delta_{A_1}$, the optimal informed schedule achieves $T = O(T_{\mathrm{inf}})$.
 \end{proof}
 
 The interpolation is linear: no threshold, no cliff, no phase transition. At precision $1/\mathrm{poly}(n)$ (NP-hard), the overhead is $\Theta(2^{n/2}/\mathrm{poly}(n))$, nearly the full exponential. At precision $2^{-n/2}$ (algorithmically relevant), the overhead is $\Theta(1)$. The space between these two precision scales is the ``information gap.'' For the running example, the explicit precision table is:
@@ -209,7 +209,7 @@ The separation theorem and the interpolation theorem characterize the cost of ig
 
 The answer is yes in an adaptive measurement model. Han, Park, and Choi~\cite{HanParkChoi2025} independently proposed a constant geometric speed (CGS) schedule that traverses the eigenstate path at uniform arc length, using eigenstate overlaps computed on the fly via the quantum Zeno Monte Carlo method to adaptively adjust the parameter velocity. Their approach improves the gap scaling from $O(\Delta_*^{-2})$ to $O(\Delta_*^{-1})$ and demonstrates numerically that the quadratic speedup persists for adiabatic unstructured search without prior spectral knowledge. The binary-search protocol below differs in mechanism: it uses branch probes to locate the crossing before executing the informed schedule, and in the ideal binary decision-probe model it achieves $O(T_{\mathrm{inf}})$.
 
-NP-hardness conflates two distinct tasks: \emph{computing} $s^*$ from the classical description of $H_z$ is hard, but \emph{detecting} $s^*$ by probing the quantum system $H(s)$ at selected parameter values can be efficient. We formalize this with a binary decision-probe oracle: a probe at parameter value $s$ returns whether $s$ lies to the left or right of the true crossing, and each probe costs $O(1/g(s))$.
+NP-hardness conflates two distinct tasks: \emph{computing} $s^*$ from the classical description of $H_z$ is hard, but \emph{detecting} $s^*$ by probing the quantum system $H(s)$ at selected parameter values can be efficient. We formalize this with a binary decision-probe oracle: a probe at parameter value $s$ returns whether $s$ is at-or-left of the true crossing or to its right (tie broken to the left branch), and each probe costs $O(1/g(s))$.
 
 \begin{definition}[Binary decision probe]
 \label{def:binary-probe}
@@ -217,7 +217,7 @@ For an instance $H$, let $D_H:[0,1]\to\{0,1\}$ be the idealized oracle
 \[
 D_H(s)=
 \begin{cases}
-0,& s < s^*(H),\\
+0,& s \le s^*(H),\\
 1,& s > s^*(H),
 \end{cases}
 \]
@@ -232,7 +232,7 @@ The protocol operates in two phases.
 \begin{enumerate}
 \item Set $s_{\mathrm{mid}} = (s_{\mathrm{lo}} + s_{\mathrm{hi}})/2$.
 \item Query $D_H(s_{\mathrm{mid}})$.
-\item If $D_H(s_{\mathrm{mid}})=0$ (left of crossing), set $s_{\mathrm{lo}} = s_{\mathrm{mid}}$.
+\item If $D_H(s_{\mathrm{mid}})=0$ (at or left of crossing), set $s_{\mathrm{lo}} = s_{\mathrm{mid}}$.
 \item If $D_H(s_{\mathrm{mid}})=1$ (right of crossing), set $s_{\mathrm{hi}} = s_{\mathrm{mid}}$.
 \end{enumerate}
 After $\lceil n/2 \rceil$ iterations, $s^*$ is located to precision $O(2^{-n/2})$.
