@@ -29,18 +29,20 @@ write $A_1(H)$ when dependence on the Hamiltonian matters.
 
 The hardness of computing $A_1$ is not the only obstacle to adiabatic optimization for hard problems. Even if $A_1$ were known exactly, the single-crossing framework of Chapters 5--7 applies only to the rank-one projector $H_0 = -\ket{\psi_0}\bra{\psi_0}$. For the transverse-field driver (Chapter~5), the multi-crossing regime makes this framework inapplicable. Knowing $A_1$ no longer helps there, because the schedule would need to navigate exponentially many crossings rather than one.
 
-In our view, the two barriers are complementary: computing $A_1$ is hard even in the rank-one setting, and the single-crossing method fails for other drivers even when spectral information is available.
+In our view, the two barriers are complementary. Computing $A_1$ is hard even in the rank-one setting, and the single-crossing method fails for other drivers even when spectral information is available.
 
 NP-hardness already appears at precision $1/\text{poly}(n)$. Two queries to an
 $A_1$-oracle then suffice to solve 3-SAT (\autoref{sec:np-hard-A1}). At
 precision $2^{-\text{poly}(n)}$, the problem becomes $\#$P-hard because
 polynomial interpolation can recover all degeneracies from polynomially many
-queries (\autoref{sec:sharp-P-hard-A1}). The algorithmically relevant precision
-$2^{-n/2}$ sits strictly between these scales. It is fine enough to matter for
-scheduling, but not fine enough for either existing hardness proof to transfer
-directly. At this precision, a quantum algorithm uses $O(2^{n/2})$ queries,
-while any classical algorithm needs $\Omega(2^n)$, yielding a Grover-type
-quadratic separation (\autoref{sec:intermediate-A1}).
+queries (\autoref{sec:sharp-P-hard-A1}).
+
+The algorithmically relevant precision $2^{-n/2}$ sits strictly between these
+scales. It is fine enough to matter for scheduling, but not fine enough for
+either existing hardness proof to transfer directly. At this precision, a
+quantum algorithm uses $O(2^{n/2})$ queries, while any classical algorithm needs
+$\Omega(2^n)$. This is exactly a Grover-type quadratic separation
+(\autoref{sec:intermediate-A1}).
 
 
 \section{NP-Hardness of Estimating \texorpdfstring{$A_1$}{A1}}
@@ -206,8 +208,7 @@ Let $P(x)$ be a polynomial of degree at most $M$ satisfying $|P(i)| \leq c$ for 
 
 Paturi's lemma bounds polynomial growth between sample points. If a polynomial is bounded by $c$ at $M+1$ integer points, it can grow by at most a factor $2^M$ on the interval. Applied to the difference between exact and approximate reconstruction polynomials, this gives explicit control of interpolation error.
 
-Across the proofs below, error propagation is organized into three stages:
-sample-point error, extrapolation amplification, and rounding threshold.
+Across the proofs below, error propagation is organized into three stages. These stages are sample-point error, extrapolation amplification, and rounding threshold.
 Stage~1 itself has three algebraic sub-steps: oracle noise enters $f$ as
 $|\tilde{f}(x_i) - f(x_i)| \leq 3\varepsilon$ (three oracle calls contribute),
 then enters polynomial samples as
@@ -246,19 +247,26 @@ With $M = 2$, the reconstruction polynomial $P(x) = (d_0/N)(1 + x/2) + (d_1/N)(x
 \section{The Intermediate Regime}
 \label{sec:intermediate-A1}
 
-The adiabatic algorithm requires $A_1$ to precision $O(2^{-n/2})$. NP-hardness holds at $1/\text{poly}(n)$ (\autoref{thm:np-hard-A1}), and $\#$P-hardness holds at $2^{-\text{poly}(n)}$ (\autoref{thm:sharp-P-hard-A1}). The algorithmically relevant precision $2^{-n/2}$ lies strictly between these regimes. The interpolation method does not reach this precision; Braida et al.\ \cite{braida2024unstructured} left the intermediate regime open.
+The adiabatic algorithm requires $A_1$ to precision $O(2^{-n/2})$. NP-hardness
+holds at $1/\text{poly}(n)$ (\autoref{thm:np-hard-A1}), and $\#$P-hardness holds
+at $2^{-\text{poly}(n)}$ (\autoref{thm:sharp-P-hard-A1}). The algorithmically
+relevant precision $2^{-n/2}$ lies strictly between these regimes. The
+interpolation method does not reach this precision. Braida et
+al.~\cite{braida2024unstructured} therefore left this intermediate regime open.
 
 The interpolation technique extracts exact integers from approximate real evaluations. At precision $2^{-n/2}$, the error amplification inherent in polynomial extrapolation makes this extraction impossible.
 
 NP-hardness extends to $2^{-n/2}$ by monotonicity. An oracle at precision
 $2^{-n/2}$ is strictly more powerful than one at $1/\text{poly}(n)$, so it
-still solves 3-SAT. The $\#$P-hardness argument does not extend the other way.
-An oracle at precision $2^{-n/2}$ is \emph{less} powerful than one at
-$2^{-\text{poly}(n)}$, and the interpolation proof for that regime fails here.
+still solves 3-SAT. The $\#$P-hardness argument does not extend in the opposite
+direction. An oracle at precision $2^{-n/2}$ is \emph{less} powerful than one
+at $2^{-\text{poly}(n)}$, and the interpolation proof for that regime fails
+here.
+
 The failure has a concrete source. Oracle noise enters polynomial samples at
-rate $\varepsilon B^M$, the Lebesgue function amplifies it exponentially in $M$,
-and the amplified error exceeds the rounding margin when
-$\varepsilon = 2^{-n/2}$.
+rate $\varepsilon B^M$. The Lebesgue function then amplifies that error
+exponentially in $M$. At $\varepsilon = 2^{-n/2}$, the amplified error already
+exceeds the rounding margin.
 
 \begin{theorem}[Interpolation barrier]
 \label{thm:interpolation-barrier}
@@ -459,13 +467,13 @@ Classical & $\Omega(2^n)$ & \autoref{thm:classical-lower-A1} \\
 \end{tabular}
 \end{center}
 
-\noindent The precision $2^{-n/2}$ is exactly the algorithmic target. The adiabatic schedule needs $A_1$ to precision $O(\sqrt{d_0/N})$, which is $O(2^{-n/2})$ in the worst case $d_0 = O(1)$. It is also where interpolation-based $\#$P-hardness proofs break (\autoref{thm:interpolation-barrier}), even though NP-hardness still follows by monotonicity. Finally, it is where query complexity separates sharply: the quantum algorithm uses $O(2^{n/2})$ queries, while classical sampling requires $\Omega(2^n)$.
+\noindent The precision $2^{-n/2}$ is exactly the algorithmic target. The adiabatic schedule needs $A_1$ to precision $O(\sqrt{d_0/N})$, which is $O(2^{-n/2})$ in the worst case $d_0 = O(1)$. It is also where interpolation-based $\#$P-hardness proofs break (\autoref{thm:interpolation-barrier}), even though NP-hardness still follows by monotonicity. It is also where query complexity separates sharply. The quantum algorithm uses $O(2^{n/2})$ queries, while classical sampling requires $\Omega(2^n)$.
 
 Classical sampling provides independent evidence for the hardness of $A_1$ estimation at the algorithmic precision. Given a procedure that samples eigenvalues $E_x$ according to the distribution $\{d_k/N\}$, estimating the mean $A_1 = \mathbb{E}[1/(E_x - E_0)]$ to precision $\delta_s$ requires $O(1/\delta_s^2) = \widetilde{O}(2^n/d_0)$ samples by Chebyshev's inequality. This matches the formal $\Omega(2^n)$ lower bound of \autoref{thm:classical-lower-A1} up to logarithmic factors, providing a consistency check between the query-complexity result and concrete sampling algorithms.
 
 The information barrier is not specific to adiabatic evolution. Consider the time-independent Hamiltonian $H = -\ket{\psi_0}\bra{\psi_0} + r\,H_\sigma$, where $r > 0$ is fixed and $H_\sigma$ is the problem Hamiltonian. Evolving $\ket{\psi_0}$ under $H$ for time $t$ produces oscillations between $\ket{\psi_0}$ and the ground state of $H_\sigma$, with success probability controlled by $r$.
 
-The oscillation frequency is set by the spectral gap of $H$, and this gap is maximized when $r$ is tuned to the avoided crossing, namely $r = A_1$ (up to normalization). To keep success probability non-negligible, $r$ must lie within $O(2^{-n/2})$ of $A_1$ \cite{braida2024unstructured}. So the same barrier appears in this model as well: one still needs $A_1$ to exponential precision, and computing it remains NP-hard. The obstacle comes from spectral structure, not from adiabatic formalism itself.
+The oscillation frequency is set by the spectral gap of $H$, and this gap is maximized when $r$ is tuned to the avoided crossing, namely $r = A_1$ (up to normalization). To keep success probability non-negligible, $r$ must lie within $O(2^{-n/2})$ of $A_1$ \cite{braida2024unstructured}. So the same barrier appears in this model as well. One still needs $A_1$ to exponential precision, and computing it remains NP-hard. The obstacle comes from spectral structure, not from adiabatic formalism itself.
 
 The results of this chapter create a tension. The adiabatic algorithm of \autoref{thm:aqo-runtime} achieves Grover scaling $\widetilde{O}(\sqrt{N/d_0})$, matching the unstructured-search lower bound. Yet the schedule depends on a spectral parameter whose computation is NP-hard, even at much coarser precision than the algorithm ultimately needs. In the circuit model, Grover achieves the same speedup without any spectral pre-computation because oracle queries gather information adaptively during execution. In the adiabatic framework, by contrast, the schedule must be fixed before evolution begins.
 

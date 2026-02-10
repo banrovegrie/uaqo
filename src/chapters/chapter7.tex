@@ -9,12 +9,12 @@
 %   complete-profile (Theorem 6.x), f(s*) = 4, s_0 formula.
 
 The spectral gap of $H(s)$ is now bounded from below on all of $[0,1]$.
-\autoref{thm:complete-profile} shows a piecewise form: the gap reaches
+\autoref{thm:complete-profile} shows a piecewise form. The gap reaches
 $g_{\min}$ at $s^*$, then reopens with slope $A_1(A_1+1)/A_2$ on the left and
 $\Delta/30$ on the right. Chapter 5 already identified the key runtime integral,
 $\int_0^1 g(s)^{-2}\,ds$ (Eq.~\eqref{eq:runtime-integral-preview}), and showed
 that the crossing window dominates. The remaining issue is the adiabatic
-theorem itself: its error bound determines which power of $g$ controls runtime.
+theorem itself. Its error bound determines which power of $g$ controls runtime.
 
 With a constant-rate theorem, runtime is controlled by
 $\int_0^1 g(s)^{-3}\,ds$. For the profile of \autoref{thm:complete-profile},
@@ -33,17 +33,33 @@ matches Grover scaling up to explicit spectral prefactors.
 
 The gap profile alone does not determine runtime. Translating spectral data into evolution time requires an adiabatic theorem, and different theorems permit different schedules. That choice changes the gap dependence and, in the running example, is exactly the difference between $O(N)$ and $O(\sqrt{N})$.
 
-The earliest rigorous bounds, due to Jansen, Ruskai, and Seiler~\cite{jansen2007bounds}, apply to a constant schedule $K'(s) = T$ and give a transition probability of order $O(1/T^2)$. Their Theorem~3 states that for a state $\psi \in P(0)$, the probability of leaving the ground space satisfies
+The earliest rigorous bounds, due to Jansen, Ruskai, and
+Seiler~\cite{jansen2007bounds}, apply to a constant schedule $K'(s) = T$ and
+give a transition probability of order $O(1/T^2)$. Their Theorem~3 states that
+for a state $\psi \in P(0)$, the probability of leaving the ground space
+satisfies
 \begin{equation}
 \label{eq:jrs-bound}
 (\psi, [1-P(s)]U_\tau(s)\psi) \leq A(s)^2,
 \end{equation}
-where $A(s) \leq (1/T)(\lVert H' \rVert/g^2)\vert_{\mathrm{bdry}} + (1/T)\int_0^s (7\sqrt{m}\,\lVert H'\rVert^2/g^3 + \lVert H'\rVert/g^2)\,ds'$, with $m$ the multiplicity of the ground eigenvalue and the boundary term evaluated at $s = 0$ and $s$. Setting $A(s) = \varepsilon$ and solving for $T$ gives
+where
+$A(s) \leq (1/T)(\lVert H' \rVert/g^2)\vert_{\mathrm{bdry}}
++ (1/T)\int_0^s (7\sqrt{m}\,\lVert H'\rVert^2/g^3 + \lVert H'\rVert/g^2)\,ds'$,
+with $m$ the multiplicity of the ground eigenvalue and the boundary term
+evaluated at $s = 0$ and $s$. Setting $A(s) = \varepsilon$ and solving for $T$
+gives
 \begin{equation}
 \label{eq:jrs-runtime}
 T = O\!\left(\frac{1}{\varepsilon}\int_0^1 \frac{\lVert H'\rVert^2}{g(s)^3}\,ds\right).
 \end{equation}
-With $M = 2$ and $\lVert H'\rVert = O(1)$, the integral $\int_0^1 g^{-3}\,ds$ is dominated by the $O(1/\sqrt{N})$-wide window where $g \approx 1/\sqrt{N}$. Its contribution is $(1/\sqrt{N})\cdot N^{3/2} = N$. Therefore the JRS bound gives $T = O(N/\varepsilon)$, which matches classical search. A constant schedule allocates the same physical time per unit of $s$ whether the gap is $O(1)$ or $O(1/\sqrt{N})$. That uniform allocation forces the $g^{-3}$ dependence, so the narrow crossing window dominates and the quantum speedup disappears.
+With $M = 2$ and $\lVert H'\rVert = O(1)$, the integral $\int_0^1 g^{-3}\,ds$
+is dominated by the $O(1/\sqrt{N})$-wide window where $g \approx 1/\sqrt{N}$.
+Its contribution is $(1/\sqrt{N})\cdot N^{3/2} = N$. Therefore the JRS bound
+gives $T = O(N/\varepsilon)$, which matches classical search. A constant
+schedule allocates the same physical time per unit of $s$ whether the gap is
+$O(1)$ or $O(1/\sqrt{N})$. That uniform allocation forces the $g^{-3}$
+dependence, so the narrow crossing window dominates and the quantum speedup
+disappears.
 
 The resolution is to let the schedule depend on the gap. Roland and Cerf~\cite{roland2004quantum} introduced a \emph{local} adiabatic condition. Instead of enforcing adiabaticity with one global timescale $T$, they enforce it infinitesimally on each segment $[s,s+ds]$. The standard criterion gives
 \[
@@ -208,7 +224,7 @@ and, using~\eqref{eq:P-prime-bound} and~\eqref{eq:pseudoinverse-deriv-bound}:
 \end{equation}
 Summing gives $40\lVert H'\rVert^2/g^3 + 4\lVert H''\rVert/g^2$. A block-matrix decomposition of the commutator with respect to $P$ and $Q = I - P$, tracking cross terms exactly rather than using submultiplicativity, replaces the coefficient $40$ by $\approx 4.77$ \cite{braida2024unstructured}; the asymptotic scaling is unchanged.
 
-The simplest schedule is constant: $K'(s) = T$, evolving at a uniform rate regardless of the gap. Substituting the derivative bounds into the error bound~\eqref{eq:error-bound} with $(1/K')' = 0$ gives the constant-rate result.
+The simplest schedule is constant. It sets $K'(s) = T$, so evolution proceeds at a uniform rate regardless of the gap. Substituting the derivative bounds into the error bound~\eqref{eq:error-bound} with $(1/K')' = 0$ gives the constant-rate result.
 
 \begin{theorem}[Constant-rate runtime]
 \label{thm:constant-rate}
@@ -234,13 +250,13 @@ Since $H'' = 0$ for the linear interpolation $H(s) = -(1-s)\ket{\psi_0}\bra{\psi
 \end{equation}
 using $\delta_s = A_2 g_{\min}/(A_1(A_1+1))$ from Eq.~\eqref{eq:gmin-deltas-relation}. This gives $T_{\mathrm{constant}} = O(\delta_s/(\varepsilon\, g_{\min}^3))$.
 
-Specializing to $M=2$ with $g_{\min}=1/\sqrt{N}$, the exact gap $g(s)=\sqrt{(2s-1)^2+4s(1-s)/N}$ from Eq.~\eqref{eq:grover-gap} gives $\int_0^1 g(s)^{-3}\,ds = O(N)$. The dominant contribution comes from the $O(1/\sqrt{N})$ window where $g\approx 1/\sqrt{N}$. Hence $T_{\mathrm{constant}}=O(N/\varepsilon)$, matching classical search. A constant-rate schedule therefore gives no quantum speedup: it wastes time where the gap is large and still moves too quickly near $s^*$.
+Specializing to $M=2$ with $g_{\min}=1/\sqrt{N}$, the exact gap $g(s)=\sqrt{(2s-1)^2+4s(1-s)/N}$ from Eq.~\eqref{eq:grover-gap} gives $\int_0^1 g(s)^{-3}\,ds = O(N)$. The dominant contribution comes from the $O(1/\sqrt{N})$ window where $g\approx 1/\sqrt{N}$. Hence $T_{\mathrm{constant}}=O(N/\varepsilon)$, matching classical search. A constant-rate schedule therefore gives no quantum speedup. It wastes time where the gap is large and still moves too quickly near $s^*$.
 
 \section{The Adaptive Schedule}
 \label{sec:adaptive-schedule}
 
 The constant schedule fails because it treats every value of $s$ the same. The
-error bound~\eqref{eq:error-bound} suggests the opposite strategy: choose large
+error bound~\eqref{eq:error-bound} suggests the opposite strategy. Choose large
 $K'(s)$ where the gap is small and small $K'(s)$ where the gap is large. Since
 $K'(s)=dt/ds$, this means spending physical time where diabatic transitions are
 dangerous. The natural ansatz is $K'(s)\propto 1/g(s)^p$ for some $p\ge 1$.
@@ -327,7 +343,7 @@ T = \int_0^1 K'\,ds = \frac{c}{\varepsilon}\, g_{\min}^{p-2}\int_0^1 \frac{ds}{g
 \end{equation}
 \end{proof}
 
-Three terms compose the error: a boundary term that depends on $g_0(1)$ and is $O(1)$; an integral that pairs $g_0^p$ from the schedule with $g^{-3}$ from the derivative bounds, producing $\int g_0^{p-3}\,ds$; and a schedule variation term from the non-constant $K'$. The parameter $p$ balances the two integrals: $B_1$ bounds $\int g_0^{-p}\,ds$ (the runtime cost), while $B_2$ bounds $\int g_0^{p-3}\,ds$ (the error cost). Their product with $g_{\min}^{-1}$ gives the final runtime.
+Three terms compose the error. The first is a boundary term that depends on $g_0(1)$ and is $O(1)$. The second is an integral that pairs $g_0^p$ from the schedule with $g^{-3}$ from the derivative bounds, producing $\int g_0^{p-3}\,ds$. The third is a schedule-variation term from the non-constant $K'$. The parameter $p$ balances the two integrals. $B_1$ bounds $\int g_0^{-p}\,ds$ (the runtime cost), while $B_2$ bounds $\int g_0^{p-3}\,ds$ (the error cost). Their product with $g_{\min}^{-1}$ gives the final runtime.
 
 \begin{corollary}
 \label{cor:ideal-case}
@@ -464,12 +480,12 @@ T = O\!\left(\frac{1}{\varepsilon}\cdot\frac{B_1 B_2}{g_{\min}}\right) = O\!\lef
 \end{equation}
 \end{proof}
 
-The runtime in \eqref{eq:main-runtime} has five interpretable factors. The $1/\varepsilon$ term is linear in target error. The factor $\sqrt{A_2}$ measures spectral crowding near $E_0$, where larger $A_2=(1/N)\sum d_k/(E_k-E_0)^2$ sharpens the minimum and narrows the crossing window. The denominator $A_1(A_1+1)$ encodes crossing location, since larger $A_1$ pushes $s^*$ toward $1$ and steepens the left arm. The term $1/\Delta^2$ is the cost of right-side control, with one $1/\Delta$ from $B_1$ and one from $B_2$. Finally, $\sqrt{N/d_0}$ is the Grover factor. In short, the speedup is quantum, and the remaining terms are explicit spectral overheads of generality.
-Compared with the constant-rate theorem, the key gain is exactly here: time
+The runtime in \eqref{eq:main-runtime} has five interpretable factors. The $1/\varepsilon$ term is linear in target error. The factor $\sqrt{A_2}$ measures spectral crowding near $E_0$, where larger $A_2=(1/N)\sum d_k/(E_k-E_0)^2$ sharpens the minimum and narrows the crossing window. The denominator $A_1(A_1+1)$ encodes crossing location, since larger $A_1$ pushes $s^*$ toward $1$ and steepens the left arm. The term $1/\Delta^2$ is the cost of right-side control, with one $1/\Delta$ from $B_1$ and one from $B_2$. Finally, $\sqrt{N/d_0}$ is the Grover factor. In short, the speedup is quantum. The remaining terms are explicit spectral overheads of generality.
+Compared with the constant-rate theorem, the key gain is exactly here. Time
 still scales linearly in the target error $1/\varepsilon$, and the minimum-gap
 scaling improves from $T=O(g_{\min}^{-2})$ to $T=O(g_{\min}^{-1})$. At the
-proof level, this comes from replacing the $g^{-3}$ corridor with
-$g^{-2}$/power-law control.
+proof level, the improvement comes from replacing the $g^{-3}$ corridor with
+power-law control centered on $g^{-2}$.
 
 For Ising Hamiltonians $H_\sigma$ (Eq.~\eqref{eq:Ising-Ham}) with $A_1,A_2=O(\mathrm{poly}(n))$ and $\Delta\ge 1/\mathrm{poly}(n)$, this becomes $T=\widetilde{O}(\sqrt{N/d_0})$. That matches the lower bound of \cite{farhi2008fail} up to polylogarithmic factors. When $d_0=O(1)$, the adiabatic algorithm recovers the Grover $\sqrt{N}$ scaling.
 
@@ -494,7 +510,7 @@ reaches the same $O(1/g_{\min})$ scaling through a different mechanism, so this
 scaling is not tied to one proof template.
 
 Guo and An~\cite{GuoAn2025} place this in a broader framework. They study
-interpolations $H(u(s))=(1-u(s))H_0+u(s)H_1$ under a measure condition: the set
+interpolations $H(u(s))=(1-u(s))H_0+u(s)H_1$ under a measure condition. The set
 $\{s:\Delta(u(s))\le x\}$ has Lebesgue measure $O(x)$ as $x\to 0$. Under that
 condition, the power-law schedule with exponent $p=3/2$ achieves
 $O(1/\Delta_*)$, a quadratic improvement over $O(1/\Delta_*^2)$. They also show

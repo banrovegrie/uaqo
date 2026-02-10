@@ -19,15 +19,27 @@ the right of $s^*$, eigenvalues of $sH_z$ crowd the interval $[sE_0, sE_1]$,
 and that variational strategy loses traction. There we switch to a resolvent
 argument plus Sherman-Morrison for rank-one perturbations. This split is the
 technical core of the chapter, and it yields the piecewise profile needed in
-Chapter 7: steep on the left, flatter on the right, and nearly flat inside the
-window.
+Chapter 7. The profile is steep on the left, flatter on the right, and nearly
+flat inside the window.
 
 \section{Gap to the Left of the Crossing}
 \label{sec:gap-left}
 
-The eigenvalue equation (\autoref{lem:eigenvalue-equation}) places the ground state energy at $\lambda_0(s) < sE_0$ and the first excited energy at $\lambda_1(s) \in (sE_0, sE_1)$. The gap $g(s) = \lambda_1(s) - \lambda_0(s)$ is therefore positive, but this ordering alone does not provide a useful quantitative bound for the runtime integral. We need a tight lower bound that captures the linear growth of the gap as $s$ decreases away from $s^*$.
+The eigenvalue equation (\autoref{lem:eigenvalue-equation}) places the ground
+state energy at $\lambda_0(s) < sE_0$ and the first excited energy at
+$\lambda_1(s) \in (sE_0, sE_1)$. This already proves $g(s) > 0$. It does not yet
+give the quantitative lower bound needed for the runtime integral. What we need
+is a bound that makes the left-side linear reopening explicit.
 
-The strategy is to tighten the upper bound on $\lambda_0(s)$. Two approaches give the same result. The first uses the variational principle. For any normalized state $\ket{\phi}$, the ground energy satisfies $\lambda_0(s) \leq \bra{\phi}H(s)\ket{\phi}$, so a well-chosen ansatz gives a quantitative bound. The second uses concavity. Since $\lambda_0(s) = \min_{\ket{\psi}} \bra{\psi} H(s) \ket{\psi}$ is the pointwise minimum of affine functions in $s$, it is concave, and any tangent line lies above it. The variational route is more direct, so we present it first.
+The strategy is to tighten the upper bound on $\lambda_0(s)$. Two routes give
+the same linear form. The first uses the variational principle. For any
+normalized state $\ket{\phi}$, the ground energy satisfies
+$\lambda_0(s) \leq \bra{\phi}H(s)\ket{\phi}$, so a carefully chosen ansatz
+directly yields a bound. The second uses concavity. Because
+$\lambda_0(s) = \min_{\ket{\psi}} \bra{\psi} H(s) \ket{\psi}$ is the pointwise
+minimum of affine functions in $s$, it is concave, and every tangent line lies
+above it. We start with the variational route because it keeps the constants
+explicit.
 
 \begin{lemma}[Gap to the left of the crossing]
 \label{lem:gap-left}
@@ -41,12 +53,12 @@ g(s) \geq \frac{A_1(A_1 + 1)}{A_2}\left(s^* - s\right).
 \begin{proof}
 We upper-bound $\lambda_0(s)$ via the variational principle and lower-bound $\lambda_1(s)$ from the eigenvalue equation.
 
-The ansatz must live in the span of $\{\ket{k} : k \geq 1\}$, orthogonal to the ground-state component $\ket{0}$, and should concentrate amplitude on levels close to $E_0$ where the energy expectation is lowest. The natural weighting is the inverse energy gap: levels near $E_0$ receive more amplitude. Requiring unit norm fixes the overall scale, giving
+The ansatz must live in the span of $\{\ket{k} : k \geq 1\}$, orthogonal to the ground-state component $\ket{0}$, and should concentrate amplitude on levels close to $E_0$ where the energy expectation is lowest. The natural weighting is the inverse energy gap, because levels near $E_0$ should carry more amplitude. Unit normalization then fixes the scale, so we define
 \begin{equation}
 \label{eq:ansatz-left}
 \ket{\phi} = \frac{1}{\sqrt{A_2 N}} \sum_{k=1}^{M-1} \frac{\sqrt{d_k}}{E_k - E_0}\,\ket{k}.
 \end{equation}
-This weighting arises naturally in first-order perturbation theory: the correction to the ground state $\ket{E_0}$ of $sH_z$ due to the perturbation $-(1-s)\ket{\psi_0}\bra{\psi_0}$ has coefficients proportional to $\braket{E_k}{\psi_0}/(E_k - E_0) = \sqrt{d_k/N}/(E_k - E_0)$, which is exactly the form above up to normalization. Normalization is immediate:
+This weighting also arises in first-order perturbation theory. The correction to the ground state $\ket{E_0}$ of $sH_z$ due to the perturbation $-(1-s)\ket{\psi_0}\bra{\psi_0}$ has coefficients proportional to $\braket{E_k}{\psi_0}/(E_k - E_0) = \sqrt{d_k/N}/(E_k - E_0)$, which matches the form above up to normalization. Normalization is immediate.
 \begin{equation}
 \braket{\phi}{\phi} = \frac{1}{A_2 N} \sum_{k=1}^{M-1} \frac{d_k}{(E_k - E_0)^2} = \frac{A_2}{A_2} = 1.
 \end{equation}
@@ -64,7 +76,7 @@ The shifted diagonal term gives
 s\bra{\phi}(H_z - E_0)\ket{\phi} = \frac{s}{A_2 N} \sum_{k=1}^{M-1} \frac{d_k}{(E_k - E_0)^2} \cdot (E_k - E_0) = \frac{s}{A_2 N}\sum_{k=1}^{M-1} \frac{d_k}{E_k - E_0} = \frac{s\, A_1}{A_2}.
 \end{equation}
 
-The constant term contributes $sE_0 \braket{\phi}{\phi} = sE_0$. Combining:
+The constant term contributes $sE_0 \braket{\phi}{\phi} = sE_0$. Combining the three terms gives
 \begin{equation}
 \label{eq:variational-bound}
 \lambda_0(s) \leq \bra{\phi}H(s)\ket{\phi} = sE_0 - (1-s)\frac{A_1^2}{A_2} + s\frac{A_1}{A_2} = sE_0 + \frac{A_1}{A_2}\left(s(1 + A_1) - A_1\right).
@@ -92,9 +104,9 @@ At the left boundary of the crossing window, $s = s^* - \delta_s$, the bound giv
 \begin{equation}
 g(s^* - \delta_s) \geq \frac{A_1(A_1+1)}{A_2}\cdot\delta_s = \hat{g},
 \end{equation}
-using $A_1(A_1+1)\delta_s/A_2 = \hat{g}$ from Eq.~\eqref{eq:gmin-deltas-relation}. Since $g_{\min} = (1 \pm O(\eta))\hat{g}$ from Eq.~\eqref{eq:gmin-formula}, the gap at the window boundary is $\Theta(g_{\min})$, so the three-region decomposition is tight: the left bound meets the window bound at the boundary rather than leaving a gap between them.
+using $A_1(A_1+1)\delta_s/A_2 = \hat{g}$ from Eq.~\eqref{eq:gmin-deltas-relation}. Since $g_{\min} = (1 \pm O(\eta))\hat{g}$ from Eq.~\eqref{eq:gmin-formula}, the gap at the window boundary is $\Theta(g_{\min})$. The three-region decomposition is therefore tight because the left bound meets the window bound at the boundary rather than leaving a gap between them.
 
-An alternative derivation uses concavity. Since $\lambda_0(s) = \min_{\ket{\psi}} \bra{\psi} H(s) \ket{\psi}$ is the pointwise minimum of affine functions in $s$, it is concave. The Hellmann-Feynman theorem \cite{Kato1950} gives the second derivative explicitly:
+An alternative derivation uses concavity. Since $\lambda_0(s) = \min_{\ket{\psi}} \bra{\psi} H(s) \ket{\psi}$ is the pointwise minimum of affine functions in $s$, it is concave. The Hellmann-Feynman theorem \cite{Kato1950} gives the second derivative explicitly.
 $$\ddot{\lambda}_0(s) = -2\sum_{j \geq 1} \frac{|\bra{\phi_j(s)}\dot{H}\ket{\phi_0(s)}|^2}{\lambda_j(s) - \lambda_0(s)} \leq 0,$$
 where $\dot{H} = H_z + \ket{\psi_0}\bra{\psi_0}$ and $\ket{\phi_j(s)}$ are the instantaneous eigenstates. Concavity implies that every tangent line lies above the function. In particular, the tangent at $s^*$ gives $\lambda_0(s) \leq \lambda_0(s^*) + \lambda_0'(s^*)(s - s^*)$, an upper bound of the same form as~\eqref{eq:lambda0-upper}, though the variational approach gives slightly sharper constants.
 
@@ -161,7 +173,7 @@ $\ket{s} = (1/\sqrt{N})\sum_v \ket{v}$ under
 $H_{\text{search}} = -\gamma L - \sum_{v \in S}\ket{v}\bra{v}$, where $L$ is
 the graph Laplacian and $\gamma > 0$ is tunable
 \cite{childs2004spatial}. When $|S| = 1$, the oracle term is rank one (and low
-rank more generally). The dictionary to our setting is direct: $L$ plays the
+rank more generally). The dictionary to our setting is direct. $L$ plays the
 role of $sH_z$, the oracle projector plays the role of
 $(1-s)\ket{\psi_0}\bra{\psi_0}$, the graph spectral gap corresponds to
 $\Delta$, and effective resistance plays the role of $A_2$.
@@ -172,7 +184,12 @@ diagonal part plus a correction term, and then bounds that correction. The
 method works because rank-one perturbations of diagonal operators always admit
 this inversion step, reducing the gap problem to one rational bound.
 
-The constants $k = 1/4$ and $f(s^*) = 4$ are not accidents of this particular Hamiltonian. They are artifacts of the line-placement optimization, balancing the denominator's positivity against the numerator's growth in the function $f(s)$, and depend only on the rank-one structure, not on whether the underlying operator is a graph Laplacian or a problem Hamiltonian. Any future application of this technique to a new rank-one perturbation will face the same optimization, with the same constants serving as a starting point.
+The constants $k = 1/4$ and $f(s^*) = 4$ are not accidents of this specific
+Hamiltonian. They come from the same line-placement optimization that appears
+whenever a rank-one perturbation is handled this way. The optimization balances
+denominator positivity against numerator growth in $f(s)$. In that sense the
+constants are structural. They do not depend on whether the unperturbed part is
+a graph Laplacian or a diagonal cost Hamiltonian.
 
 Since $H(s) = sH_z - (1-s)\ket{\psi_0}\bra{\psi_0}$ is a rank-one perturbation of $sH_z$, we can invert its resolvent explicitly. The Sherman-Morrison identity \cite{sherman_morrison} states that for an invertible operator $A$ and vectors $\ket{u}, \bra{v}$,
 \begin{equation}
@@ -181,18 +198,40 @@ Since $H(s) = sH_z - (1-s)\ket{\psi_0}\bra{\psi_0}$ is a rank-one perturbation o
 \end{equation}
 provided $1 + \bra{v}A^{-1}\ket{u} \neq 0$. Applying this to the resolvent of $H(s)$ decomposes it into the resolvent of $sH_z$ (whose spectrum is known explicitly) and a correction from the rank-one term $-(1-s)\ket{\psi_0}\bra{\psi_0}$. The triangle inequality then yields an upper bound on $\lVert R_{H(s)}(\gamma)\rVert$.
 
-Choose a line $\gamma(s)$ between $\lambda_0(s)$ and $\lambda_1(s)$ for all $s \geq s^*$, apply the Sherman-Morrison decomposition, bound each piece using the spectral parameters $A_1$ and $A_2$, and convert the resulting bound on $\lVert R_{H(s)}(\gamma)\rVert$ into a linear lower bound on $g(s)$.
+We choose a line $\gamma(s)$ between $\lambda_0(s)$ and $\lambda_1(s)$ for all
+$s \geq s^*$. Then we apply Sherman-Morrison, bound each contribution in terms
+of $A_1$ and $A_2$, and convert the resulting resolvent estimate into a linear
+lower bound on $g(s)$.
 
-The simplest choice for $\gamma(s)$ starts at $sE_0$ when $s=s^*$ and ends between $E_0$ and $E_1$ at $s=1$. Take $\beta(s)=a(s-s^*)/(1-s^*)$ with $a<\Delta$, and set $\gamma(s)=sE_0+\beta(s)$. With $a=\Delta/6$, one can show $f(s)\le 1$ for all $s\ge s^*$, which gives $g(s)\ge \beta(s)= (\Delta/6)(s-s^*)/(1-s^*)$. This is too weak near the crossing. At the window boundary $s=s^*+\delta_s$, it yields $g(s^*+\delta_s)\ge (\Delta/6)\cdot \delta_s/(1-s^*) = (\Delta A_2)/(6A_1)\cdot g_{\min}$. Since $\Delta A_2\le A_1$, this is at most $g_{\min}/6$, and it can be polynomially smaller when $\Delta A_2\ll A_1$. At $s=s^*$, the same bound gives only $g(s^*)\ge 0$, missing the true minimum gap.
+The simplest line starts at $sE_0$ when $s=s^*$ and ends between $E_0$ and
+$E_1$ at $s=1$. Take $\beta(s)=a(s-s^*)/(1-s^*)$ with $a<\Delta$, and set
+$\gamma(s)=sE_0+\beta(s)$. For $a=\Delta/6$, one can show $f(s)\le 1$ for all
+$s\ge s^*$. This yields
+$g(s)\ge \beta(s)= (\Delta/6)(s-s^*)/(1-s^*)$.
+The bound is valid but too weak where the runtime is decided. At the window
+boundary $s=s^*+\delta_s$, it gives
+$g(s^*+\delta_s)\ge (\Delta/6)\cdot \delta_s/(1-s^*)
+= (\Delta A_2)/(6A_1)\cdot g_{\min}$.
+Since $\Delta A_2\le A_1$, this is at most $g_{\min}/6$, and it can be
+polynomially smaller when $\Delta A_2\ll A_1$. At $s=s^*$, the same estimate
+collapses to $g(s^*)\ge 0$, which misses the true minimum gap entirely.
 
-The failure has a geometric explanation. At $s^*$, the ground energy $\lambda_0(s^*)$ is not at $s^*E_0$ but rather $g_{\min}/2$ below it. The line $\gamma(s)$ passes through $s^*E_0$ at $s = s^*$, so it sits between the two eigenvalues but with zero margin below. The resolvent norm at a point equidistant from two eigenvalues has norm $2/g$, but at a point touching one eigenvalue, the norm diverges. The line must start with $O(g_{\min})$ separation from both eigenvalues at $s^*$.
+The failure has a geometric explanation. At $s^*$, the ground energy
+$\lambda_0(s^*)$ sits $g_{\min}/2$ below $s^*E_0$. The line $\gamma(s)$ passes
+through $s^*E_0$ at $s=s^*$, so it has no safety margin from the lower branch.
+At a midpoint between two eigenvalues, the resolvent norm is $2/g$. At a point
+that touches one eigenvalue, it diverges. So the line must start at
+$O(g_{\min})$ distance from both branches.
 
-The fix is to shift the line's origin from $s^*$ to a point $s_0 < s^*$ so that $\beta(s^*) = k\, g_{\min}$ for a constant $k < 1$. With $\beta(s) = a(s - s_0)/(1 - s_0)$, the constraint $\beta(s^*) = k\,g_{\min}$ determines
+The fix is to shift the line origin from $s^*$ to a point $s_0 < s^*$ so that
+$\beta(s^*) = k\, g_{\min}$ for a constant $k < 1$. With
+$\beta(s) = a(s - s_0)/(1 - s_0)$, the constraint $\beta(s^*) = k\,g_{\min}$
+determines
 \begin{equation}
 \label{eq:s0-definition}
 s_0 = s^* - \frac{k\, g_{\min}(1 - s^*)}{a - k\, g_{\min}}.
 \end{equation}
-The line now passes through $\gamma(s^*) = s^*E_0 + k\,g_{\min}$, which lies between $\lambda_0(s^*)$ and $\lambda_1(s^*)$ when $k$ is chosen appropriately. The price is that $s_0 < s^*$ introduces additional terms in the monotonicity analysis for $f(s)$, requiring a careful choice of $a$.
+The line now passes through $\gamma(s^*) = s^*E_0 + k\,g_{\min}$, which lies between $\lambda_0(s^*)$ and $\lambda_1(s^*)$ when $k$ is chosen appropriately. The price is that $s_0 < s^*$ introduces extra terms in the monotonicity analysis for $f(s)$. We therefore need a careful choice of $a$.
 
 \begin{lemma}[Gap to the right of the crossing]
 \label{lem:gap-right}
@@ -214,7 +253,16 @@ Since $H(s) = sH_z - (1-s)\ket{\psi_0}\bra{\psi_0}$, the resolvent of $H(s)$ at 
 
 The unperturbed resolvent $R_{sH_z}(\gamma)$ is diagonal in the $\ket{k}$ basis with entries $1/(\gamma - sE_k) = 1/(\beta - s(E_k - E_0))$ for $k \geq 1$ and $1/\beta$ for $k = 0$. The nearest eigenvalue of $sH_z$ to $\gamma$ is $sE_0$, at distance $\beta$, so $\lVert R_{sH_z}(\gamma)\rVert = 1/\beta$.
 
-We bound the numerator and denominator of the second term separately. Both require that $\beta(s) \leq s(E_k - E_0)/2$ for all $k \geq 1$, which ensures the Taylor expansion in powers of $\beta/(s(E_k - E_0))$ converges rapidly. Since $\beta(s) \leq a = \Delta/12$ and $s(E_k - E_0) \geq s^*\Delta \geq \Delta/3$ (using $s^* = A_1/(A_1+1) \geq 1/3$, which holds when $A_1 \geq 1/2$), we have $\beta \leq \Delta/12 < \Delta/6 \leq s(E_k - E_0)/2$. The assumption $A_1 \geq 1/2$ is also the nontrivial regime for search: since $A_1 \geq 1 - d_0/N$, the complementary case $A_1 < 1/2$ implies $d_0 > N/2$, where random sampling already finds a ground state with constant probability.
+We now bound the numerator and denominator of the second term separately. Both
+bounds use $\beta(s) \leq s(E_k - E_0)/2$ for all $k \geq 1$, so the Taylor
+series in $\beta/(s(E_k - E_0))$ converges quickly. Here
+$\beta(s) \leq a = \Delta/12$, while
+$s(E_k - E_0) \geq s^*\Delta \geq \Delta/3$ because
+$s^* = A_1/(A_1+1) \geq 1/3$ when $A_1 \geq 1/2$. Therefore
+$\beta \leq \Delta/12 < \Delta/6 \leq s(E_k - E_0)/2$, as required.
+The condition $A_1 \geq 1/2$ also marks the nontrivial search regime. Since
+$A_1 \geq 1 - d_0/N$, the complementary case $A_1 < 1/2$ implies $d_0 > N/2$,
+where random sampling already succeeds with constant probability.
 
 \textbf{Numerator bound.} The squared norm of $R_{sH_z}(\gamma)\ket{\psi_0}$ expands as
 \begin{equation}
@@ -226,18 +274,18 @@ Using $s(E_k - E_0) - \beta \geq s(E_k - E_0)/2$, each term in the sum is at mos
 \lVert R_{sH_z}(\gamma)\ket{\psi_0}\bra{\psi_0} R_{sH_z}(\gamma)\rVert \leq \lVert R_{sH_z}(\gamma)\ket{\psi_0}\rVert^2 \leq \frac{d_0}{N\beta^2} + \frac{4A_2}{s^2}.
 \end{equation}
 
-\textbf{Denominator bound.} Expanding the expectation value:
+\textbf{Denominator bound.} Expanding the expectation value gives
 \begin{align}
 1 + (1-s)\bra{\psi_0}R_{sH_z}(\gamma)\ket{\psi_0} &= 1 + \frac{(1-s)d_0}{N\beta} - \frac{1-s}{N}\sum_{k=1}^{M-1}\frac{d_k}{s(E_k - E_0) - \beta} \nonumber \\
 &= 1 + \frac{(1-s)d_0}{N\beta} - \frac{1-s}{s}\sum_{k=1}^{M-1}\frac{d_k}{N(E_k - E_0)}\sum_{\ell=0}^{\infty}\left(\frac{\beta}{s(E_k - E_0)}\right)^{\!\ell}.
 \end{align}
-Using $\beta/(s(E_k - E_0)) \leq 1/2$ to bound the geometric series by $1 + 2\beta/(s(E_k - E_0))$:
+Using $\beta/(s(E_k - E_0)) \leq 1/2$ to bound the geometric series by $1 + 2\beta/(s(E_k - E_0))$ gives
 \begin{equation}
 \label{eq:denominator-bound}
 1 + (1-s)\bra{\psi_0}R_{sH_z}(\gamma)\ket{\psi_0} \geq 1 + \frac{(1-s)d_0}{N\beta} - (1-s)\left(\frac{A_1}{s} + \frac{2A_2\beta}{s^2}\right).
 \end{equation}
 
-\textbf{Collecting terms.} Substituting the bounds~\eqref{eq:numerator-bound} and~\eqref{eq:denominator-bound} into~\eqref{eq:resolvent-SM} and factoring:
+\textbf{Collecting terms.} Substituting the bounds~\eqref{eq:numerator-bound} and~\eqref{eq:denominator-bound} into~\eqref{eq:resolvent-SM} and factoring gives
 \begin{equation}
 \label{eq:resolvent-f}
 \lVert R_{H(s)}(\gamma)\rVert \leq \frac{1}{\beta}\left(1 + f(s)\right),
@@ -247,13 +295,13 @@ and
 \label{eq:f-definition}
 f(s) = \frac{\frac{d_0}{N}\, s^2(1-s) + 4A_2\beta^2(1-s)}{\frac{d_0}{N}\, s^2(1-s) + \beta\, s\,\dfrac{s - s^*}{1 - s^*} - 2A_2\beta^2(1-s)}.
 \end{equation}
-To obtain this form, multiply numerator and denominator of the second term in~\eqref{eq:resolvent-SM} by $\beta$, then multiply by $s^2(1-s)$ to clear fractions. The key step is rewriting the denominator's constant-plus-linear terms. Using $A_1 = s^*/(1-s^*)$:
+To obtain this form, multiply numerator and denominator of the second term in~\eqref{eq:resolvent-SM} by $\beta$, then multiply by $s^2(1-s)$ to clear fractions. The key step is rewriting the denominator's constant-plus-linear terms using $A_1 = s^*/(1-s^*)$:
 \begin{equation}
 1 - \frac{(1-s)A_1}{s} + \frac{(1-s)d_0}{N\beta} = \frac{s - s^*}{s(1-s^*)} + \frac{(1-s)d_0}{N\beta},
 \end{equation}
 since $1 - A_1(1-s)/s = (s - A_1(1-s))/s = (s - s^*(1-s)/(1-s^*))/s = (s(1-s^*) - s^*(1-s))/(s(1-s^*)) = (s-s^*)/(s(1-s^*))$. Multiplying through by $\beta s^2(1-s)$ and collecting the Taylor-bounded terms into the $A_2\beta^2$ contributions gives Eq.~\eqref{eq:f-definition}. The fraction $d_0/N$ measures the density of ground states in the computational basis.
 
-The numerator of $f(s)$ measures the rank-one perturbation's effect on the resolvent: the $d_0/N$ term comes from the $\ket{0}$ component of $\ket{\psi_0}$ (the ground-state overlap), while the $A_2$ term comes from the excited components. The denominator captures the spectral rigidity: the term $\beta\,s(s-s^*)/(1-s^*)$ grows as $\gamma$ moves away from the crossing, stabilizing the resolvent against the perturbation. Near $s^*$, the denominator is small (the gap is small), so $f(s^*)$ is $O(1)$. As $s$ increases, the denominator grows and $f(s) \to 0$.
+The numerator of $f(s)$ measures how strongly the rank-one perturbation can amplify the resolvent norm. The $d_0/N$ term comes from the $\ket{0}$ component of $\ket{\psi_0}$, and the $A_2$ term comes from the excited components. The denominator records the opposing effect. As $\gamma$ moves away from the crossing, the factor $\beta\,s(s-s^*)/(1-s^*)$ increases and pushes the resolvent back down. This is why $f(s^*)$ is only $O(1)$ near the crossing and why $f(s)\to 0$ as $s$ approaches $1$.
 
 From~\eqref{eq:resolvent-f} and~\eqref{eq:gap-resolvent}, the spectral gap satisfies
 \begin{equation}
@@ -263,11 +311,12 @@ g(s) \geq \frac{2\beta(s)}{1 + f(s)} \geq \frac{2\beta(s)}{1 + \max_{s \geq s^*}
 If $f$ is monotonically decreasing on $[s^*, 1]$, then $\max_{s \geq s^*} f(s) = f(s^*)$, and the bound becomes $g(s) \geq 2\beta(s)/(1 + f(s^*))$, which is linear in $s - s_0$.
 
 \textbf{Monotonicity of $f$.} We show $f'(s) < 0$ for $s \in [s^*, 1]$. Write
-$f = u/v$, so the sign of $f'$ is the sign of $u'v - uv'$. The algebra is long,
-so we isolate the sign structure: after expansion and cancellation, three
-contributions remain. Two are manifestly negative. The third is positive and
-proportional to $(d_0/N)\,s_0$, which appears because the line origin is
-shifted below $s^*$. The key step is to prove the negative terms dominate.
+$f = u/v$, so the sign of $f'$ is the sign of $u'v - uv'$. The derivative algebra
+is long, so it helps to name the structure before expanding. After cancellation,
+three terms remain. Two are negative. One is positive and proportional to
+$(d_0/N)\,s_0$, which appears because the line origin is shifted below $s^*$.
+The real work is to show that the negative terms dominate this positive
+contribution on all of $[s^*,1]$.
 Write $f = u/v$ with
 \begin{align}
 \label{eq:uv-def}
@@ -282,21 +331,37 @@ u' &= \frac{4aA_2\beta}{1-s_0}(2 + s_0 - 3s) + \frac{d_0}{N}\, s(2 - 3s), \label
 v' &= \frac{a(3s^2 - 2s(s^* + s_0) + s^*s_0)}{(1-s_0)(1-s^*)} - \frac{2aA_2\beta}{1-s_0}(2 + s_0 - 3s) + \frac{d_0}{N}\,s(2-3s). \nonumber
 \end{align}
 
-Expanding $u'v$ and $uv'$ and taking the difference, two terms cancel exactly: the $(d_0/N)^2 s^3(2-3s)(1-s)$ term and the $8a A_2^2\beta^3(1-s)(2+s_0-3s)/(1-s_0)$ term. The remaining expression has three terms \cite{braida2024unstructured}:
+Expanding $u'v$ and $uv'$ and taking the difference produces exact cancellation
+of two terms. The canceled terms are
+$(d_0/N)^2 s^3(2-3s)(1-s)$ and
+$8a A_2^2\beta^3(1-s)(2+s_0-3s)/(1-s_0)$. The remainder has three terms
+\cite{braida2024unstructured}:
 \begin{align}
 \label{eq:upv-uvp}
 u'v - uv' =\;& -\frac{4aA_2\beta^2}{(1-s_0)(1-s^*)}\Big(s^2(1 + s_0 - s^*) - 2s\,s_0 + s^*s_0\Big) \\
 &+ \frac{12aA_2\frac{d_0}{N}\,\beta}{1-s_0}\,s(1-s)^2\,s_0 \nonumber \\
 &- \frac{\frac{d_0}{N}\,s^2 a}{(1-s_0)(1-s^*)}\Big({-}s^2(s^* + s_0 - 1) + 2s\,s_0 s^* - s^*s_0\Big). \nonumber
 \end{align}
-The first and third terms are negative; the second is positive (it is the only term involving $(d_0/N)\,s_0$, which arises from the shift of $s_0$ below $s^*$). We must show the first negative term dominates the positive one.
+The first and third terms are negative, while the middle term is positive. That
+middle term is the only one that contains $(d_0/N)\,s_0$, so it is exactly the
+cost of shifting the line origin below $s^*$. We now show that the first
+negative term controls it.
 
 Factor out $-4aA_2\beta/(1-s_0)$ from the sum of the first two terms:
 \begin{equation}
 \label{eq:domination-argument}
 -\frac{4aA_2\beta}{1-s_0}\left(\frac{\beta}{1-s^*}\Big(s^2(1+s_0-s^*) - 2s\,s_0 + s^*s_0\Big) - \frac{3d_0}{N}\,s_0\,s(1-s)^2\right).
 \end{equation}
-The quadratic $s^2(1+s_0-s^*) - 2s\,s_0 + s^*s_0$ is convex in $s$ because $1+s_0-s^* > 0$ (recall $s_0 < s^*$). Its minimizer lies at $s_m < s^*$, and the quadratic is positive for all $s \geq s^*$; at $s = s^*$ it equals $s^*(1-s^*)(s^*-s_0) > 0$. The cubic $s(1-s)^2$ is maximized at $s = 1/3 \leq s^*$. Therefore, on $[s^*, 1]$, the bracket in~\eqref{eq:domination-argument} is bounded below by its value at $s = s^*$:
+The quadratic
+$s^2(1+s_0-s^*) - 2s\,s_0 + s^*s_0$
+is convex in $s$ because $1+s_0-s^* > 0$, and here $s_0 < s^*$.
+Its minimizer lies at $s_m < s^*$, so throughout $[s^*,1]$ it stays above its
+value at $s^*$. At $s=s^*$ that value is
+$s^*(1-s^*)(s^*-s_0)>0$.
+The cubic $s(1-s)^2$ reaches its maximum at $s=1/3\le s^*$, so on
+$[s^*,1]$ it also stays below its value at $s^*$.
+Therefore the bracket in~\eqref{eq:domination-argument} is bounded below by its
+value at $s=s^*$:
 \begin{equation}
 \frac{a(s^*-s_0)^2}{1-s_0} - \frac{3d_0}{N}\, s_0(1-s^*)^2.
 \end{equation}
@@ -305,20 +370,24 @@ Using $s_0 \leq s^*$ and $s^*-s_0 = k\,g_{\min}(1-s^*)/(a - k\,g_{\min})$, this 
 \label{eq:a-constraint}
 a < \frac{4}{3}k^2\frac{A_1}{A_2}.
 \end{equation}
-Since $\Delta A_2 \leq A_1$ (because $A_2 \leq \sum_{k \geq 1} d_k/(N(E_k-E_0)^2) \leq A_1/\Delta$), the choice $a = (4/3)k^2\Delta$ satisfies~\eqref{eq:a-constraint}. With this choice, $u'v - uv' < 0$ on $[s^*, 1]$, so $f$ is monotonically decreasing.
+Since $\Delta A_2 \leq A_1$ and
+$A_2 \leq \sum_{k \geq 1} d_k/(N(E_k-E_0)^2) \leq A_1/\Delta$,
+the choice $a = (4/3)k^2\Delta$ satisfies~\eqref{eq:a-constraint}.
+With this choice, $u'v - uv' < 0$ on $[s^*,1]$, so $f$ is monotonically
+decreasing.
 
 \textbf{Evaluating $f(s^*)$.} At $s = s^*$, $\beta(s^*) = k\,g_{\min}$. The term $\beta\,s(s-s^*)/(1-s^*)$ vanishes, so
 \begin{equation}
 f(s^*) = \frac{\frac{d_0}{N}\,{s^*}^2(1-s^*) + 4A_2 k^2 g_{\min}^2(1-s^*)}{\frac{d_0}{N}\,{s^*}^2(1-s^*) - 2A_2 k^2 g_{\min}^2(1-s^*)}.
 \end{equation}
-Replacing $g_{\min}$ by its leading-order expression $\hat{g} = 2s^*\sqrt{d_0/(NA_2)}$ from Eq.~\eqref{eq:gmin-formula} (valid up to a $(1 \pm O(\eta))$ factor that does not affect the final constant), we have $A_2 k^2 \hat{g}^2 = 4k^2{s^*}^2 d_0/N$. Substituting:
+Replacing $g_{\min}$ by its leading-order expression $\hat{g} = 2s^*\sqrt{d_0/(NA_2)}$ from Eq.~\eqref{eq:gmin-formula} (valid up to a $(1 \pm O(\eta))$ factor that does not affect the final constant), we have $A_2 k^2 \hat{g}^2 = 4k^2{s^*}^2 d_0/N$. Substituting gives
 \begin{equation}
 \label{eq:f-at-sstar}
 f(s^*) = \frac{1 + 16k^2}{1 - 8k^2}.
 \end{equation}
 For $k = 1/4$, $f(s^*) = (1 + 1)/(1 - 1/2) = 4$, so $1 + f(s^*) = 5$.
 
-\textbf{Final bound.} From~\eqref{eq:gap-via-f}:
+\textbf{Final bound.} From~\eqref{eq:gap-via-f},
 \begin{align}
 g(s) &\geq \frac{2\beta(s)}{1 + f(s^*)} = \frac{2a}{1 + f(s^*)}\cdot\frac{s - s_0}{1 - s_0}.
 \end{align}
@@ -359,13 +428,20 @@ where $s_0 = s^* - k\,g_{\min}(1-s^*)/(a - k\,g_{\min})$ with $k = 1/4$ and $a =
 The three cases follow from \autoref{lem:gap-in-window} (window, proved in Chapter 5), \autoref{lem:gap-left} (left), and \autoref{lem:gap-right} (right). The right bound holds for all $s \geq s^*$ and therefore covers $\mathcal{I}_{s^\rightarrow}$. The window bound $g(s) \geq g_{\min}$ is tighter than the right bound at $s^*$ but weaker far from the crossing.
 \end{proof}
 
-The bounds match across region boundaries. At the left boundary $s = s^* - \delta_s$:
+The bounds match across region boundaries. At the left boundary $s = s^* - \delta_s$,
 \begin{equation}
 \frac{A_1(A_1+1)}{A_2}\cdot\delta_s = \hat{g} = \Theta(g_{\min}),
 \end{equation}
 so the left bound at the window boundary is $\Theta(g_{\min})$, consistent with the window bound. At $s = s^*$, the right bound gives $g(s^*) \geq 2\beta(s^*)/(1 + f(s^*)) = 2k\,g_{\min}/5 = g_{\min}/10$, which is below $g_{\min}$ by a constant factor but still $O(g_{\min})$. The window bound provides the tighter estimate $g(s^*) = g_{\min}$.
 
-The piecewise bounds are intentionally asymmetric. The left arm is steep, while the right arm is shallower. The variational method tracks the left slope closely, whereas the resolvent method trades tightness for uniform validity in a congested spectral region. Geometrically, the profile is a broad V centered at $s^*$ with a narrow rounded minimum of width about $2\delta_s$. The left slope is $A_1(A_1+1)/A_2$, which is $O(\mathrm{poly}(n))$ for Ising instances. The right slope is $\Delta/(30(1-s_0))$, set by the problem gap $\Delta$. At the endpoints, $g(0)=1$ for $H_0$ and $g(1)=\Delta$ for $H_z$.
+The piecewise bounds are intentionally asymmetric. The left arm is steep, and
+the right arm is shallower. The variational method tracks the left slope
+closely. The resolvent method gives a weaker slope but remains valid through the
+spectral congestion on the right. Geometrically, the profile is a broad V
+centered at $s^*$ with a narrow rounded minimum of width about $2\delta_s$. The
+left slope is $A_1(A_1+1)/A_2$, which is $O(\mathrm{poly}(n))$ for Ising
+instances. The right slope is $\Delta/(30(1-s_0))$, set by the problem gap
+$\Delta$. At the endpoints, $g(0)=1$ for $H_0$ and $g(1)=\Delta$ for $H_z$.
 
 \begin{figure}[H]
 \centering
@@ -443,7 +519,7 @@ The piecewise bounds are intentionally asymmetric. The left arm is steep, while 
 \label{fig:gap-profile}
 \end{figure}
 
-The gap depends on four parameters: $A_1$, $A_2$, $d_0$, and $\Delta$. For any problem Hamiltonian $H_z$ satisfying the spectral condition, \autoref{thm:complete-profile} bounds $g(s)$ over all of $[0,1]$ up to constants. The minimum is $g_{\min}=\Theta(\sqrt{d_0/(NA_2)})$ at $s^*=A_1/(A_1+1)$, and it is exponentially small in $n$ when $d_0=O(1)$. The crossing location depends only on $A_1$. More solutions (larger $d_0$) widen the gap, while richer near-ground spectral structure (larger $A_2$) narrows it. At $s=1$, the gap returns to $\Delta$, the spectral gap of $H_z$ itself.
+Four parameters control the gap: $A_1$, $A_2$, $d_0$, and $\Delta$. For any problem Hamiltonian $H_z$ satisfying the spectral condition, \autoref{thm:complete-profile} bounds $g(s)$ over all of $[0,1]$ up to constants. The minimum is $g_{\min}=\Theta(\sqrt{d_0/(NA_2)})$ at $s^*=A_1/(A_1+1)$, and it is exponentially small in $n$ when $d_0=O(1)$. The crossing location depends only on $A_1$. More solutions (larger $d_0$) widen the gap, while richer near-ground spectral structure (larger $A_2$) narrows it. At $s=1$, the gap returns to $\Delta$, the spectral gap of $H_z$ itself.
 
 For unstructured search, the exact gap $g(s) = \sqrt{(2s-1)^2 + 4s(1-s)/N}$ and the piecewise bound from \autoref{thm:complete-profile} can be compared directly. The left bound has slope $(2N-1)/N \approx 2$, matching the asymptotic slope of the exact gap, which approaches $2(1-1/N) \approx 2$ away from $s^*$. The window bound $g_{\min} = 1/\sqrt{N}$ is exact. The right bound has slope approximately $1/15$ near $s^*$, weaker than the true slope by a factor of $30$, but sufficient for the runtime integral since the window dominates.
 
@@ -451,4 +527,8 @@ The window dominates the runtime integral. $\int_0^1 g(s)^{-2}\,ds$ splits acros
 \begin{equation}
 \int_{\delta_s}^{s^*} \frac{du}{(Cu)^2} = \frac{1}{C^2}\left(\frac{1}{\delta_s} - \frac{1}{s^*}\right) \leq \frac{1}{C^2\delta_s},
 \end{equation}
-which is $O(1/(C^2\delta_s))$. In the window, $g(s) \geq g_{\min}$ gives $\int_{s^*-\delta_s}^{s^*+\delta_s} g(s)^{-2}\,ds \leq 2\delta_s/g_{\min}^2$. The window contribution $\delta_s/g_{\min}^2 = \Theta(A_2^{3/2}/(A_1(A_1+1)) \cdot \sqrt{N/d_0})$ dominates the outer regions, and the full integral, including the $\Delta$-dependent right-arm contribution, yields the runtime $T = O((\sqrt{A_2}/(A_1(A_1+1)\Delta^2))\sqrt{N/d_0})$ that Chapter 7 derives rigorously.
+which is $O(1/(C^2\delta_s))$. In the window, $g(s) \geq g_{\min}$ gives $\int_{s^*-\delta_s}^{s^*+\delta_s} g(s)^{-2}\,ds \leq 2\delta_s/g_{\min}^2$. The window contribution $\delta_s/g_{\min}^2 = \Theta(A_2^{3/2}/(A_1(A_1+1)) \cdot \sqrt{N/d_0})$ dominates the outer regions. Once the $\Delta$-dependent right-arm term is included, the full integral yields the runtime
+\[
+T = O\!\left(\frac{\sqrt{A_2}}{A_1(A_1+1)\Delta^2}\sqrt{\frac{N}{d_0}}\right),
+\]
+which Chapter 7 derives rigorously.
