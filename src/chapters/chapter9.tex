@@ -12,7 +12,7 @@
 
 The adiabatic algorithm of \autoref{thm:aqo-runtime} achieves the Grover speedup $\widetilde{O}(\sqrt{N/d_0})$, but its schedule depends on $s^* = A_1/(A_1+1)$, whose computation is NP-hard (\autoref{thm:np-hard-A1}). In the circuit model, Grover's algorithm achieves the same speedup without computing any spectral parameter. The adiabatic framework demands the schedule be fixed before evolution begins. What runtime is achievable by an adiabatic algorithm that knows nothing about the problem Hamiltonian beyond its dimension?
 
-The spectral gap $g(s)$ determines runtime through the physics of the interpolation. Our uncertainty about where that gap is smallest determines what runtime is achievable in practice. Whether that uncertainty matters at all depends on the computational model.
+This chapter follows one question through three lenses. At the physics level, runtime is set by the gap profile $g(s)$ along the interpolation path. At the information-theoretic level, the decisive unknown is where that profile reaches its minimum. At the complexity-theoretic level, we ask what resources are required to obtain that location and exploit it.
 
 
 \section{The Cost of Ignorance}
@@ -55,7 +55,11 @@ It is \emph{uniformly RC-admissible} on the family if this inequality holds for 
 
 The schedule induces a velocity profile $v(s) > 0$ on $[0,1]$, with total evolution time $T = \int_0^1 v(s)^{-1}\,ds$.
 
-Within the uniformly RC-admissible class (Definition~\ref{def:rc-admissible}), the crossing velocity obeys a pointwise bound. Since $H'(s) = \ket{\psi_0}\!\bra{\psi_0} + H_z$ satisfies $\lVert H'(s) \rVert \leq \lVert \ket{\psi_0}\!\bra{\psi_0} \rVert + \lVert H_z \rVert \leq 1 + 1 = 2$ (using the eigenvalue normalization $E_{M-1} \leq 1$ from Chapter~5), RC-admissibility gives $v(s) \leq \varepsilon\,g(s)^2/2$. At a crossing point where $g=\Delta_*$, this yields $v \leq \varepsilon\,\Delta_*^2/2$.
+Within the uniformly RC-admissible class (Definition~\ref{def:rc-admissible}), the crossing velocity obeys a pointwise bound. Since $H'(s) = \ket{\psi_0}\!\bra{\psi_0} + H_z$ satisfies $\lVert H'(s) \rVert \leq \lVert \ket{\psi_0}\!\bra{\psi_0} \rVert + \lVert H_z \rVert \leq 1 + 1 = 2$ (using the eigenvalue normalization $E_{M-1} \leq 1$ from Chapter~5), RC-admissibility gives
+\[
+v(s) \leq \varepsilon\,g(s)^2/2.
+\]
+At a crossing point where $g=\Delta_*$, this yields $v \leq \varepsilon\,\Delta_*^2/2$.
 
 The crossing window has width $\delta_s = \Theta(\Delta_*)$, so any valid
 schedule must stay slow across that window. Chapter~5 gives
@@ -563,7 +567,11 @@ For $c_L > 1$ and $r \gg a$, the leading term $(c_L - 1)r^2$ dominates.
 The framework comparison extends across gap geometries. For $\alpha < 1$, the Roland-Cerf integral $\int g^{-2}\,ds = \Theta(g_{\min}^{1/\alpha - 2})$ grows slower than $1/g_{\min}$, making the RC analysis tighter. For $\alpha = 1$, both give $\Theta(1/g_{\min})$, and the JRS constant $C^2$ can be smaller than the RC integral $I$ (\autoref{thm:constant-comparison}). For $\alpha > 1$, the measure constant $C \to \infty$ as $g_{\min} \to 0$, so the JRS framework degrades and only the RC analysis applies. The structural $\alpha = 1$ (\autoref{prop:structural-alpha}) sits at the exact boundary where both frameworks are valid and neither uniformly dominates.
 \end{remark}
 
-For the Grover problem, $c_L \to 2$ as $N \to \infty$. Using the exact values $C_{\mathrm{exact}} = 1$ and $I_{\mathrm{exact}} \to (\pi/2)\sqrt{N}$ gives $C^2/I \to 2/(\pi\sqrt{N}) \to 0$, so the JRS certification is asymptotically tighter. This comparison is unusually explicit because the Grover gap has a closed form. For structured Hamiltonians with richer spectra, exact constants are rarely analytic, and \autoref{thm:constant-comparison} becomes the practical tool. For example, evaluating it on the open ferromagnetic Ising chain (\autoref{eq:Ising-Ham} with nearest-neighbor coupling $J = 1$, uniform field $h = 1$, and $n = 10$ spins) gives $C^2/I = 0.71$. The JRS advantage remains, but with a weaker margin than in Grover. The two frameworks are best viewed as complementary. The spectral analysis~\cite{braida2024unstructured} identifies $A_1$, $s^*$, and the piecewise gap structure, while the variational analysis~\cite{GuoAn2025} identifies the optimal power-law exponent. Together they give a complete account of the rank-one $\alpha = 1$ case, which sits exactly at the boundary where both frameworks apply and the measure condition remains bounded.
+For the Grover problem, $c_L \to 2$ as $N \to \infty$. Using the exact values $C_{\mathrm{exact}} = 1$ and $I_{\mathrm{exact}} \to (\pi/2)\sqrt{N}$ gives $C^2/I \to 2/(\pi\sqrt{N}) \to 0$, so the JRS certification is asymptotically tighter. This comparison is unusually explicit because the Grover gap has a closed form.
+
+For structured Hamiltonians with richer spectra, exact constants are rarely analytic, and \autoref{thm:constant-comparison} becomes the practical tool. For example, evaluating it on the open ferromagnetic Ising chain (\autoref{eq:Ising-Ham} with nearest-neighbor coupling $J = 1$, uniform field $h = 1$, and $n = 10$ spins) gives $C^2/I = 0.71$. The JRS advantage remains, but with a weaker margin than in Grover.
+
+The two frameworks are best viewed as complementary. The spectral analysis~\cite{braida2024unstructured} identifies $A_1$, $s^*$, and the piecewise gap structure, while the variational analysis~\cite{GuoAn2025} identifies the optimal power-law exponent. Together they give a complete account of the rank-one $\alpha = 1$ case, which sits exactly at the boundary where both frameworks apply and the measure condition remains bounded.
 
 This complementarity persists under partial spectral knowledge. The RC framework ($p = 2$) builds the schedule from crossing position $s^*$, so its runtime degrades on the crossing-localization scale:
 \[
@@ -582,7 +590,7 @@ The gap geometry and optimality analysis above assumes the rank-one interpolatio
 \section{Anatomy of the Barrier}
 \label{sec:barrier-anatomy}
 
-No instance-independent modification within the rank-one framework can make $s^*$ spectrum-independent. The argument proceeds through four theorems that progressively close escape routes, culminating in a no-go theorem.
+No instance-independent modification within the rank-one framework can make $s^*$ spectrum-independent. The argument below closes four escape routes in sequence: uncoupled ancillas, non-uniform initial states, fixed ancilla couplings, and multi-segment paths. The no-go theorem then follows by combination.
 
 Recall from Chapter~5 that for any initial state $\ket{\psi} \in \mathbb{C}^N$, the weights $w_k(\psi) = \sum_{z \in \Omega_k} |\braket{z}{\psi}|^2$ determine the effective spectral parameter $A_1^{\mathrm{eff}}(\psi) = \sum_{k \geq 1} w_k(\psi)/(E_k - E_0)$ and the effective crossing position $s^*(\psi) = A_1^{\mathrm{eff}}(\psi)/(A_1^{\mathrm{eff}}(\psi) + 1)$. For the uniform superposition $\ket{\psi_0}$, $w_k = d_k/N$ and $A_1^{\mathrm{eff}} = A_1$.
 
@@ -598,6 +606,8 @@ Decompose the extended Hilbert space $\mathbb{C}^N \otimes \mathbb{C}^{2^m}$ int
 \begin{remark}
 The crossing position is invariant, but the gap of $H_{\mathrm{ext}}(s)$ is strictly smaller than the bare gap: for $d_0 = 1$, the extra eigenvalues at $sE_0$ (from states $\ket{z} \otimes \ket{a}$ with $z \in \Omega_0$, $a \perp \ket{\phi}$) sit between the ground eigenvalue $\lambda_0(s) < sE_0$ and the crossing branch. Uncoupled ancillas make the gap worse, not better.
 \end{remark}
+
+The next escape route is to change the initial state while keeping the algorithm instance-independent.
 
 \begin{theorem}[Universality of uniform superposition]
 \label{thm:universality}
@@ -619,6 +629,8 @@ Any two such assignments are related by a permutation $\pi$ of $\{0,\ldots,N-1\}
 Any instance-independent adiabatic algorithm (same Hamiltonian for all energy assignments with the same degeneracy structure) must use the uniform superposition as initial state, fixing the crossing at $s^* = A_1/(A_1+1)$.
 \end{corollary}
 
+A more aggressive route is to add a fixed ancilla coupling $V$ and hope it cancels the instance dependence.
+
 \begin{theorem}[Coupled ancilla limitation]
 \label{thm:coupled-ancilla}
 Consider an extended Hamiltonian $H_{\mathrm{ext}}(s) = -(1-s)\ket{\Psi}\!\bra{\Psi} + s(H_z \otimes I + V)$ where $\ket{\Psi} = \ket{\psi_0} \otimes \ket{\phi}$ and $V$ is instance-independent. No fixed $V$ makes $A_1^{\mathrm{eff}}$ constant across all problem instances.
@@ -633,6 +645,8 @@ Consider the two-level family parametrized by $\Delta > 0$, with $E_0 = 0$, $E_1
 \]
 for $\Delta \gg \lVert V \rVert$. Because $\lVert V \rVert$ is fixed independently of $\Delta$, this contribution varies with $\Delta$, so $A_1^{\mathrm{eff}}(\Delta)$ cannot be constant.
 \end{proof}
+
+Another route is to insert intermediate segments and move the crossing to a better-controlled stage of the path.
 
 \begin{theorem}[Multi-segment rigidity]
 \label{thm:multi-segment}
@@ -654,7 +668,11 @@ Combine Theorems~\ref{thm:product-ancilla}--\ref{thm:multi-segment}. \autoref{th
 
 For the running example ($N = 4$, $d_0 = 1$), product ancilla invariance (\autoref{thm:product-ancilla}) implies that appending any number of ancilla qubits in a product state leaves the crossing at $s^* = 3/7$.
 
-The no-go theorem is specific to the rank-one framework with instance-independent design. A natural next idea is to move to higher-rank initial Hamiltonians. The next propositions show this does not solve the problem. Rank-$k$ projectors still cannot make crossing positions spectrum-independent, first on two-level families and then on general multilevel families through a trace argument. For rank-$k$ projectors $P = UU^\dagger$, the secular equation becomes the $k \times k$ determinant condition $\det(I_k - (1-s)G(\lambda,s)) = 0$, where $G(\lambda,s) = U^\dagger(sH_z - \lambda I)^{-1}U$. On the two-level family ($E_0 = 0$, $E_1 = \Delta$), this reduces to $\det(I_k - (x/\Delta)B) = 0$, with $B = U_{\mathrm{exc}}^\dagger U_{\mathrm{exc}}$ and $x = (1-s)/s$. Each positive eigenvalue $\mu$ of $B$ gives a crossing branch $s(\Delta) = 1/(1+\Delta/\mu)$, and this branch is non-constant in $\Delta$.
+The no-go theorem is specific to the rank-one framework with instance-independent design. A natural next idea is to move to higher-rank initial Hamiltonians. The next two propositions close that route as well.
+
+For rank-$k$ projectors $P = UU^\dagger$, the secular equation becomes the $k \times k$ determinant condition $\det(I_k - (1-s)G(\lambda,s)) = 0$, where $G(\lambda,s) = U^\dagger(sH_z - \lambda I)^{-1}U$. On the two-level family ($E_0 = 0$, $E_1 = \Delta$), this reduces to $\det(I_k - (x/\Delta)B) = 0$, with $B = U_{\mathrm{exc}}^\dagger U_{\mathrm{exc}}$ and $x = (1-s)/s$.
+
+Each positive eigenvalue $\mu$ of $B$ gives a crossing branch $s(\Delta) = 1/(1+\Delta/\mu)$, and this branch is non-constant in $\Delta$.
 
 \begin{proposition}[Rank-$k$ two-level obstruction]
 \label{prop:rank-k-obstruction}
@@ -927,4 +945,4 @@ $[u_L, u_R]$) gives constant overhead proportional to $u_R-u_L$. Level 3
 (quantum measurement access) gives $O(1)$ overhead with $O(n)$ measurements.
 Level 4 (circuit model) has overhead $1$ with no spectral information.
 
-The adiabatic approach to unstructured search therefore works, reaches Grover scaling, and is optimal within its schedule class. Its information requirements are a structural consequence of the rank-one interpolation path. They are not a fundamental limit of quantum computation itself, only a limit of this specific model. The next chapter translates these claims into machine-checked formal proofs.
+The adiabatic approach to unstructured search therefore works, reaches Grover scaling, and is optimal within its schedule class. Its information requirements are a structural consequence of the rank-one interpolation path. They are not a fundamental limit of quantum computation itself, only a limit of this specific model. The next chapter translates these results into machine-checked formal proofs.

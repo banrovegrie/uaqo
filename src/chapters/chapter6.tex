@@ -17,9 +17,10 @@ $\lambda_0(s)$ sits below $sE_0$ while the first excited energy $\lambda_1(s)$
 sits above it. A variational argument then gives a sharp linear gap bound. To
 the right of $s^*$, eigenvalues of $sH_z$ crowd the interval $[sE_0, sE_1]$,
 and that variational strategy loses traction. There we switch to a resolvent
-argument plus Sherman-Morrison for rank-one perturbations. The combined result
-is the piecewise profile needed in Chapter 7: steep on the left, flatter on the
-right, and nearly flat inside the window.
+argument plus Sherman-Morrison for rank-one perturbations. This split is the
+technical core of the chapter, and it yields the piecewise profile needed in
+Chapter 7: steep on the left, flatter on the right, and nearly flat inside the
+window.
 
 \section{Gap to the Left of the Crossing}
 \label{sec:gap-left}
@@ -145,14 +146,31 @@ now an upper bound on a resolvent norm.
 
 This resolvent approach to rank-one perturbations has precedent in spatial
 search. Childs and Goldstone~\cite{childs2004spatial} used it to prove
-$O(\sqrt{N})$ search time on the complete graph. The algebra is the same as in
-our Hamiltonian $H(s) = sH_z - (1-s)\ket{\psi_0}\bra{\psi_0}$, with a graph
-Laplacian replaced by a diagonal cost Hamiltonian. Chakraborty, Novo, and
+$O(\sqrt{N})$ search time on the complete graph. Chakraborty, Novo, and
 Roland~\cite{chakraborty2016spatial, chakraborty2020optimality} then extended
-the method to broad graph families via Sherman-Morrison. Here we import that
-same mechanism, with graph parameters replaced by $A_1$ and $A_2$.
+the method to broad graph families via Sherman-Morrison.
 
-Spatial search via continuous-time quantum walks solves the following problem. Given a graph $G$ on $N$ vertices with a subset $S$ of marked vertices, one seeks a marked vertex by evolving the initial state $\ket{s} = (1/\sqrt{N})\sum_v \ket{v}$ under $H_{\text{search}} = -\gamma L - \sum_{v \in S}\ket{v}\bra{v}$, where $L$ is the graph Laplacian and $\gamma > 0$ is tunable \cite{childs2004spatial}. When $|S| = 1$, the oracle term is rank one (and low rank more generally). The correspondence with our setting is straightforward: $L$ plays the role of $sH_z$, the oracle projector plays the role of $(1-s)\ket{\psi_0}\bra{\psi_0}$, the graph spectral gap corresponds to $\Delta$, and the effective resistance plays the role of $A_2$. In both settings, one places a line $\gamma(s)$ between the two lowest eigenvalues, applies Sherman-Morrison to split the resolvent into a known diagonal part and a correction term, then bounds that correction. The method works because rank-one perturbations of diagonal operators always admit this inversion step, reducing the gap problem to one rational bound.
+The algebraic structure is the same as in our Hamiltonian
+$H(s) = sH_z - (1-s)\ket{\psi_0}\bra{\psi_0}$, with a graph Laplacian replaced
+by a diagonal cost Hamiltonian. We therefore import the same mechanism, with
+graph parameters replaced by $A_1$ and $A_2$.
+
+Spatial search via continuous-time quantum walks asks for a marked vertex in a
+graph $G$ on $N$ vertices by evolving
+$\ket{s} = (1/\sqrt{N})\sum_v \ket{v}$ under
+$H_{\text{search}} = -\gamma L - \sum_{v \in S}\ket{v}\bra{v}$, where $L$ is
+the graph Laplacian and $\gamma > 0$ is tunable
+\cite{childs2004spatial}. When $|S| = 1$, the oracle term is rank one (and low
+rank more generally). The dictionary to our setting is direct: $L$ plays the
+role of $sH_z$, the oracle projector plays the role of
+$(1-s)\ket{\psi_0}\bra{\psi_0}$, the graph spectral gap corresponds to
+$\Delta$, and effective resistance plays the role of $A_2$.
+
+In both settings, one places a line $\gamma(s)$ between the two lowest
+eigenvalues, applies Sherman-Morrison to split the resolvent into a known
+diagonal part plus a correction term, and then bounds that correction. The
+method works because rank-one perturbations of diagonal operators always admit
+this inversion step, reducing the gap problem to one rational bound.
 
 The constants $k = 1/4$ and $f(s^*) = 4$ are not accidents of this particular Hamiltonian. They are artifacts of the line-placement optimization, balancing the denominator's positivity against the numerator's growth in the function $f(s)$, and depend only on the rank-one structure, not on whether the underlying operator is a graph Laplacian or a problem Hamiltonian. Any future application of this technique to a new rank-one perturbation will face the same optimization, with the same constants serving as a starting point.
 
@@ -196,7 +214,7 @@ Since $H(s) = sH_z - (1-s)\ket{\psi_0}\bra{\psi_0}$, the resolvent of $H(s)$ at 
 
 The unperturbed resolvent $R_{sH_z}(\gamma)$ is diagonal in the $\ket{k}$ basis with entries $1/(\gamma - sE_k) = 1/(\beta - s(E_k - E_0))$ for $k \geq 1$ and $1/\beta$ for $k = 0$. The nearest eigenvalue of $sH_z$ to $\gamma$ is $sE_0$, at distance $\beta$, so $\lVert R_{sH_z}(\gamma)\rVert = 1/\beta$.
 
-We bound the numerator and denominator of the second term separately. Both require that $\beta(s) \leq s(E_k - E_0)/2$ for all $k \geq 1$, which ensures the Taylor expansion in powers of $\beta/(s(E_k - E_0))$ converges rapidly. Since $\beta(s) \leq a = \Delta/12$ and $s(E_k - E_0) \geq s^*\Delta \geq \Delta/3$ (using $s^* = A_1/(A_1+1) \geq 1/3$, which holds when $A_1 \geq 1/2$), we have $\beta \leq \Delta/12 < \Delta/6 \leq s(E_k - E_0)/2$. The condition $A_1 \geq 1/2$ requires that the spectral gaps $E_k - E_0$ are not too large relative to $d_0$; when $A_1 < 1/2$, the crossing occurs at $s^* < 1/3$ and the ground-state degeneracy $d_0$ is large enough that random sampling finds a solution with constant probability, making the adiabatic approach unnecessary.
+We bound the numerator and denominator of the second term separately. Both require that $\beta(s) \leq s(E_k - E_0)/2$ for all $k \geq 1$, which ensures the Taylor expansion in powers of $\beta/(s(E_k - E_0))$ converges rapidly. Since $\beta(s) \leq a = \Delta/12$ and $s(E_k - E_0) \geq s^*\Delta \geq \Delta/3$ (using $s^* = A_1/(A_1+1) \geq 1/3$, which holds when $A_1 \geq 1/2$), we have $\beta \leq \Delta/12 < \Delta/6 \leq s(E_k - E_0)/2$. The assumption $A_1 \geq 1/2$ is also the nontrivial regime for search: since $A_1 \geq 1 - d_0/N$, the complementary case $A_1 < 1/2$ implies $d_0 > N/2$, where random sampling already finds a ground state with constant probability.
 
 \textbf{Numerator bound.} The squared norm of $R_{sH_z}(\gamma)\ket{\psi_0}$ expands as
 \begin{equation}
@@ -244,7 +262,13 @@ g(s) \geq \frac{2\beta(s)}{1 + f(s)} \geq \frac{2\beta(s)}{1 + \max_{s \geq s^*}
 \end{equation}
 If $f$ is monotonically decreasing on $[s^*, 1]$, then $\max_{s \geq s^*} f(s) = f(s^*)$, and the bound becomes $g(s) \geq 2\beta(s)/(1 + f(s^*))$, which is linear in $s - s_0$.
 
-\textbf{Monotonicity of $f$.} We show $f'(s) < 0$ for $s \in [s^*, 1]$. Write $f = u/v$, so the sign of $f'$ is the sign of $u'v - uv'$. After expansion and cancellation, three contributions remain. Two are manifestly negative. The third is positive and proportional to $(d_0/N)\,s_0$, which appears because the line origin is shifted below $s^*$. The key step is to prove the negative terms dominate. Write $f = u/v$ with
+\textbf{Monotonicity of $f$.} We show $f'(s) < 0$ for $s \in [s^*, 1]$. Write
+$f = u/v$, so the sign of $f'$ is the sign of $u'v - uv'$. The algebra is long,
+so we isolate the sign structure: after expansion and cancellation, three
+contributions remain. Two are manifestly negative. The third is positive and
+proportional to $(d_0/N)\,s_0$, which appears because the line origin is
+shifted below $s^*$. The key step is to prove the negative terms dominate.
+Write $f = u/v$ with
 \begin{align}
 \label{eq:uv-def}
 u &= \frac{d_0}{N}\,s^2(1-s) + 4A_2\beta^2(1-s), \\

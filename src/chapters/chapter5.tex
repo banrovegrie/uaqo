@@ -6,7 +6,7 @@
 %   computational resource, avoided crossings, local/adaptive schedules,
 %   Roland-Cerf construction.
 
-In the circuit model, unstructured optimization is already understood. Given a black-box cost function on $N = 2^n$ bit-strings, Grover's algorithm and its generalizations find a minimizer in $O(\sqrt{N/d_0})$ queries, where $d_0$ is the number of optima \cite{Grover1996, BBHT1998}. The algorithm needs no prior spectral knowledge of the cost function. Amplitude amplification gathers the required information adaptively, one oracle query at a time. No spectral parameter must be computed in advance, no schedule must be tuned to a gap profile, and no pre-computation rivals the search cost itself.
+In the circuit model, unstructured optimization is already understood. Given a black-box cost function on $N = 2^n$ bit-strings, Grover's algorithm and its generalizations find a minimizer in $O(\sqrt{N/d_0})$ queries, where $d_0$ is the number of optima \cite{Grover1996, BBHT1998}. The algorithm needs no prior knowledge of the cost function's structure. Amplitude amplification gathers what it needs adaptively, one oracle query at a time. No spectral parameter is computed in advance, no schedule is tuned to a gap profile, and no preprocessing competes with the search cost itself.
 
 Adiabatic quantum computation is polynomially equivalent to the circuit model \cite{aharonov2007adiabatic}, so the same speedup exists in principle. The obstruction is different. The evolution Hamiltonian $H(s)$ interpolates continuously between an initial Hamiltonian $H_0$ and the problem Hamiltonian $H_z$, and the runtime is controlled by the spectral gap of $H(s)$ along the entire path. The location of the avoided crossing, the sharpness of the minimum gap, and the reopening rate all matter. Matching the Grover speedup now requires controlling spectral features that depend on the full degeneracy structure of $H_z$.
 
@@ -16,9 +16,9 @@ Consider a cost function encoded in an $n$-qubit Hamiltonian diagonal in the com
 
 The bound applies directly to our setup. Farhi et al.\ proved that when $H_0$ is a rank-one projector onto the uniform superposition, no schedule can find the ground state in time $o(\sqrt{N/d_0})$, regardless of the cost function. Their proof constructs $N$ equivalent Hamiltonians related by Fourier shifts and applies a continuous-time analogue of the BBBV argument \cite{bennett1997strengths}. Partial answers came first. \v{Z}nidari\v{c} and Horvat \cite{horvat2006exponential} showed via analytical and heuristic arguments that the minimum gap scales as $\sqrt{d_0/2^n}$ for 3-SAT instances and identified the crossing position, but did not rigorously bound the runtime. Hen \cite{hen2014continuous} proved a quadratic speedup for a random Hamiltonian whose energy distribution makes the crossing position spectrum-independent, sidestepping the central difficulty.
 
-The answer in full generality is yes, but with a sharp caveat. The spectrum of the interpolated Hamiltonian is much richer than in the Grover case. Instead of a two-level system plus a degenerate bulk, one gets $M$ interacting energy levels in a symmetric subspace, with higher-state avoided crossings that obscure the lowest gap. The ground-state crossing position depends nontrivially on the degeneracy structure of $H_z$. The minimum gap still scales as $\Theta(1/\sqrt{N})$ up to spectral factors, but it occurs at a position that must be known to exponential precision for the schedule to be correct.
+The answer in full generality is yes and, in our view, this is the surprising part, but it comes with a sharp caveat. The spectrum of the interpolated Hamiltonian is much richer than in the Grover case. Instead of a two-level system plus a degenerate bulk, one gets $M$ interacting energy levels in a symmetric subspace, with higher-state avoided crossings that obscure the lowest gap. The ground-state crossing position depends nontrivially on the degeneracy structure of $H_z$. The minimum gap still scales as $\Theta(1/\sqrt{N})$ up to spectral factors, but it occurs at a position that must be known to exponential precision for the schedule to be correct.
 
-For a general diagonal problem Hamiltonian, $H(s)$ has a single avoided crossing at position $s^* = A_1/(A_1 + 1)$, where $A_1$ is a spectral parameter determined by the degeneracy structure. The minimum spectral gap at the crossing scales as $\Theta(\sqrt{d_0/(N A_2)})$, and the gap grows linearly on both sides. Chapter 6 proves the gap bounds outside the crossing window, and Chapter 7 derives the optimal runtime. Chapter 8 then shows the catch: computing $s^*$ is NP-hard.
+For a general diagonal problem Hamiltonian, $H(s)$ has a single avoided crossing at position $s^* = A_1/(A_1 + 1)$, where $A_1$ is a spectral parameter determined by the degeneracy structure. The minimum spectral gap at the crossing scales as $\Theta(\sqrt{d_0/(N A_2)})$, and the gap grows linearly on both sides. Chapter 6 proves the gap bounds outside the crossing window, and Chapter 7 derives the optimal runtime. Chapter 8 then shows where the edge comes from: computing $s^*$ is NP-hard.
 
 \section{From Cost Function to Adiabatic Path}
 \label{sec:aqo-problem}
@@ -95,7 +95,7 @@ A_p = \frac{N - 1}{N} \approx 1 \quad \text{for all } p,
 \end{equation}
 since $E_1 - E_0 = 1$. The spectral parameters are trivial in this case, which is precisely why the Roland-Cerf analysis is simple.
 
-For a general Ising Hamiltonian with $\Delta \geq 1/\text{poly}(n)$ and $M \in \text{poly}(n)$, the bound $A_1 \leq (1-d_0/N)/\Delta$ gives $A_1 = O(\text{poly}(n))$, while $A_2 \geq 1 - d_0/N$ ensures $A_2 = \Theta(1)$ at minimum.
+For a general Ising Hamiltonian with $\Delta \geq 1/\text{poly}(n)$ and $M \in \text{poly}(n)$, the bound $A_1 \leq (1-d_0/N)/\Delta$ gives $A_1 = O(\text{poly}(n))$. The bound $A_2 \geq 1 - d_0/N$ then guarantees $A_2$ stays constant-order whenever $d_0 \ll N$.
 
 $A_1$ determines the crossing position, $s^* = A_1/(A_1 + 1)$. The parameter $A_2$ enters the minimum spectral gap, $g_{\min} = \Theta(\sqrt{d_0/(N A_2)})$. The gap scales as $\sqrt{d_0/N}$, so more ground states strengthen the coupling and widen the crossing. Both parameters appear in the runtime:
 \[
@@ -127,8 +127,8 @@ The problem Hamiltonian $H_z$ satisfies the spectral condition if there exists a
 \end{equation}
 \end{definition}
 
-The quantity on the left is, up to constants, the ratio between crossing-window
-width and local spectral scale. When this ratio is small, the two-level
+The quantity on the left is, up to constants, the ratio between the crossing-window
+width and the problem-Hamiltonian spectral gap $\Delta$. When this ratio is small, the two-level
 approximation near the crossing is accurate. Higher levels stay perturbative,
 and the window occupies only a small part of $[0,1]$. The appendix
 of \cite{braida2024unstructured} shows that $c \approx 0.02$ is sufficient.
@@ -363,7 +363,7 @@ The crossing is at $s^* \approx 1/2$, the minimum gap scales as $1/\sqrt{N}$, an
 \section{Gap Structure}
 \label{sec:gap-structure}
 
-The adiabatic schedule requires the gap everywhere, not just near the crossing. The local adaptive schedule speeds up where the gap is large and slows where it is small, so the runtime depends on the gap profile across the full interval $[0,1]$. Inside $\mathcal{I}_{s^*}$, the gap is $\Theta(g_{\min})$. Outside it, the gap grows linearly. Proving this requires different techniques for the two sides.
+The adiabatic schedule requires the gap everywhere, not just near the crossing. The local adaptive schedule speeds up where the gap is large and slows where it is small, so the runtime depends on the gap profile across the full interval $[0,1]$. Inside $\mathcal{I}_{s^*}$, the gap is $\Theta(g_{\min})$. Outside it, the gap grows linearly. Proving this split requires different techniques on the two sides, and that split drives the structure of Chapter 6.
 
 \begin{lemma}[Gap to the left of the crossing]
 \label{lem:gap-left-preview}
@@ -441,6 +441,6 @@ $O(2^{-\text{poly}(n)})$, is $\#$P-hard because polynomial interpolation
 recovers all degeneracies $d_k$ from $O(\text{poly}(n))$ exact queries. Chapter
 8 proves both statements and quantifies the resulting precision gap.
 
-In the circuit model, Grover's algorithm reaches $\widetilde{O}(\sqrt{N/d_0})$ without pre-computing any spectral parameter. Oracle queries gather the needed information during execution. In the adiabatic framework, by contrast, the schedule is fixed before evolution starts, which forces NP-hard pre-computation. This asymmetry is not a proof artifact. It reflects a genuine model-level difference. The adiabatic speedup is real, but it is conditional on solving a hard preprocessing problem first \cite{braida2024unstructured}. Chapter 9 makes this tradeoff explicit through an uninformed-schedule separation, an interpolation theorem for partial information, and an adaptive measurement protocol that bypasses classical hardness.
+In the circuit model, Grover's algorithm reaches $\widetilde{O}(\sqrt{N/d_0})$ without pre-computing any spectral parameter. Oracle queries gather the needed information during execution. In the adiabatic framework, by contrast, the schedule is fixed before evolution starts, which forces NP-hard pre-computation. In our view, this asymmetry is not a proof artifact. It reflects a genuine model-level difference. The adiabatic speedup is real, but it is conditional on solving a hard preprocessing problem first \cite{braida2024unstructured}. Chapter 9 makes this tradeoff explicit through an uninformed-schedule separation, an interpolation theorem for partial information, and an adaptive measurement protocol that bypasses classical hardness.
 
 In the unstructured case, the limitation vanishes: $A_1 = (N-1)/N \approx 1$ is trivially known, so $s^* \approx 1/2$ requires no hard computation. The complexity arises only for problem Hamiltonians with rich spectral structure, where the degeneracies $d_k$ and energy gaps $E_k - E_0$ are not known in advance. The Ising Hamiltonian encoding an NP-hard problem is precisely such a case.
