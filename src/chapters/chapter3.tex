@@ -1,489 +1,572 @@
-Chapter 2 established the pressure point. Hard optimization can be encoded in
-energy language, but encoding does not by itself produce an algorithm. To say
-anything precise, one must fix a computational model and a resource measure.
+% Chapter 3 — Draft v1
+% Working title: The Search Frontier
+%
+% This chapter builds the quantum computational model from first principles
+% and derives the tight Theta(sqrt(N/d_0)) frontier for unstructured search.
+% Everything before Grover is here because Grover demands it. Everything
+% after Grover motivates the transition to adiabatic computation in Chapter 4.
 
-This chapter fixes that baseline in the circuit and query setting. It develops
-the finite-dimensional quantum formalism used throughout the thesis, defines the
-computational model, and establishes the unstructured-search frontier that later
-chapters must match or explain. The route is deliberate. First come states,
-measurement, and Hamiltonian dynamics. Then come circuits, oracles, and
-$\mathrm{BQP}$. Then comes Grover's algorithm as geometry in a two-dimensional
-subspace, followed by the BBBV lower bound that proves the quadratic speedup is
-optimal. Only after this baseline is closed does it make sense to turn to
-adiabatic computation.
+Chapter~2 translated combinatorial optimization into ground-state energy
+minimization. The translation is exact and natural: a cost function becomes a
+diagonal Hamiltonian, and the optimal solutions become its lowest-energy
+eigenstates. But a Hamiltonian that encodes an answer is not a procedure that
+finds it. For that, one needs a computational model with definite operations and
+countable resources.
 
-\section{Quantum Mechanics Essentials}
+Quantum mechanics provides such a model, and it provides it with a distinctive
+tension. A system of $n$ qubits carries $2^n$ complex amplitudes---an
+exponentially large internal description. Yet measurement returns a single
+sampled outcome, and the superposition that supported the computation is
+destroyed. The entire theory of quantum algorithms lives in the gap between what
+the system maintains privately and what it reveals upon observation. Bridging
+that gap for a specific computational task---arranging interference so that the
+measured outcome is likely to be useful---is what algorithm design amounts to.
+
+This chapter builds the computational baseline and derives its sharpest
+consequence for unstructured problems. The main result is a tight
+characterization: finding a marked item among $N$ unstructured alternatives has
+quantum query complexity $\Theta(\sqrt{N})$. Grover's algorithm achieves the
+upper bound; the lower bound of Bennett, Bernstein, Brassard, and Vazirani
+proves nothing can do better. That characterization is the floor against which
+every later adiabatic claim must be measured.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{States and Measurement}
 \label{sec:ch3-states-measurement}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The modern theory of quantum computation begins with a modeling tension. Feynman
-argued that generic quantum dynamics appears classically expensive to simulate
-\cite{Feynman1982}. Deutsch then gave a universal model of quantum computation
-\cite{Deutsch1985}. Shor and Grover later turned that modeling claim into explicit
-complexity separations \cite{Shor1997, Grover1996}.
-
-For this thesis, the operational lesson is simple. Any complexity claim is
-meaningful only after the computational model and its counted resources are fixed.
-Changing the model changes which lower bounds are provable.
-
-A pure state of a finite-dimensional closed quantum system is a unit vector
-$\ket{\psi}$ in a complex Hilbert space $\mathcal{H}$
-\cite{NielsenChuang2010, SakuraiNapolitano2017}. A single qubit uses
+The simplest quantum system distinguishes two states. Call them $\ket{0}$ and
+$\ket{1}$---a quantum bit, or qubit. The state space of a single qubit is
 \begin{equation}
 \label{eq:ch3-qubit-space}
 \mathcal{H}_1 = \mathbb{C}^2 = \mathrm{span}\{\ket{0},\ket{1}\}.
 \end{equation}
-For $n$ qubits,
+A qubit can be in either basis state, or in any normalized linear combination
+$\alpha\ket{0}+\beta\ket{1}$ with $|\alpha|^2+|\beta|^2=1$. The coefficients
+$\alpha$ and $\beta$ are complex numbers called amplitudes. Their squared moduli
+are probabilities, but the amplitudes themselves carry phase information that has
+no classical analogue and that will turn out to be the source of computational
+advantage.
+
+For $n$ qubits, the state space is the tensor product
 \begin{equation}
 \label{eq:ch3-nqubit-space}
-\mathcal{H}_n = (\mathbb{C}^2)^{\otimes n}, \qquad \dim \mathcal{H}_n = N=2^n.
+\mathcal{H}_n = (\mathbb{C}^2)^{\otimes n},
+\qquad
+\dim \mathcal{H}_n = N = 2^n.
 \end{equation}
-The computational basis is $\{\ket{x}:x\in\{0,1\}^n\}$, and every pure state has
-an amplitude expansion
+The computational basis is $\{\ket{x}: x\in\{0,1\}^n\}$, one vector for each
+binary string of length $n$. Every pure state of $n$ qubits admits an amplitude
+expansion
 \begin{equation}
 \label{eq:ch3-state-expansion}
-\ket{\psi} = \sum_{x\in\{0,1\}^n} \alpha_x\ket{x},
+\ket{\psi} = \sum_{x\in\{0,1\}^n} \alpha_x \ket{x},
 \qquad
 \sum_x |\alpha_x|^2 = 1.
 \end{equation}
-Dirac and von Neumann gave the canonical operator-state formalism used here
-\cite{Dirac1930, vonNeumann1955}.
+The normalization condition ensures that the amplitudes define a valid
+probability distribution upon measurement. Dirac and von~Neumann gave the
+canonical operator-state formalism used here~\cite{Dirac1930, vonNeumann1955};
+Nielsen and Chuang~\cite{NielsenChuang2010} provide a modern computational
+treatment.
 
-Composite systems introduce non-factorizable states. A bipartite state
-$\ket{\psi_{AB}}$ is entangled if no pair $(\ket{\psi_A},\ket{\psi_B})$ exists
-with
+Why does the state space grow exponentially? The answer lies in the
+tensor-product structure. A two-qubit system does not merely carry the state of
+qubit $A$ and the state of qubit $B$ side by side; it carries every possible
+correlation between them. Some of these correlations have no classical
+counterpart. A bipartite state $\ket{\psi_{AB}}$ is called entangled when it
+cannot be written as a product
 \begin{equation}
-\label{eq:ch3-entanglement-definition}
-\ket{\psi_{AB}} = \ket{\psi_A}\otimes\ket{\psi_B}.
+\label{eq:ch3-entanglement}
+\ket{\psi_{AB}} \neq \ket{\psi_A}\otimes\ket{\psi_B}
 \end{equation}
-Entanglement by itself is not a speedup theorem, but it expands the reachable
-space of correlations and therefore the algorithmic design space.
+for any choice of single-system states. The Bell state
+$(\ket{00}+\ket{11})/\sqrt{2}$ is the canonical example: measuring one qubit
+determines the outcome of measuring the other, regardless of spatial separation.
+Entanglement is not, by itself, a speedup theorem. But it expands the reachable
+space of correlations, and therefore the space of algorithmic strategies.
 
-Global phase is physically irrelevant:
+Not all features of a quantum state are physical. A global phase
+$e^{i\phi}$ multiplying the entire state vector is unobservable:
 \begin{equation}
 \label{eq:ch3-global-phase}
 \ket{\psi} \equiv e^{i\phi}\ket{\psi}.
 \end{equation}
-Relative phase is not. Interference depends on relative phase, and interference is
-where quantum algorithms get non-classical behavior.
+Relative phases between components are a different matter entirely. The states
+$(\ket{0}+\ket{1})/\sqrt{2}$ and $(\ket{0}-\ket{1})/\sqrt{2}$ produce
+identical statistics when measured in the $\{\ket{0},\ket{1}\}$ basis---each
+yields $0$ or $1$ with probability $1/2$---but they are perfectly
+distinguishable in the $\{\ket{+},\ket{-}\}$ basis. The sign between components
+is physical, and it is the mechanism through which quantum amplitudes interfere
+constructively or destructively. Interference is where quantum algorithms get
+their non-classical behavior, and relative phase is what makes interference
+possible.
 
-Measurement is represented by orthogonal projectors $\{P_m\}$ with
-$P_mP_{m'}=\delta_{m,m'}P_m$ and $\sum_m P_m = I$. The Born rule gives
+Measurement connects the amplitude world to observable outcomes. A projective
+measurement is specified by a collection of orthogonal projectors $\{P_m\}$
+satisfying $P_mP_{m'}=\delta_{m,m'}P_m$ and $\sum_m P_m = I$. The Born rule
+gives the probability of outcome $m$:
 \begin{equation}
 \label{eq:ch3-born-rule}
 \Pr[m] = \bra{\psi}P_m\ket{\psi}.
 \end{equation}
-For rank-one measurement onto $\ket{\phi}$,
+For a rank-one measurement onto some state $\ket{\phi}$, this simplifies to
 \begin{equation}
 \label{eq:ch3-born-rank-one}
-\Pr[\phi] = |\langle\phi|\psi\rangle|^2.
+\Pr[\phi] = |\langle\phi|\psi\rangle|^2,
 \end{equation}
-The post-measurement state for outcome $m$ is
-$P_m\ket{\psi}/\sqrt{\Pr[m]}$, when $\Pr[m]>0$.
+and the post-measurement state, conditioned on outcome $m$ occurring, is
+$P_m\ket{\psi}/\sqrt{\Pr[m]}$.
 
-Mixed states are represented by density operators
+The thesis works primarily with pure-state dynamics, but adiabatic evolution
+through a small gap can leak probability into excited states, making the
+pure-state description insufficient. The overlap
+$\bra{\psi(s)}P(s)\ket{\psi(s)}$ between the evolved state and the
+instantaneous ground-state projector---the central figure of merit in later
+chapters---generalizes naturally to mixed states. The appropriate description
+of a system that has interacted with an unmonitored environment is a density
+operator
 \begin{equation}
 \label{eq:ch3-density-operator}
 \rho = \sum_j p_j \ket{\psi_j}\bra{\psi_j},
-\qquad p_j\ge 0,\quad \sum_j p_j=1,
+\qquad p_j \geq 0, \quad \sum_j p_j = 1,
 \end{equation}
-with measurement rule
-\begin{equation}
-\label{eq:ch3-born-density}
-\Pr[m]=\Tr(P_m\rho).
-\end{equation}
-The thesis mostly analyzes pure-state dynamics, but later adiabatic error bounds
-are naturally expressed on $\rho(s)$.
+with measurement rule $\Pr[m]=\Tr(P_m\rho)$. Pure states correspond to
+$\rho = \ket{\psi}\bra{\psi}$ with $\Tr(\rho^2)=1$.
 
-Eqs.~\eqref{eq:ch3-state-expansion}--\eqref{eq:ch3-born-rank-one} already expose a
-critical computational constraint. Amplitudes are not directly readable classical
-data. A measurement returns one sampled outcome, not the full amplitude table.
-Algorithmic advantage therefore requires controlled interference before
-measurement.
+The Born rule has a computational consequence that deserves emphasis.
+Eq.~\eqref{eq:ch3-state-expansion} describes a vector with $2^n$ complex
+entries, but a computational-basis measurement returns a single sampled string
+$x$, drawn with probability $|\alpha_x|^2$. There is no physical operation that
+reads out the full amplitude table. A quantum computer is not a device that
+explores $2^n$ possibilities in parallel and then reports all the answers. It is
+a device that, through controlled unitary evolution, arranges constructive
+interference on desired outcomes and destructive interference on the rest---and
+then bets everything on a single measurement. Algorithmic advantage is the art
+of making that bet pay off with high probability.
 
-\section{Hamiltonians and Time Evolution}
-\label{sec:ch3-hamiltonians-dynamics}
 
-A Hamiltonian $H$ is Hermitian. Hermiticity guarantees real eigenvalues and an
-orthogonal eigenspace decomposition. In non-degenerate form,
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Dynamics}
+\label{sec:ch3-dynamics}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Between preparation and measurement, quantum mechanics is entirely
+deterministic. The state vector evolves by a norm-preserving rotation in Hilbert
+space---not a rotation in physical space, but a rotation in the abstract space of
+amplitudes. The generator of this rotation is the Hamiltonian.
+
+The fundamental single-qubit operators are the Pauli matrices
 \begin{equation}
-\label{eq:ch3-spectral-nondegenerate}
-H = \sum_j \lambda_j \ket{\phi_j}\bra{\phi_j},
+\label{eq:ch3-pauli}
+\sigma_x = \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix},
+\quad
+\sigma_y = \begin{pmatrix} 0 & -i \\ i & 0 \end{pmatrix},
+\quad
+\sigma_z = \begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix}.
 \end{equation}
-where each eigenpair satisfies
+Each is Hermitian, unitary, and has eigenvalues $\pm 1$. On an $n$-qubit
+system, $\sigma_\alpha^j$ denotes the Pauli-$\alpha$ operator acting on qubit
+$j$ with identity on all other qubits. Tensor products of Pauli operators
+generate the full algebra of observables on $\mathcal{H}_n$, and every
+Hamiltonian in this thesis---Ising couplings, diagonal cost functions,
+transverse-field drivers---is expressed in this language.
+
+A Hamiltonian $H$ is a Hermitian operator on $\mathcal{H}_n$. Hermiticity
+guarantees real eigenvalues and a complete orthonormal eigenbasis. The spectral
+decomposition reads
 \begin{equation}
-\label{eq:ch3-eigenpair-definition}
-H\ket{\phi_j}=\lambda_j\ket{\phi_j},
-\end{equation}
-and in projector form,
-\begin{equation}
-\label{eq:ch3-spectral-projectors}
+\label{eq:ch3-spectral-decomposition}
 H = \sum_k E_k P_k,
 \end{equation}
-where $P_k$ projects onto the eigenspace at energy $E_k$.
-The expected energy in state $\ket{\psi}$ is
-\begin{equation}
-\label{eq:ch3-energy-expectation}
-\langle H \rangle_\psi = \bra{\psi}H\ket{\psi}.
-\end{equation}
-For any sufficiently regular scalar function $f$, spectral calculus gives
-\begin{equation}
-\label{eq:ch3-spectral-calculus}
-f(H)=\sum_k f(E_k)P_k,
-\end{equation}
-which yields $e^{-itH}=\sum_k e^{-itE_k}P_k$ as the time-evolution operator in
-the eigenbasis.
+where $P_k$ projects onto the eigenspace at energy $E_k$, with
+$P_kP_{k'}=\delta_{k,k'}P_k$ and $\sum_k P_k = I$. In non-degenerate form,
+this becomes $H=\sum_j \lambda_j\ket{\phi_j}\bra{\phi_j}$ with
+$H\ket{\phi_j}=\lambda_j\ket{\phi_j}$. The spectral decomposition immediately
+yields a natural operator norm: $\|H\| = \max_k |E_k|$, the largest
+eigenvalue in absolute value.
 
-For optimization language, order distinct energies as
-$E_0<E_1<\cdots$. The ground energy is $E_0$, and the first spectral gap is
-\begin{equation}
-\label{eq:ch3-static-gap}
-\Delta = E_1 - E_0.
-\end{equation}
-If ground space is degenerate with dimension $d_0$, write its projector as
+Two quantities from this decomposition will recur throughout the thesis. Order
+the distinct eigenvalues as $E_0 < E_1 < \cdots$. The ground energy $E_0$ is
+the smallest eigenvalue; if the ground space is $d_0$-fold degenerate, its
+projector is
 \begin{equation}
 \label{eq:ch3-ground-projector}
 P_0 = \sum_{j=1}^{d_0} \ket{\phi_{0,j}}\bra{\phi_{0,j}}.
 \end{equation}
-Later adiabatic success statements are naturally written as overlap with $P_0$,
-not with a single selected vector.
-
-Closed-system dynamics follows the Schrodinger equation (units $\hbar=1$). For
-constant $H$,
+The spectral gap is the distance from the ground level to the first excited
+level:
 \begin{equation}
-\label{eq:ch3-schrodinger-static}
+\label{eq:ch3-spectral-gap}
+\Delta = E_1 - E_0.
+\end{equation}
+For now, $\Delta$ is a property of a single static Hamiltonian. In the adiabatic
+setting of Chapter~4, the Hamiltonian varies with a schedule parameter $s$, and
+the relevant quantity becomes $g(s) = E_1(s)-E_0(s)$ along the full
+interpolation path. The distinction between a static gap and a path-dependent
+gap profile is where much of the later complexity resides.
+
+The spectral decomposition extends to a functional calculus: for any function
+$f$ defined on the spectrum,
+\begin{equation}
+\label{eq:ch3-spectral-calculus}
+f(H) = \sum_k f(E_k)\,P_k.
+\end{equation}
+Setting $f(E)=E$ gives the energy expectation
+$\langle H \rangle_\psi = \sum_k E_k\bra{\psi}P_k\ket{\psi}$. Setting
+$f(E)=e^{-iEt}$ produces the time-evolution operator. The spectral projections
+$P_k$ themselves reappear in adiabatic error bounds, where the overlap between
+the evolving state and the instantaneous ground projector is the central
+diagnostic.
+
+When a Hamiltonian depends on a parameter $\lambda$, the spectral
+decomposition gives eigenvalue derivatives without differentiating
+eigenvectors. If $E_k(\lambda)$ is a non-degenerate eigenvalue with eigenstate
+$\ket{\phi_k(\lambda)}$, the Hellmann--Feynman theorem states
+\begin{equation}
+\label{eq:ch3-hellmann-feynman}
+\frac{dE_k}{d\lambda}
+= \bra{\phi_k(\lambda)}\frac{\partial H}{\partial\lambda}\ket{\phi_k(\lambda)}.
+\end{equation}
+The eigenvalue derivative is the expectation value of the Hamiltonian
+derivative in the current eigenstate. For the adiabatic Hamiltonians of
+Chapter~4, $\lambda$ is the schedule parameter $s$, and
+Eq.~\eqref{eq:ch3-hellmann-feynman} converts spectral gap derivatives into
+matrix elements of the fixed operator $H_z - H_0$.
+
+Closed-system dynamics obeys the Schr\"{o}dinger equation. In units where
+$\hbar=1$, a time-independent Hamiltonian generates
+\begin{equation}
+\label{eq:ch3-schrodinger}
 i\frac{d}{dt}\ket{\psi(t)} = H\ket{\psi(t)},
 \end{equation}
 with solution
 \begin{equation}
-\label{eq:ch3-unitary-solution}
-\ket{\psi(t)} = U(t)\ket{\psi(0)}, \qquad U(t)=e^{-itH}.
+\label{eq:ch3-unitary-evolution}
+\ket{\psi(t)} = U(t)\ket{\psi(0)},
+\qquad
+U(t) = e^{-iHt} = \sum_k e^{-iE_k t}\,P_k.
 \end{equation}
-Unitarity,
+The operator $U(t)$ is unitary, $U^\dagger U = I$, which is exactly the
+statement that total measurement probability is preserved. Unitarity is to
+quantum dynamics what conservation of probability is to classical stochastic
+processes, except that it acts on amplitudes rather than probabilities, and
+therefore permits interference.
+
+When the Hamiltonian varies in time, the solution involves a time-ordered
+exponential:
 \begin{equation}
-\label{eq:ch3-unitary-condition}
-U^\dagger U = I,
+\label{eq:ch3-time-ordered}
+\ket{\psi(t)} = \mathcal{T}\exp\!\left(-i\int_0^t H(\tau)\,d\tau\right)
+\ket{\psi(0)}.
 \end{equation}
-is exactly the algebraic statement that total probability is preserved during
-closed-system evolution.
-For time-dependent $H(t)$,
-\begin{equation}
-\label{eq:ch3-schrodinger-time-dependent}
-i\frac{d}{dt}\ket{\psi(t)} = H(t)\ket{\psi(t)},
-\end{equation}
-with formal propagator
-\begin{equation}
-\label{eq:ch3-time-ordered-propagator}
-\ket{\psi(t)} = \mathcal{T}\exp\!\left(-i\int_0^t H(\tau)\,d\tau\right)\ket{\psi(0)}.
-\end{equation}
+The time ordering $\mathcal{T}$ is necessary because $H(\tau_1)$ and
+$H(\tau_2)$ need not commute at different times. For adiabatic algorithms,
+$H(t)$ interpolates slowly between an initial Hamiltonian whose ground state is
+easy to prepare and a final Hamiltonian whose ground state encodes the answer.
+The relevant question will be how slowly the interpolation must proceed to keep
+the evolving state near the instantaneous ground state.
 
-Two remarks now prevent confusion later. First, adding $cI$ to $H$ shifts all
-energies but does not change eigenvectors. Second, this shift contributes only a
-global phase under unitary evolution. Measured probabilities are unchanged.
-Normalization choices such as setting a ground energy to zero are therefore
-computationally harmless.
+Two normalizations deserve mention now to prevent confusion later. Adding a
+constant $cI$ to any Hamiltonian shifts all energy levels by $c$ without
+changing eigenvectors, the spectral gap, or any transition amplitude. Under
+unitary evolution, this shift contributes only a global phase $e^{-ict}$, which
+is physically unobservable. Setting the ground energy to zero is therefore a
+computationally harmless convention, used freely in the chapters that follow.
 
-Finally, distinguish static and path-dependent gaps carefully. Eq.~\eqref{eq:ch3-static-gap}
-defines a static spectral gap of one Hamiltonian. In adiabatic evolution,
-$H=H(s)$ varies with schedule parameter $s$, and the relevant quantity becomes
-$g(s)=\lambda_1(s)-\lambda_0(s)$ along the full path.
 
-\section{Why Quantum Helps}
-\label{sec:ch3-speedup-mechanisms}
-
-At this point, the right question is not whether quantum mechanics is
-``powerful'' in general. The right question is which mechanism a specific
-algorithm exploits and how that mechanism is certified by a complexity bound.
-For unstructured search, the mechanism is constructive interference in a
-two-dimensional invariant subspace. For Shor's algorithm, it is Fourier
-structure over periodicity. Different speedups come from different structures.
-
-Superposition alone is not a speedup theorem. Entanglement alone is not a
-speedup theorem. Both enlarge state geometry, but complexity gains still require
-a unitary process that maps problem structure to measurable amplitude
-separation. This is why query lower bounds are indispensable. They separate
-what is physically expressible from what is information-theoretically learnable
-with bounded resources.
-
-Tunneling is often discussed in optimization contexts, especially for adiabatic
-and annealing dynamics. It can help in specific barrier profiles, but broad
-claims of generic optimization advantage from tunneling alone are not proved.
-This thesis therefore tracks only quantities that support explicit theorems:
-oracle/query complexity in this chapter, then spectral gaps, schedules, and
-adiabatic error bounds in Chapters 4--9.
-
-\section{Circuits and Query Complexity}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The Circuit Model}
 \label{sec:ch3-circuit-model}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-In the gate model, an algorithm is a uniform family of circuits over a universal
-gate set. Barenco et al.~established standard finite universal gate constructions
-\cite{Barenco1995}, and Bernstein-Vazirani formalized complexity in terms of
-uniform circuit families \cite{BernsteinVazirani1997}. Uniformity means there is
-a classical polynomial-time procedure that outputs the circuit for input length
-$n$. Complexity is then measured by resources such as size, depth, and ancilla
-count as functions of $n$.
+Quantum mechanics provides the physical substrate. To do computer science with
+it, one needs a formal model of computation---a specification of what counts as
+an algorithm, what counts as a step, and what counts as efficient. The circuit
+model serves this role for quantum computation, just as the Turing machine
+serves it for classical computation.
 
-The choice of finite universal gate set does not change the complexity class.
-Solovay-Kitaev type compilation guarantees polylogarithmic overhead in target
-precision for approximating unitaries, so $\mathrm{BQP}$ is robust under standard
-gate-set choices \cite{KitaevShenVyalyi2002, DawsonNielsen2006}.
+A quantum circuit is a sequence of elementary unitary operations, called gates,
+drawn from a finite set. Each gate acts on one or two qubits; universality means
+that any unitary on $n$ qubits can be approximated to arbitrary precision by a
+sufficiently long sequence of such gates. Barenco et~al.\ established that the
+controlled-NOT gate together with arbitrary single-qubit rotations form a
+universal set~\cite{Barenco1995}. The Solovay-Kitaev theorem guarantees that the
+overhead of approximating a target unitary to precision $\varepsilon$ is only
+polylogarithmic in $1/\varepsilon$, so the choice of finite gate set does not
+affect the complexity class~\cite{KitaevShenVyalyi2002, DawsonNielsen2006}.
 
-A schematic $T$-query quantum algorithm for oracle $f$ has the interleaved form
-\begin{equation}
-\label{eq:ch3-query-interleaving}
-\ket{\psi^{(T)}} = U_T O_f U_{T-1} O_f \cdots O_f U_1 O_f U_0\ket{0^m},
-\end{equation}
-where $U_j$ are input-independent unitaries and $O_f$ carries the instance
-information. This is the fixed-oracle primitive. Optimization algorithms that use
-threshold updates run this primitive repeatedly with different oracles
-$O_{f_\tau}$ across outer-loop iterations.
+The complexity class $\mathrm{BQP}$ (bounded-error quantum polynomial time)
+captures what polynomial-size quantum circuits can decide with high confidence.
+A promise problem is a pair $(L_{\mathrm{yes}},L_{\mathrm{no}})$ of disjoint
+subsets of $\{0,1\}^*$; the promise is that inputs come from
+$L_{\mathrm{yes}}\cup L_{\mathrm{no}}$, and behavior on other inputs is
+unconstrained. A promise problem is in $\mathrm{BQP}$ if there exists a uniform
+family of polynomial-size quantum circuits that accepts every
+$x\in L_{\mathrm{yes}}$ with probability at least $2/3$ and rejects every
+$x\in L_{\mathrm{no}}$ with probability at least $2/3$. Uniformity means a
+classical polynomial-time algorithm can output the circuit description for input
+length $n$. The constant $2/3$ is conventional: standard repetition with
+majority vote amplifies success probability to $1-2^{-p(n)}$ for any polynomial
+$p$~\cite{BernsteinVazirani1997, Watrous2009}.
 
-For a function family $f_n$, bounded-error quantum query complexity $Q_2(f_n)$ is
-the minimum number of oracle calls in any algorithm of the form
-Eq.~\eqref{eq:ch3-query-interleaving} that succeeds with probability at least
-$2/3$ on every valid input of size $n$. Classical randomized query complexity
-$R_2(f_n)$ is defined analogously with randomized decision trees
-\cite{arora2009computational, NielsenChuang2010}.
+Promise formulations are more than a technicality. Optimization problems
+naturally arrive as promise problems, and the adiabatic results of later
+chapters are stated in this form. For orientation in the complexity landscape:
+$\mathrm{P}\subseteq\mathrm{BQP}\subseteq\mathrm{PSPACE}$, with the
+intermediate inclusion passing through
+$\mathrm{PP}$~\cite{BernsteinVazirani1997, Watrous2009}. Whether any of these
+containments is strict remains open, and for this thesis the relevant point is
+simply that $\mathrm{BQP}$ is a well-defined class with known relationships to
+classical complexity.
 
-This separation is deliberate. Query complexity isolates information acquisition.
-Gate complexity measures full implementation cost. The thesis uses this query
-frontier as a baseline because Chapter 5 opens with unstructured optimization in
-that exact black-box sense.
-
-The complexity class $\mathrm{BQP}$ contains promise problems solvable by uniform
-polynomial-size quantum circuits with bounded two-sided error. This definition is
-due to Bernstein-Vazirani \cite{BernsteinVazirani1997}; Watrous and Arora-Barak
-provide standard modern treatments \cite{Watrous2009, arora2009computational}. A
-promise problem is a pair $(L_{\mathrm{yes}},L_{\mathrm{no}})$ with
-$L_{\mathrm{yes}}\cap L_{\mathrm{no}}=\varnothing$. A
-$\mathrm{BQP}$ algorithm must accept $x\in L_{\mathrm{yes}}$ with probability at
-least $2/3$ and reject $x\in L_{\mathrm{no}}$ with probability at least $2/3$.
-Standard repetition and majority vote reduce error exponentially, so the constant
-$2/3$ is conventional.
-Promise formulations are not a technicality. They let us state complexity on the
-physically relevant input domain while leaving behavior unconstrained off-promise.
-
-For orientation in the complexity landscape,
-$\mathrm{P}\subseteq\mathrm{BQP}\subseteq\mathrm{PSPACE}$, with a standard route
-through $\mathrm{BQP}\subseteq\mathrm{PP}\subseteq\mathrm{PSPACE}$
-\cite{BernsteinVazirani1997, Watrous2009}. These inclusions are known; strictness
-relations remain open.
-
-One distinction is worth fixing now. $\mathrm{BQP}$ is a decision-class notion
-for promise problems. Minimum finding is an optimization task. The bridge is
-threshold reduction: optimization is solved by repeated decision queries of the
-form ``is there any item with cost at most $\tau$?'' This reduction is the
-reason query-optimal search bounds transfer directly to unstructured minimum
-finding.
-Operationally, the decision primitive is
-\[
-D_\tau(C) = \mathbf{1}\!\left[\exists x,\ C(x)\le \tau\right].
-\]
-Optimization then becomes threshold management plus calls to $D_\tau$.
-
-\section{Unstructured Optimization in the Oracle Model}
-\label{sec:ch3-oracle-unstructured}
-
-For a Boolean oracle $f:\{0,1\}^n\to\{0,1\}$, the standard query action is
+Many of the sharpest results in quantum algorithms are proved not in the full
+circuit model but in a restriction that isolates information acquisition from
+computational overhead. In the query model, an algorithm accesses the problem
+instance only through calls to an oracle $O_f$, and the counted resource is the
+number of such calls. For a Boolean oracle
+$f:\{0,1\}^n\to\{0,1\}$, the standard query acts as
 \begin{equation}
 \label{eq:ch3-standard-oracle}
-O_f\ket{x,y} = \ket{x, y\oplus f(x)}.
+O_f\ket{x,y} = \ket{x,\, y\oplus f(x)}.
 \end{equation}
-An equivalent phase-oracle form is
+An equivalent phase-oracle form, obtained by preparing the target register in
+the $\ket{-}$ state, acts as
 \begin{equation}
 \label{eq:ch3-phase-oracle}
 O_f\ket{x} = (-1)^{f(x)}\ket{x}.
 \end{equation}
-These forms are interconvertible with one ancilla, so lower and upper bounds
-transfer between them.
+These forms are interconvertible with one ancilla qubit, so lower bounds and
+upper bounds transfer freely between them.
 
-Unstructured search asks for a marked input in a set
-$W\subseteq\{0,1\}^n$ of size $d_0\ge 1$, given only oracle access.
-Unstructured minimum finding asks for
-$x^\star\in\arg\min_x C(x)$ for a black-box cost function
-$C:\{0,1\}^n\to\mathbb{R}$ with no promised exploitable structure.
-By contrast, structured optimization provides additional representation-level
-regularity, such as locality, sparsity, algebraic constraints, or graph
-symmetry, that can be exploited algorithmically. The unstructured model used for
-Grover and BBBV deliberately removes that advantage.
-
-The word ``unstructured'' names the information model, not the computational
-paradigm. In the circuit model, one accesses the instance through oracle queries.
-In adiabatic optimization, one accesses it through the diagonal energy map
-$z\mapsto E_z$ of $H_z$, with no additional promised regularity such as locality,
-sparsity, or exploitable algebraic pattern. The two models
-therefore enforce the same absence of exploitable structure through different
-physical primitives.
-In worst-case formulations, no generic advantage can rely on basis labels
-themselves. Only permutation-invariant summaries, such as the number of marked
-states, are available to all algorithms \cite{bennett1997strengths}.
-
-The reductions between these tasks are explicit. Search reduces to optimization by
+A $T$-query quantum algorithm has the interleaved structure
 \begin{equation}
-\label{eq:ch3-search-to-min}
-C_f(x) = 1-f(x),
+\label{eq:ch3-query-algorithm}
+\ket{\psi^{(T)}} = U_T\, O_f\, U_{T-1}\, O_f \cdots O_f\, U_1\, O_f\, U_0
+\ket{0^m},
 \end{equation}
-so minimizers are exactly marked items. Optimization reduces to threshold search
-with
+where the $U_j$ are input-independent unitaries and $O_f$ carries the instance
+information. The bounded-error quantum query complexity $Q_2(f_n)$ is the
+minimum $T$ over all algorithms of this form that succeed with probability at
+least $2/3$ on every valid input of size $n$. The classical randomized query
+complexity $R_2(f_n)$ is defined analogously with randomized decision
+trees~\cite{arora2009computational, NielsenChuang2010}.
+
+Query complexity isolates information-theoretic content from computational
+overhead. When a query lower bound holds, it holds regardless of how cleverly
+the intermediate unitaries $U_j$ are designed. No circuit-level ingenuity can
+circumvent an information-theoretic barrier. This is why the Grover frontier,
+proved in the query model, is so robust.
+
+One further connection completes the bridge from decision to optimization. Given
+a cost function $C:\{0,1\}^n\to\mathbb{R}$ accessed by oracle, define the
+threshold decision problem
 \begin{equation}
-\label{eq:ch3-min-to-search}
-f_\tau(x) = \mathbf{1}[C(x)\le \tau].
+\label{eq:ch3-threshold-decision}
+D_\tau(C) = \mathbf{1}[\exists\, x:\, C(x) \leq \tau].
 \end{equation}
-Durr and Hoyer use this threshold view with Grover subroutines to obtain
-minimum finding in
+Optimization---finding $\arg\min_x C(x)$---reduces to repeated calls to
+$D_\tau$ with varying threshold $\tau$. D\"{u}rr and H{\o}yer exploited this
+reduction with Grover subroutines, achieving unstructured minimum finding in
+$\Theta(\sqrt{N/d_0})$ queries, where $d_0$ is the number of minimizers
+\cite{durr1996quantum, BBHT1998, BrassardHoyerMoscaEtAl2002}. The query
+complexity of unstructured search therefore transfers directly to unstructured
+optimization. The underlying primitive is amplitude estimation: given a quantum
+subroutine whose output qubit has probability $p$ of being measured as
+$\ket{1}$, the algorithm of Brassard, H{\o}yer, Mosca, and Tapp estimates $p$
+to additive precision $\varepsilon$ using $O(1/\varepsilon)$ applications of
+the subroutine and its inverse, quadratically faster than the
+$O(1/\varepsilon^2)$ samples required
+classically~\cite{BrassardHoyerMoscaEtAl2002}.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Grover's Algorithm}
+\label{sec:ch3-grover}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Strip away all structure. A Boolean function $f:\{0,1\}^n\to\{0,1\}$ marks a
+subset $W\subseteq\{0,1\}^n$ of solutions, and the goal is to find any
+$x\in W$ using as few oracle queries as possible. No regularity in the labels is
+promised or assumed. Classically, the best one can do is query inputs one by
+one; with $|W|=d_0$ solutions among $N=2^n$ candidates, the expected number of
+queries is $\Theta(N/d_0)$. Grover showed that a quantum algorithm needs only
+$\Theta(\sqrt{N/d_0})$, a quadratic improvement driven by a genuinely quantum
+mechanism~\cite{Grover1996}.
+
+The mechanism is geometric, and it unfolds in a two-dimensional subspace of the
+full $N$-dimensional Hilbert space. This is the essential surprise: a problem
+defined on $2^n$ items reduces to a rotation in the plane.
+
+Define the normalized marked and unmarked superpositions
 \begin{equation}
-\label{eq:ch3-durr-hoyer-runtime}
-\Theta\!\left(\sqrt{\frac{N}{d_0}}\right)
-\end{equation}
-queries up to failure-amplification factors \cite{durr1996quantum, BBHT1998,
-BrassardHoyerMoscaEtAl2002}.
-
-This is the baseline Chapter 5 invokes. In the circuit-query model, unstructured
-optimization already has a sharp exponent.
-
-\section{Grover as Geometry}
-\label{sec:ch3-grover-geometry}
-
-Let $W$ be the marked set with size $d_0$. Define normalized marked and unmarked
-superpositions
-\begin{equation}
-\label{eq:ch3-marked-unmarked-states}
+\label{eq:ch3-marked-unmarked}
 \ket{w} = \frac{1}{\sqrt{d_0}}\sum_{x\in W}\ket{x},
 \qquad
 \ket{r} = \frac{1}{\sqrt{N-d_0}}\sum_{x\notin W}\ket{x}.
 \end{equation}
-The uniform superposition is
+These are orthogonal unit vectors spanning a two-dimensional subspace
+$\mathcal{V}=\mathrm{span}\{\ket{w},\ket{r}\}$. The uniform superposition over
+all basis states decomposes in $\mathcal{V}$ as
 \begin{equation}
-\label{eq:ch3-uniform-state-decomposition}
-\ket{s}=\frac{1}{\sqrt{N}}\sum_x\ket{x}
-=\sin\theta\,\ket{w}+\cos\theta\,\ket{r},
+\label{eq:ch3-uniform-decomposition}
+\ket{s}
+= \frac{1}{\sqrt{N}}\sum_x\ket{x}
+= \sin\theta\,\ket{w}+\cos\theta\,\ket{r},
 \qquad
-\sin\theta=\sqrt{\frac{d_0}{N}}.
+\sin\theta = \sqrt{\frac{d_0}{N}}.
 \end{equation}
-The dynamics closes on
-$\mathrm{span}\{\ket{w},\ket{r}\}$.
+When $d_0 \ll N$, the angle $\theta$ is small: the initial state $\ket{s}$ is
+nearly orthogonal to the target $\ket{w}$, tilted toward it by an angle of
+order $\sqrt{d_0/N}$.
 
-Grover's iterate is a product of two reflections,
+The oracle provides a phase-flip on marked states, which in
+$\mathcal{H}_n$ is a reflection through the hyperplane orthogonal to $\ket{w}$:
+\begin{equation}
+\label{eq:ch3-oracle-reflection}
+O_w = I - 2\ket{w}\bra{w}.
+\end{equation}
+Grover's iterate combines this oracle reflection with a reflection through the
+initial state:
 \begin{equation}
 \label{eq:ch3-grover-iterate}
-G=(2\ket{s}\bra{s}-I)(I-2\ket{w}\bra{w}),
-\end{equation}
-which is a rotation by angle $2\theta$ in that plane. In basis
-$(\ket{w},\ket{r})$,
-\begin{equation}
-\label{eq:ch3-grover-matrix}
-G=
-\begin{pmatrix}
-\cos 2\theta & \sin 2\theta\\
--\sin 2\theta & \cos 2\theta
-\end{pmatrix}.
-\end{equation}
-Hence
-\begin{equation}
-\label{eq:ch3-grover-k-step}
-G^k\ket{s} = \sin((2k+1)\theta)\ket{w}+\cos((2k+1)\theta)\ket{r},
-\end{equation}
-so success probability is
-$\sin^2((2k+1)\theta)$.
-
-The same operation has a circuit decomposition: one oracle reflection and one
-diffusion reflection per iteration. Writing
-\begin{equation}
-\label{eq:ch3-grover-oracle-diffusion}
-O_w = I-2\ket{w}\bra{w},
+G = D\,O_w,
 \qquad
-D = 2\ket{s}\bra{s}-I,
+D = 2\ket{s}\bra{s}-I.
 \end{equation}
-the iterate is $G=DO_w$. The algorithm is therefore a repeated application of a
-fixed two-block circuit.
-The diffusion operator itself can be written as
+The diffusion operator $D$ is itself implementable as
+$H^{\otimes n}(2\ket{0^n}\bra{0^n}-I)H^{\otimes n}$, so each application of
+$G$ costs one oracle query and $O(n)$ elementary gates.
+
+A product of two reflections in a plane is a rotation by twice the angle between
+their reflection axes. In the basis $(\ket{w},\ket{r})$, the iterate acts as
 \begin{equation}
-\label{eq:ch3-diffusion-hadamard-form}
-D = H^{\otimes n}\left(2\ket{0^n}\bra{0^n}-I\right)H^{\otimes n},
+\label{eq:ch3-grover-rotation}
+G = \begin{pmatrix}
+\cos 2\theta & \sin 2\theta \\
+-\sin 2\theta & \cos 2\theta
+\end{pmatrix},
 \end{equation}
-which is the form implemented in gate-level circuits.
-
-Choosing
+rotating the state toward $\ket{w}$ by $2\theta$ per application. After $k$
+iterations,
 \begin{equation}
-\label{eq:ch3-grover-optimal-k}
-k^*\approx \left\lfloor\frac{\pi}{4\theta}-\frac{1}{2}\right\rfloor
+\label{eq:ch3-grover-k-iterations}
+G^k\ket{s}
+= \sin\bigl((2k+1)\theta\bigr)\,\ket{w}
++ \cos\bigl((2k+1)\theta\bigr)\,\ket{r},
 \end{equation}
-maximizes success. For $d_0\ll N$, $\theta\sim\sqrt{d_0/N}$, giving
+so the probability of observing a marked item is
+$\sin^2\!\bigl((2k+1)\theta\bigr)$. This reaches its first maximum near $1$
+when $(2k+1)\theta \approx \pi/2$, giving an optimal iteration count of
 \begin{equation}
-\label{eq:ch3-grover-runtime}
-Q_{\mathrm{Grover}}=\Theta\!\left(\sqrt{\frac{N}{d_0}}\right)
+\label{eq:ch3-optimal-k}
+k^* \approx \left\lfloor\frac{\pi}{4\theta} - \frac{1}{2}\right\rfloor.
 \end{equation}
-queries \cite{Grover1996, BBHT1998, BrassardHoyerMoscaEtAl2002}.
-When $d_0$ is unknown, BBHT-style randomized iteration schedules retain the same
-asymptotic scaling in expectation while preserving bounded-error success
-\cite{BBHT1998}.
-For the one-solution case $d_0=1$, this reduces to
-$k^*=\lfloor(\pi/4)\sqrt{N}\rfloor+O(1)$ queries.
-
-The geometric point matters for this thesis beyond Chapter 3. A large Hilbert
-space can still reduce to an effective two-level dynamics controlling runtime.
-Chapter 5 uses the same structural motif at the avoided crossing of adiabatic
-interpolation.
-
-\section{Why Grover Is Optimal}
-\label{sec:ch3-bbbv-optimality}
-
-The query lower bound of Bennett, Bernstein, Brassard, and Vazirani (BBBV) states
-that unstructured search requires
+For $d_0\ll N$, $\theta\approx\sqrt{d_0/N}$, and $k^* =
+\Theta(\sqrt{N/d_0})$. Each iteration uses one query, so the total query
+complexity is
 \begin{equation}
-\label{eq:ch3-bbbv-lower-bound}
-\Omega\!\left(\sqrt{\frac{N}{d_0}}\right)
+\label{eq:ch3-grover-complexity}
+Q_{\mathrm{Grover}} = \Theta\!\left(\sqrt{\frac{N}{d_0}}\right).
 \end{equation}
-queries for bounded-error success \cite{bennett1997strengths}. For $d_0=1$, this
-is $\Omega(\sqrt{N})$.
+When $d_0$ is unknown in advance, Boyer, Brassard, H{\o}yer, and Tapp showed
+that a randomized schedule of iteration counts achieves the same asymptotic
+scaling in expectation~\cite{BBHT1998}.
 
-A useful proof intuition is hybrid distinguishability growth. Compare final states
-under nearby oracles. Let $\ket{\psi_T^{(w)}}$ be the final state when the marked
-set is $\{w\}$, and let $\ket{\psi_T^{(0)}}$ be the final state for the null
-oracle (no marked item). One query changes average distinguishability by at most a
-controlled amount, so after $T$ queries,
+The two-dimensional picture deserves a moment of reflection, because it is a
+structural motif that will reappear in a different guise. A problem defined over
+$2^n$ basis states might seem to require $2^n$-dimensional analysis. But the
+symmetry of the unstructured oracle---treating all marked items equally and all
+unmarked items equally---collapses the relevant dynamics to a plane. The full
+Hilbert space serves as a stage, but only two directions participate in the
+performance. The runtime is determined entirely by the angular geometry in
+$\mathcal{V}$: how far the initial state is from the target, and how fast the
+iterate rotates.
+
+The same dimensional reduction occurs in adiabatic search. In Chapter~4, the
+avoided crossing between the two lowest energy levels of an interpolating
+Hamiltonian plays the role that $\mathrm{span}\{\ket{w},\ket{r}\}$ plays here.
+The minimum spectral gap at the crossing replaces the angle $\theta$. The local
+schedule speed replaces the iteration count. The structural lesson is the same:
+effective low-dimensional dynamics, embedded in an exponentially large state
+space, controls the computational outcome.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The Search Frontier}
+\label{sec:ch3-search-frontier}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Grover's algorithm demonstrates that $\sqrt{N/d_0}$ queries suffice for
+unstructured search. The natural question is whether a cleverer algorithm could
+use fewer. Bennett, Bernstein, Brassard, and Vazirani showed that it
+cannot~\cite{bennett1997strengths}.
+
+The argument rests on a hybrid distinguishability bound. Consider a quantum
+algorithm that makes $T$ queries to a single-marked-item oracle. Let
+$\ket{\psi_T^{(w)}}$ denote the algorithm's final state when item $w$ is
+marked, and let $\ket{\psi_T^{(\varnothing)}}$ denote the final state under the
+null oracle, which marks nothing. Each oracle query perturbs the state by an
+amount that depends on how much amplitude currently sits on the queried location.
+A careful accounting of these perturbations, averaged over all possible marked
+items, yields the bound
 \begin{equation}
-\label{eq:ch3-hybrid-bound}
-\frac{1}{N}\sum_{w\in[N]}
-\left\|\ket{\psi_T^{(w)}}-\ket{\psi_T^{(0)}}\right\|_2
+\label{eq:ch3-bbbv-bound}
+\frac{1}{N}\sum_{w=1}^{N}
+\left\|\ket{\psi_T^{(w)}}-\ket{\psi_T^{(\varnothing)}}\right\|
 \leq \frac{2T}{\sqrt{N}}.
 \end{equation}
-When $T\ll \sqrt{N}$, the average distance remains $o(1)$, so the final states do
-not separate enough for any measurement to identify the marked oracle with
-constant bias. Constant success therefore needs $T=\Omega(\sqrt{N})$.
-The same argument with $d_0$ marked items yields
-$\Omega(\sqrt{N/d_0})$ up to constants. Nayak and Wu provide a complementary
-polynomial-method perspective on related bounds \cite{NayakWu1999}.
+The right-hand side grows linearly in $T$. When $T \ll \sqrt{N}$, it remains
+$o(1)$: the average distance between the final state under a random
+single-marked oracle and the final state under the null oracle is negligible. In
+this regime, no measurement can reliably distinguish the two cases, because
+states that are close in norm produce nearly identical measurement statistics.
+For an algorithm to identify the marked item with constant success probability,
+the final states must be well separated, forcing $T = \Omega(\sqrt{N})$.
 
-Combining Eq.~\eqref{eq:ch3-grover-runtime} with
-Eq.~\eqref{eq:ch3-bbbv-lower-bound} gives the exact frontier in the unstructured
-query model:
+The extension to $d_0 > 1$ marked items follows by a standard averaging
+argument, yielding $\Omega(\sqrt{N/d_0})$. Nayak and Wu give a complementary
+polynomial-method perspective on related bounds~\cite{NayakWu1999}.
+
+Combining the upper bound from Grover with the BBBV lower bound closes the
+frontier for unstructured quantum search:
 \begin{equation}
-\label{eq:ch3-optimal-frontier}
-Q_{\mathrm{search}} = \Theta\!\left(\sqrt{\frac{N}{d_0}}\right).
+\label{eq:ch3-search-frontier}
+Q_{\mathrm{search}}
+= \Theta\!\left(\sqrt{\frac{N}{d_0}}\right).
 \end{equation}
-This is not merely a known algorithm. It is a closed asymptotic frontier.
+This is not merely a known algorithm paired with a known lower bound. It is a
+tight asymptotic characterization: the quantum query complexity of unstructured
+search is determined up to constant factors, and no future algorithm can improve
+the exponent.
 
-The same exponent appears in continuous-time query models. Farhi, Goldstone, and
-Gutmann proved an $\Omega(\sqrt{N/d_0})$ lower bound for unstructured adiabatic
-search with a rank-one projector driver \cite{farhi2008fail}. This is the formal
-bridge to Chapter 4. Changing the implementation from discrete queries to
-Hamiltonian evolution does not remove the unstructured lower-bound barrier.
+The same $\Omega(\sqrt{N})$ barrier survives the transition from discrete
+queries to continuous-time Hamiltonian evolution. Farhi, Goldstone, and Gutmann
+proved that any adiabatic algorithm using a rank-one projector driver---the
+driver $H_0 = -\ket{\psi_0}\bra{\psi_0}$ used throughout Chapter~4---for
+unstructured search requires time $\Omega(\sqrt{N/d_0})$, matching the BBBV
+bound in the circuit-query model~\cite{farhi2008fail}. Changing the physical
+implementation from gates to Hamiltonians does not remove the
+information-theoretic barrier.
 
-\section{Scope and Transition}
-\label{sec:ch3-scope-transition}
+What does the word ``unstructured'' mean across these two settings? In the
+circuit model, it means black-box oracle access: the only way to learn about
+$f$ is to query it, and no exploitable regularity in the labels is promised or
+assumed. In the adiabatic model, it means that the problem Hamiltonian is a
+diagonal cost map $z \mapsto E_z$ with no additional promised structure---no
+locality, sparsity, or algebraic pattern that an algorithm could exploit. The two
+models enforce the same absence of exploitable information through different
+physical primitives.
 
-This chapter worked in an ideal closed-system complexity model. Real devices are
-open systems and suffer decoherence and control noise \cite{Zurek2003}. Fault-tolerant
-frameworks address this in principle through encoding and active correction
-\cite{Kitaev1997, NielsenChuang2010}. Those engineering layers matter in practice,
-but they are not the analytical target of Chapters 4--9.
-
-The next step keeps the optimization objective fixed and changes only the model.
-In the circuit-query setting, unstructured optimization is already pinned down by
-Eq.~\eqref{eq:ch3-optimal-frontier}. In adiabatic computation, the same objective
-is pursued by continuous Hamiltonian evolution, and runtime is governed by
-pathwise spectral geometry rather than query count alone. Chapter 4 asks what
-this model shift buys and what it demands, once schedule design and gap control
-become algorithmic resources in their own right. That is the precise sense in
-which Chapter 5 can open by saying that, in the circuit model, unstructured
-optimization is already understood.
+The frontier is now closed. Unstructured quantum search has query complexity
+$\Theta(\sqrt{N/d_0})$, and this holds regardless of whether the algorithm uses
+discrete oracle queries or continuous Hamiltonian evolution. The question that
+remains is subtler. In the circuit model, achieving the optimal scaling requires
+only knowledge of $N$ and $d_0$: the algorithm is $k^*$ iterations of a fixed
+two-reflection circuit, and $k^*$ depends on nothing else. In the adiabatic
+model, matching the same scaling requires a schedule that is adapted to the
+spectral gap profile along the interpolation path. Whether the information
+needed for that adaptation is easier or harder to obtain than the information
+implicit in a single oracle query is not settled by BBBV alone. Chapter~4
+introduces the adiabatic framework and makes this question precise.
