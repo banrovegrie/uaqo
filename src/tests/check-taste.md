@@ -8,16 +8,16 @@ For notation consistency, see `check-math.md`. For formatting, see `check-format
 
 ## Failure Modes
 
-### 1. Scaffolding Leakage
+### 1. Bloat and Throat-Clearing
 
 Phrases that announce technique rather than execute it:
 
 - "To provide intuition..." / "The key insight is..." / "It is worth noting..."
 - "Importantly," / "Interestingly," / "In other words,"
 
-**Test:** Delete the phrase. If the sentence still works, the phrase was scaffolding.
+**Test:** Delete the phrase. Ask two questions: (1) Is the meaning unchanged? (2) Is the reading experience unchanged? Both must be yes to flag. A sentence that carries no new information but improves pacing, builds anticipation, or warms the prose is not bloat.
 
-**Borderline acceptable:** "Recall that X" when X appeared chapters ago. Forward references like "Section 4 proves..." are acceptable when orienting the reader.
+**Borderline acceptable:** "Recall that X" when X appeared chapters ago. Forward references like "Section 4 proves..." are acceptable when orienting the reader. Warm transitions like "A concrete example makes this vivid" are good writing, not bloat.
 
 ### 2. Sycophancy
 
@@ -189,7 +189,7 @@ Proof code should embody the same standards as prose. The proof IS the explanati
 
 **Test:** Delete the comment. Does the proof become harder to understand? If no, delete.
 
-**Scaffolding in docstrings:**
+**Bloat in docstrings:**
 - `This theorem states that...` (the theorem statement says this)
 - `The proof proceeds by...` (the proof shows this)
 
@@ -263,7 +263,7 @@ A thesis differs from a paper:
 - Insufficient depth on a central result (thesis thinner than paper)
 
 **WARN:** Local and fixable.
-- Scaffolding phrases
+- Bloat phrases
 - Filler sentences
 - Minor hedging
 - Bra-ket decoration

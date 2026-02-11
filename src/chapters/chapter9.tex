@@ -263,10 +263,9 @@ proportional to interval width, not an exponential overhead. In the taxonomy of
 
 The separation theorem and the interpolation theorem characterize the cost of
 ignorance within the fixed-schedule model. An adiabatic device, however, is a
-physical system that can be measured during execution. The original
-paper~\cite{braida2024unstructured} asks a concrete question: ``Can this
-limitation be overcome when one only has access to a device operating in the
-adiabatic setting?''
+physical system that can be measured during execution. Our work
+in~\cite{braida2024unstructured} asks a concrete question: Can this limitation be
+overcome when one only has access to a device operating in the adiabatic setting?
 
 The answer is yes in an adaptive measurement model. Han, Park, and
 Choi~\cite{HanParkChoi2025} independently proposed a constant geometric speed
@@ -854,7 +853,7 @@ The oracle-dependent term $g(t)H_z^{(\delta)} = \delta g(t)(I - P_0)$ has instan
 For $\delta = N^{-1/2}$, this yields $T = \Omega(N/\sqrt{d_0})$, the same exponential penalty as the fixed-schedule adiabatic model. So the barrier reappears on worst-case instances even for general continuous-time rank-one algorithms when controls are normalized. The scope is precise: the obstruction comes from monotone schedules with bounded controls, not from continuous-time quantum computation itself.
 
 
-\section{Computational Nature of $A_1$}
+\section{Computational Nature of \texorpdfstring{$A_1$}{A1}}
 \label{sec:computational-nature}
 
 The barrier cannot be designed away. What kind of hardness is it? The quantity $A_1$ is not merely NP-hard to compute. Its core hardness is counting hardness inherited from partition-function structure. The tractability boundary does not align with optimization hardness, is not controlled by the number of solutions alone, and depends on structural properties of the energy landscape.

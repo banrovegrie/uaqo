@@ -73,6 +73,7 @@ Key questions:
 - Would a graduate student new to AQO understand this?
 - Are definitions motivated before they appear?
 - Does the section flow logically?
+- Does the prose have warmth, varied pace, and rhetorical life? Good thesis writing is not dry. Transitional sentences that orient the reader, build anticipation, or provide rhythm should be valued, not penalized. Penalize monotone dryness, not conversational warmth.
 
 ### Originality (only for thesis extensions because rest would be already in background or paper)
 
@@ -223,14 +224,14 @@ Original contributions beyond the paper.
 | `unclear_notation` | Inconsistent with paper notation within the same local context (proof, theorem, or tightly coupled argument). Standard reuse of common letters across sections is normal mathematical practice and should not be flagged | Defer to `check-math.md`; list violations |
 | `unmotivated_definition` | Definition appears before reader wants it | Require motivation paragraph |
 | `vague_claim` | "efficient"/"optimal" without bounds | Require O(?) or proof |
-| `disconnected_section` | Section serves no structural purpose | Require motivation or removal |
+| `disconnected_section` | Section serves no structural or motivational purpose | Require motivation or removal |
 | `unfair_comparison` | Comparing to suboptimal classical algorithms | Require comparison to best known |
 
 ### Minor (note for correction)
 
 | Error | Description | Action |
 |-------|-------------|--------|
-| `scaffolding` | "To provide intuition...", "Importantly," | Defer to `check-taste.md` |
+| `bloat` | Empty filler like "To provide intuition...", "Importantly," that adds no content or texture. Do NOT flag warm transitions, rhetorical setups, or anticipatory sentences that build reader engagement | Defer to `check-taste.md` |
 | `formatting` | Non-ASCII, delimiter issues | Defer to `check-format.md` |
 | `typos` | Language errors not affecting understanding | Note for author |
 | `figure_quality` | Low resolution or unclear visualizations | Suggest improvements |
@@ -430,6 +431,6 @@ This review agent is comprehensive but defers to specialized tests:
 |---------|----------|
 | ASCII, delimiters, formatting | `check-format.md` |
 | Notation consistency, math correctness | `check-math.md` |
-| Prose quality, scaffolding, filler | `check-taste.md` |
+| Prose quality, bloat, filler | `check-taste.md` |
 
 Run specialized tests first for mechanical issues. Use this review for holistic evaluation.

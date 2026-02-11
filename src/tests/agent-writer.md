@@ -92,7 +92,7 @@ Signs:
 Tests:
 - Opening test: why now?
 - Closing test: what did we establish, and what question does it open?
-- Transition test: does transition carry new information, not just navigation?
+- Transition test: does transition carry argument, orientation, or texture? Pure navigation ("next we discuss") fails; a sentence that builds anticipation or reframes the question passes even if it carries no new technical fact.
 
 ### 6. Authorless Voice and Missing Judgment
 
@@ -120,7 +120,7 @@ Tests:
 - In a 6-10 page span, identify sentences that calibrate importance.
 - If none exist in central material, WARN or FAIL depending on severity.
 
-### 8. Scaffolding Leakage and Throat-Clearing
+### 8. Bloat and Throat-Clearing
 
 Prose announces moves instead of executing them.
 
@@ -129,9 +129,12 @@ Signs:
 - "The key insight is" followed by obvious restatement.
 - "As mentioned above" used as filler.
 
+Important distinction: not every transitional or anticipatory sentence is bloat. Sentences that orient the reader, set expectations, build anticipation, or provide rhetorical rhythm are part of good essayistic writing. "A concrete example makes this vivid" is warm connective prose, not bloat. "It is worth noting that" is bloat because it adds no content and no texture. The test is whether the sentence contributes to the reader's experience (pacing, anticipation, warmth, orientation) even if it does not carry new technical information. If it contributes texture or rhythm, keep it. If it is purely mechanical throat-clearing with no rhetorical function, flag it.
+
 Tests:
-- Delete suspected phrase. If meaning is unchanged, delete it.
-- Persistent scaffolding clusters are WARN; central sections with heavy scaffolding can be FAIL.
+- For a suspected phrase, ask two questions: (1) Is meaning unchanged if deleted? (2) Is the reading experience unchanged if deleted? Both must be yes to flag. A sentence that carries no information but improves pacing or builds anticipation is not bloat.
+- Persistent bloat clusters are WARN; central sections with heavy bloat can be FAIL.
+- Never flag warm transitions, rhetorical questions that drive sections, or sentences that set up examples or figures as bloat.
 
 ### 9. Hedge Fog and Sycophancy
 
@@ -177,12 +180,14 @@ Tests:
 Style loses energy or consistency.
 
 Signs:
-- Alternation between stiff bureaucratic and casual voice.
+- Jarring or uncontrolled alternation between stiff bureaucratic and casual voice.
 - Repeated passive structures ("it is shown that").
 - Verb-to-noun inflation ("perform an analysis of" instead of "analyze").
 
+Note: intentional register variation is a feature of good writing, not a defect. The best technical prose is formal during proofs and warmer during motivation, interpretation, and transitions. Penrose shifts register constantly and it works because each shift serves a purpose. Only flag register changes that feel accidental or jarring, not deliberate modulation.
+
 Tests:
-- Sample 10-15 sentences; check tense/register consistency.
+- Sample 10-15 sentences; check for jarring uncontrolled shifts, not deliberate variation.
 - If sentence energy collapses across a paragraph, WARN.
 
 ### 13. Pacing and Rhythm Failure
@@ -259,6 +264,7 @@ A section passes when:
 10. Register is consistent, active, and readable.
 11. Citations are integrated with explanation.
 12. Reader exits with new capability, not just new vocabulary.
+13. Prose has warmth and varied pace. Good writing is not dry. It pulls the reader forward through anticipation, surprise, concrete vignettes, and sentences that reward attention. Do not penalize sentences that build reader engagement even if they carry no new theorem.
 
 ## Severity
 
@@ -271,7 +277,7 @@ A section passes when:
 - Depth below source-paper baseline on central material.
 
 **WARN:** Local weakness, fixable in revision.
-- Scaffolding/filler clusters.
+- Bloat/filler clusters.
 - Flat emphasis in local spans.
 - Weak transition/closing.
 - Template sentence loops.
@@ -321,9 +327,9 @@ FAIL: Structural and writing-quality failures
 
 WARN: Local quality weaknesses
   - ch2.tex:45
-    symptom: repeated scaffolding openers ("Importantly", "It is worth noting")
+    symptom: repeated bloat openers ("Importantly", "It is worth noting")
     consequence: slows pacing and signals meta-writing over argument
-    rewrite_direction: delete scaffolding and lead with the claim
+    rewrite_direction: delete bloat and lead with the claim
   - ch3.tex:112
     symptom: "efficient" claim lacks complexity expression
     consequence: reader cannot evaluate scope or compare methods

@@ -99,7 +99,7 @@ The bridge theorem \texttt{A1\_partial\_eq\_A1} is typical. Two representations 
 \centering
 \caption{Main-paper scope in \texttt{src/lean/UAQO} (excluding \texttt{Experiments} and \texttt{Test}).}
 \label{tab:formalization-scope-deep}
-\begin{tabular}{|l|c|c|p{6.8cm}|}
+\begin{tabular}{|l|c|c|>{\raggedright\arraybackslash}p{6.8cm}|}
 \hline
 Component & Files & Approx. LOC & Role in proof architecture \\
 \hline
@@ -122,19 +122,19 @@ Within this scope, the development contains 330 theorem and lemma declarations. 
 \centering
 \caption{Claim-to-artifact map for the Chapter 10 argument.}
 \label{tab:formalization-claim-map}
-\begin{tabular}{|p{4.1cm}|p{4.7cm}|p{3.8cm}|}
+\begin{tabular}{|>{\raggedright\arraybackslash}p{4.1cm}|>{\raggedright\arraybackslash}p{5.2cm}|>{\raggedright\arraybackslash}p{3.8cm}|}
 \hline
 Chapter claim & Primary Lean artifact & Epistemic status \\
 \hline
-Paper formulas for $A_p$, $s^*$, $\delta_s$, $g_{\min}$ are represented faithfully & \texttt{Spectral/SpectralParameters}, \texttt{Test/Verify} & Definitional equality checks (\texttt{rfl}) \\
+Paper formulas for $A_p$, $s^*$, $\delta_s$, $g_{\min}$ are represented faithfully & \texttt{Spectral/\allowbreak{}Spectral\-Parameters}, \texttt{Test/\allowbreak{}Verify} & Definitional equality checks (\texttt{rfl}) \\
 \hline
-Two-query NP-hardness core is formally encoded & \texttt{Complexity/Hardness} (\texttt{mainResult2}) & Proved modulo \texttt{gareyJohnsonEncoding} axiom \\
+Two-query NP-hardness core is formally encoded & \texttt{Complexity/\allowbreak{}Hardness} (\texttt{mainResult2}) & Proved modulo \texttt{garey\-Johnson\-Encoding} axiom \\
 \hline
-Counting extraction bridge to \#P statement is formalized & \texttt{Complexity/Hardness} (\texttt{mainResult3}) & Machine-checked theorem core \\
+Counting extraction bridge to \#P statement is formalized & \texttt{Complexity/\allowbreak{}Hardness} (\texttt{mainResult3}) & Machine-checked theorem core \\
 \hline
-Global gap-profile runtime claims require additional spectral interface & \texttt{Proofs/Spectral/GapBoundsProofs} & Conditional via \texttt{FullSpectralHypothesis} \\
+Global gap-profile runtime claims require additional spectral interface & \texttt{Proofs/\allowbreak{}Spectral/\allowbreak{}Gap\-Bounds\-Proofs} & Conditional via \texttt{Full\-Spectral\-Hypothesis} \\
 \hline
-Adiabatic transfer theorems are wrappers over explicit physics interfaces & \texttt{Adiabatic/Theorem} & Axiom-mediated \\
+Adiabatic transfer theorems are wrappers over explicit physics interfaces & \texttt{Adiabatic/\allowbreak{}Theorem} & Axiom-mediated \\
 \hline
 \end{tabular}
 \end{table}
@@ -211,7 +211,7 @@ The development declares 15 explicit axioms, grouped in \autoref{tab:axiom-ledge
 \centering
 \caption{Axiom groups in the UAQO main-paper formalization.}
 \label{tab:axiom-ledger-deep}
-\begin{tabular}{|l|c|p{7.8cm}|}
+\begin{tabular}{|l|c|>{\raggedright\arraybackslash}p{7.8cm}|}
 \hline
 Group & Count & Representative content \\
 \hline

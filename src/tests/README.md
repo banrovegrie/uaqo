@@ -26,7 +26,7 @@ The published paper is the foundation. The thesis explains it deeply and weaves 
 |------|------|----------------|
 | Format | `check-format.md` | ASCII only, no `---` separators, LaTeX basics |
 | Math | `check-math.md` | Notation consistency, correctness vs paper |
-| Taste | `check-taste.md` | Prose quality, scaffolding, filler, structure |
+| Taste | `check-taste.md` | Prose quality, bloat, filler, structure |
 | Writer | `agent-writer.md` | Voice, taste, pacing, structural flow, and judgment |
 | Review | `review.md` | Holistic peer review with weighted dimensions |
 
