@@ -315,6 +315,43 @@ narrow dip, and everything about the crossing---its location, its width, its
 minimum value---is determined by $N$ alone. No instance-specific information
 is needed.
 
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[xscale=7.5, yscale=3.5]
+  % Axes
+  \draw[->, line width=0.4pt] (-0.04,0) -- (1.10,0) node[right] {$s$};
+  \draw[->, line width=0.4pt] (0,-0.06) -- (0,1.25);
+
+  % Tick marks
+  \draw (0,0.02) -- (0,-0.02) node[below] {\footnotesize $0$};
+  \draw (0.5,0.02) -- (0.5,-0.02) node[below] {\footnotesize $s^*$};
+  \draw (1,0.02) -- (1,-0.02) node[below] {\footnotesize $1$};
+
+  % g(s) curve -- Roland-Cerf gap with N=32 for visual clarity
+  % g(s) = sqrt((2s-1)^2 + 4s(1-s)/N), approximate shape: wide dip at s=1/2
+  \draw[line width=1.0pt, darkblue] plot[domain=0:1, samples=120, smooth]
+    (\x, {sqrt((2*\x-1)^2 + 4*\x*(1-\x)/32)});
+  \node[darkblue, right] at (1.02, 0.97) {\footnotesize $g(s)$};
+
+  % g_min label
+  \draw[dotted, thin] (0,{sqrt(1/32)}) -- (0.5,{sqrt(1/32)});
+  \node[left] at (0,{sqrt(1/32)}) {\footnotesize $g_{\min}$};
+
+  % ds/dt curve -- proportional to g(s)^2, scaled for visibility
+  % ds/dt = eps * g(s)^2, we plot g(s)^2 rescaled
+  \draw[line width=1.0pt, darkred, dashed] plot[domain=0:1, samples=120, smooth]
+    (\x, {(2*\x-1)^2 + 4*\x*(1-\x)/32});
+  \node[darkred, right] at (1.02, 0.88) {\footnotesize $\dot{s} \propto g(s)^2$};
+\end{tikzpicture}
+\caption{Gap profile $g(s)$ (solid) and local schedule speed
+$\dot{s} \propto g(s)^2$ (dashed) for the Roland-Cerf Hamiltonian. Both
+reach their minimum at the avoided crossing $s^* = 1/2$. The schedule
+crawls through the narrow-gap bottleneck and sprints through the wide-gap
+regions on either side. The runtime is dominated by the integral of
+$1/g(s)^2$ near $s^*$.}
+\label{fig:ch4-gap-schedule}
+\end{figure}
+
 Roland and Cerf applied the local schedule $\dot{s} = \varepsilon\,g(s)^2$,
 which crawls through the bottleneck near $s = 1/2$ and sprints through the
 wide-gap regions on either side. The resulting runtime is

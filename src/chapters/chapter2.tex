@@ -36,30 +36,10 @@ function did not change. The counting of resources did not change. Only the
 model of computation changed, and with it the sharp boundary between efficient
 and inefficient.
 
-The dependence on model choice will recur throughout this thesis, and it helps
-to have a picture for it.
-\begin{figure}[h]
-\centering
-\begin{tikzpicture}[
-  box/.style={draw, rounded corners=2pt, align=center, inner sep=4pt, font=\small},
-  arr/.style={->, >=stealth, line width=0.5pt}
-]
-\node[box] (p) at (0,0) {physical\\process};
-\node[box] (m) at (4.0,0) {computational\\model};
-\node[box] (r) at (8.0,0) {resource\\accounting};
-\node[box] (c) at (12.0,0) {complexity\\claim};
-\draw[arr] (p) -- (m);
-\draw[arr] (m) -- (r);
-\draw[arr] (r) -- (c);
-\end{tikzpicture}
-\caption{The modeling chain: physical assumptions determine the computational
-model, which determines resource accounting, which supports or refutes
-complexity claims.}
-\label{fig:ch2-modeling-chain}
-\end{figure}
-Physical assumptions determine a computational model. The model determines a
-resource accounting. And the resource accounting supports, or fails to support,
-a complexity claim. Chapters~3 and~4 will put this chain under pressure: the
+The dependence on model choice will recur throughout this thesis. Physical
+assumptions determine a computational model. The model determines a resource
+accounting. And the resource accounting supports, or fails to support, a
+complexity claim. Chapters~3 and~4 will put this chain under pressure: the
 optimization objective stays fixed while the computational model shifts from
 query circuits to continuous Hamiltonian evolution.
 
@@ -551,9 +531,8 @@ thesis is measured.
 \section{Bridge to Quantum Computation}
 \label{sec:ch2-bridge}
 
-The vocabulary is now in place. The modeling chain
-(Figure~\ref{fig:ch2-modeling-chain}) makes explicit that complexity claims
-depend on the computational model. Energy plays a double role as generator of
+The vocabulary is now in place. The modeling chain makes explicit that
+complexity claims depend on the computational model. Energy plays a double role as generator of
 dynamics and as optimization objective, and the diagonal Hamiltonian $H_z$
 encodes any combinatorial cost function exactly. The complexity classes P, NP,
 and $\#\mathrm{P}$ measure the difficulty of deciding, verifying, and counting,

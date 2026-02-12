@@ -474,6 +474,51 @@ When $d_0$ is unknown in advance, Boyer, Brassard, H{\o}yer, and Tapp showed
 that a randomized schedule of iteration counts achieves the same asymptotic
 scaling in expectation~\cite{BBHT1998}.
 
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[scale=2.8]
+  % Axes
+  \draw[->, line width=0.4pt] (-0.15,0) -- (1.25,0) node[right] {$\ket{r}$};
+  \draw[->, line width=0.4pt] (0,-0.15) -- (0,1.25) node[above] {$\ket{w}$};
+
+  % Angle theta (initial state angle from |r> axis)
+  \def\thetaval{14}
+  \def\oneiter{42}
+  \def\twoiter{70}
+
+  % Initial state |s>
+  \draw[->, line width=0.8pt] (0,0) -- ({cos(\thetaval)},{sin(\thetaval)});
+  \node[above right, inner sep=1pt] at ({cos(\thetaval)},{sin(\thetaval)}) {$\ket{s}$};
+
+  % After k=1 iteration
+  \draw[->, line width=0.8pt, darkred] (0,0) -- ({cos(\oneiter)},{sin(\oneiter)});
+  \node[above right, darkred, inner sep=1pt] at ({cos(\oneiter)},{sin(\oneiter)}) {$G\ket{s}$};
+
+  % After k=2 iterations
+  \draw[->, line width=0.8pt, darkred!60] (0,0) -- ({cos(\twoiter)},{sin(\twoiter)});
+  \node[above right, darkred!60, inner sep=1pt] at ({cos(\twoiter)},{sin(\twoiter)}) {$G^2\ket{s}$};
+
+  % Angle arc for theta
+  \draw[<->, line width=0.3pt] ({0.35*cos(0)},{0.35*sin(0)})
+    arc[start angle=0, end angle=\thetaval, radius=0.35];
+  \node at ({0.48*cos(\thetaval/2)},{0.48*sin(\thetaval/2)}) {\footnotesize $\theta$};
+
+  % Angle arc for 2theta rotation
+  \draw[->, line width=0.3pt, darkred]
+    ({0.6*cos(\thetaval)},{0.6*sin(\thetaval)})
+    arc[start angle=\thetaval, end angle=\oneiter, radius=0.6];
+  \node[darkred] at ({0.74*cos((\thetaval+\oneiter)/2)},{0.74*sin((\thetaval+\oneiter)/2)})
+    {\footnotesize $2\theta$};
+\end{tikzpicture}
+\caption{Grover's algorithm as rotation in the plane
+$\mathcal{V} = \mathrm{span}\{\ket{w},\ket{r}\}$. The initial state $\ket{s}$
+makes angle $\theta = \arcsin\!\sqrt{d_0/N}$ with the $\ket{r}$ axis. Each
+Grover iterate $G$ rotates the state by $2\theta$ toward the marked-state
+axis. After $k^* \approx \pi/(4\theta)$ iterations the state is
+near~$\ket{w}$.}
+\label{fig:ch3-grover-rotation}
+\end{figure}
+
 The two-dimensional picture deserves a moment of reflection, because it is a
 structural motif that will reappear in a different guise. A problem defined over
 $2^n$ basis states might seem to require $2^n$-dimensional analysis. But the
