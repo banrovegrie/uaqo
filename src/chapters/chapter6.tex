@@ -6,21 +6,18 @@
 %   gap-right-preview (Lemma 5.5), Delta = E_1 - E_0.
 
 Chapter 5 established the crossing window $\mathcal{I}_{s^*}$ where the spectral
-gap satisfies $g(s) = \Theta(g_{\min})$, and it stated the outer-region bounds.
-The left side has a linear lower bound (\autoref{lem:gap-left-preview}), and so
-does the right side (\autoref{lem:gap-right-preview}). This chapter proves both
-lemmas.
+gap satisfies $g(s) = \Theta(g_{\min})$, and it stated the outer-region bounds:
+a linear lower bound on the left (\autoref{lem:gap-left-preview}) and on the
+right (\autoref{lem:gap-right-preview}). What remains is to prove them.
 
 The two proofs use different tools because the spectrum behaves differently on
 the two sides of the crossing. To the left of $s^*$, the ground energy
 $\lambda_0(s)$ sits below $sE_0$ while the first excited energy $\lambda_1(s)$
-sits above it. A variational argument then gives a sharp linear gap bound. To
+sits above it. A variational argument gives a sharp linear gap bound. To
 the right of $s^*$, eigenvalues of $sH_z$ crowd the interval $[sE_0, sE_1]$,
 and that variational strategy loses traction. There we switch to a resolvent
-argument plus Sherman-Morrison for rank-one perturbations. This split is the
-technical core of the chapter, and it yields the piecewise profile needed in
-Chapter 7. The profile is steep on the left, flatter on the right, and nearly
-flat inside the window.
+argument plus Sherman-Morrison for rank-one perturbations. The resulting profile
+is steep on the left, flatter on the right, and nearly flat inside the window.
 
 \section{Gap to the Left of the Crossing}
 \label{sec:gap-left}
@@ -243,7 +240,7 @@ g(s) \geq \frac{\Delta}{30}\cdot\frac{s - s_0}{1 - s_0}.
 \end{lemma}
 
 \begin{proof}
-Set $\gamma(s) = sE_0 + \beta(s)$ with $\beta(s) = a(s - s_0)/(1-s_0)$. We bound $\lVert R_{H(s)}(\gamma)\rVert$ from above using the Sherman-Morrison formula.
+Set $\gamma(s) = sE_0 + \beta(s)$ with $\beta(s) = a(s - s_0)/(1-s_0)$. The argument reduces to showing that a certain ratio $f(s)$, built from the numerator and denominator of the Sherman-Morrison correction, is monotonically decreasing on $[s^*,1]$. Once that is established, $\max_{s \geq s^*} f(s) = f(s^*) = O(1)$, and the resolvent bound $\lVert R_{H(s)}(\gamma)\rVert \leq (1/\beta)(1+f(s))$ converts directly into a linear gap lower bound.
 
 Since $H(s) = sH_z - (1-s)\ket{\psi_0}\bra{\psi_0}$, the resolvent of $H(s)$ at $\gamma$ satisfies, via Eq.~\eqref{eq:sherman-morrison} and the triangle inequality,
 \begin{equation}
@@ -313,10 +310,7 @@ If $f$ is monotonically decreasing on $[s^*, 1]$, then $\max_{s \geq s^*} f(s) =
 \textbf{Monotonicity of $f$.} We show $f'(s) < 0$ for $s \in [s^*, 1]$. Write
 $f = u/v$, so the sign of $f'$ is the sign of $u'v - uv'$. The derivative algebra
 is long, so it helps to name the structure before expanding. After cancellation,
-three terms remain. Two are negative. One is positive and proportional to
-$(d_0/N)\,s_0$, which appears because the line origin is shifted below $s^*$.
-The real work is to show that the negative terms dominate this positive
-contribution on all of $[s^*,1]$.
+three terms remain, which we label $T_1$, $T_2$, $T_3$. Terms $T_1$ and $T_3$ are negative. Term $T_2$ is positive and proportional to $(d_0/N)\,s_0$, which appears because the line origin is shifted below $s^*$. The real work is to show that $T_1$ alone dominates $T_2$ on all of $[s^*,1]$. The argument factors $T_1 + T_2$ and compares a convex quadratic in $s$ (from $T_1$) against a cubic $s(1-s)^2$ (from $T_2$). Both expressions are bounded by their values at $s^*$, and the spectral condition (Definition~\ref{def:spectral-condition}) ensures the quadratic term wins.
 Write $f = u/v$ with
 \begin{align}
 \label{eq:uv-def}
@@ -338,16 +332,13 @@ $8a A_2^2\beta^3(1-s)(2+s_0-3s)/(1-s_0)$. The remainder has three terms
 \cite{braida2024unstructured}:
 \begin{align}
 \label{eq:upv-uvp}
-u'v - uv' =\;& -\frac{4aA_2\beta^2}{(1-s_0)(1-s^*)}\Big(s^2(1 + s_0 - s^*) - 2s\,s_0 + s^*s_0\Big) \\
-&+ \frac{12aA_2\frac{d_0}{N}\,\beta}{1-s_0}\,s(1-s)^2\,s_0 \nonumber \\
-&- \frac{\frac{d_0}{N}\,s^2 a}{(1-s_0)(1-s^*)}\Big({-}s^2(s^* + s_0 - 1) + 2s\,s_0 s^* - s^*s_0\Big). \nonumber
+u'v - uv' =\;& \underbrace{-\frac{4aA_2\beta^2}{(1-s_0)(1-s^*)}\Big(s^2(1 + s_0 - s^*) - 2s\,s_0 + s^*s_0\Big)}_{T_1} \\
+&+ \underbrace{\frac{12aA_2\frac{d_0}{N}\,\beta}{1-s_0}\,s(1-s)^2\,s_0}_{T_2} \nonumber \\
+&\underbrace{- \frac{\frac{d_0}{N}\,s^2 a}{(1-s_0)(1-s^*)}\Big({-}s^2(s^* + s_0 - 1) + 2s\,s_0 s^* - s^*s_0\Big)}_{T_3}. \nonumber
 \end{align}
-The first and third terms are negative, while the middle term is positive. That
-middle term is the only one that contains $(d_0/N)\,s_0$, so it is exactly the
-cost of shifting the line origin below $s^*$. We now show that the first
-negative term controls it.
+Terms $T_1$ and $T_3$ are negative, while $T_2$ is positive. The positive term $T_2$ is the only one that contains $(d_0/N)\,s_0$, so it is exactly the cost of shifting the line origin below $s^*$. We now show that $T_1$ alone controls $T_2$.
 
-Factor out $-4aA_2\beta/(1-s_0)$ from the sum of the first two terms:
+Factor out $-4aA_2\beta/(1-s_0)$ from $T_1 + T_2$:
 \begin{equation}
 \label{eq:domination-argument}
 -\frac{4aA_2\beta}{1-s_0}\left(\frac{\beta}{1-s^*}\Big(s^2(1+s_0-s^*) - 2s\,s_0 + s^*s_0\Big) - \frac{3d_0}{N}\,s_0\,s(1-s)^2\right).
@@ -427,6 +418,8 @@ where $s_0 = s^* - k\,g_{\min}(1-s^*)/(a - k\,g_{\min})$ with $k = 1/4$ and $a =
 \begin{proof}
 The three cases follow from \autoref{lem:gap-in-window} (window, proved in Chapter 5), \autoref{lem:gap-left} (left), and \autoref{lem:gap-right} (right). The right bound holds for all $s \geq s^*$ and therefore covers $\mathcal{I}_{s^\rightarrow}$. The window bound $g(s) \geq g_{\min}$ is tighter than the right bound at $s^*$ but weaker far from the crossing.
 \end{proof}
+
+The right branch uses $\frac{s-s_0}{1-s_0}$, while the published paper \cite{braida2024unstructured} writes $\frac{s-s^*}{1-s_0} + \frac{s^*-s_0}{1-s_0}$ as two separate terms. These are identical: $s - s_0 = (s - s^*) + (s^* - s_0)$. The single-fraction form absorbs the constant offset $s^* - s_0$ into the numerator, which simplifies the piecewise statement without changing the bound.
 
 The bounds match across region boundaries. At the left boundary $s = s^* - \delta_s$,
 \begin{equation}

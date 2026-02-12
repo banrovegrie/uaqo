@@ -88,9 +88,7 @@ Somma~\cite{boixo2009eigenpath} introduced eigenpath traversal, which replaces
 continuous evolution with projections onto ground states of intermediate
 Hamiltonians $H(s_0),H(s_1),\ldots,H(s_L)$. Their key ingredient is phase
 randomization between steps. It suppresses coherent accumulation of diabatic
-error, which otherwise recreates the usual $O(1/g_{\min}^2)$ behavior. Under
-that phase randomization, coherent errors from successive transitions no longer
-add constructively.
+error, which otherwise recreates the usual $O(1/g_{\min}^2)$ behavior.
 Under the condition $\int g^{-p}\,ds = O(g_{\min}^{1-p})$, this gives
 $O(1/g_{\min})$ scaling. Cunningham and Roland~\cite{cunningham2024eigenpath}
 tightened constants and gave a continuous-time version that underlies
@@ -278,7 +276,7 @@ The adaptive rate theorem, extending the eigenpath traversal framework of \cite{
 
 \begin{theorem}[Adaptive rate {\cite{braida2024unstructured}}]
 \label{thm:adaptive-rate}
-Let $H(s)$ satisfy the conditions of \autoref{lem:error-bound}, and let $g_0: [0,1] \to \mathbb{R}^+$ be an absolutely continuous function satisfying $g_0(s) \leq g(s)$ for all $s$. Suppose there exist $1 < p < 2$ (the endpoints are excluded: at $p = 1$ the $B_1$ integral diverges logarithmically, and at $p = 2$ the schedule variation term requires the exact gap) and constants $B_1, B_2 \geq 1$ such that
+Let $H(s)$ satisfy the conditions of \autoref{lem:error-bound}, and let $g_0: [0,1] \to \mathbb{R}^+$ be an absolutely continuous function satisfying $g_0(s) \leq g(s)$ for all $s$. Suppose there exist $1 < p < 2$ and constants $B_1, B_2 \geq 1$ such that
 \begin{equation}
 \label{eq:B1-condition}
 \int_0^1 \frac{ds}{g_0(s)^p} \leq B_1\, g_{\min}^{1-p} \qquad \text{and} \qquad \int_0^1 \frac{ds}{g_0(s)^{3-p}} \leq B_2\, g_{\min}^{p-2}.
@@ -382,7 +380,7 @@ The schedule $K'(s) \propto 1/g(s)^p$ concentrates the evolution time near the c
 \section{Runtime of Adiabatic Quantum Optimization}
 \label{sec:aqo-runtime}
 
-Applying \autoref{thm:adaptive-rate} to $H(s)=-(1-s)\ket{\psi_0}\bra{\psi_0}+sH_z$ with the gap profile of \autoref{thm:complete-profile} requires three concrete steps. We construct a continuous lower bound $g_0(s)$ from the piecewise bounds, compute $B_1$ and $B_2$, and then evaluate the constant $c$.
+Applying \autoref{thm:adaptive-rate} to $H(s)=-(1-s)\ket{\psi_0}\bra{\psi_0}+sH_z$ with the gap profile of \autoref{thm:complete-profile} requires three concrete steps. We construct a continuous lower bound $g_0(s)$ from the piecewise bounds, compute $B_1$ and $B_2$ by splitting $\int g_0^{-p}\,ds$ across the three regions and showing each contributes $O(\text{poly}(n)\cdot g_{\min}^{1-p})$, and then evaluate the constant $c$.
 
 The bounds from \autoref{thm:complete-profile} are valid on their regions but do not meet continuously at $s^*-\delta_s$ and $s^*$. The left bound is too high at $s^*-\delta_s$, and the right bound is too low at $s^*$. Since \autoref{thm:adaptive-rate} requires $g_0$ to be absolutely continuous on $[0,1]$, we shrink the left and window pieces by a constant factor $b$ so the three branches join continuously.
 
@@ -469,7 +467,7 @@ c = O(B_2).
 Let $H_z$ satisfy the spectral condition (Definition~\ref{def:spectral-condition}) and assume $A_1 \geq 1/2$ (equivalently $s^* \geq 1/3$). For any $\varepsilon > 0$, the adaptive schedule~\eqref{eq:adaptive-schedule} with the gap lower bound~\eqref{eq:g0-def} prepares the ground state of $H_z$ with fidelity at least $1 - \varepsilon$ in time
 \begin{equation}
 \label{eq:main-runtime}
-T = O\!\left(\frac{1}{\varepsilon}\cdot\frac{\sqrt{A_2}}{\Delta^2\, A_1(A_1+1)}\cdot\sqrt{\frac{N}{d_0}}\right).\footnote{Our published work \cite{braida2024unstructured} states $A_1^2$ in Theorem~1. The expression $A_1(A_1+1)$ follows from the proof derivation in Appendix~A-IV \cite{braida2024unstructured}. For Ising Hamiltonians with $A_1 = O(\mathrm{poly}(n))$, the distinction is absorbed by the $O(\cdot)$ notation, since $A_1(A_1+1) = A_1^2 + A_1 = \Theta(A_1^2)$.}
+T = O\!\left(\frac{1}{\varepsilon}\cdot\frac{\sqrt{A_2}}{\Delta^2\, A_1(A_1+1)}\cdot\sqrt{\frac{N}{d_0}}\right).
 \end{equation}
 \end{theorem}
 
@@ -480,8 +478,13 @@ T = O\!\left(\frac{1}{\varepsilon}\cdot\frac{B_1 B_2}{g_{\min}}\right) = O\!\lef
 \end{equation}
 \end{proof}
 
+\begin{remark}[$A_1^2$ vs $A_1(A_1+1)$]
+\label{rem:A1-squared}
+Our published work \cite{braida2024unstructured} states $A_1^2$ in Theorem~1. The expression $A_1(A_1+1)$ follows from the proof derivation in Appendix~A-IV of \cite{braida2024unstructured}, and is what the algebra above produces. For Ising Hamiltonians with $A_1 = O(\mathrm{poly}(n))$, the distinction is absorbed by $O(\cdot)$ notation, since $A_1(A_1+1) = A_1^2 + A_1 = \Theta(A_1^2)$.
+\end{remark}
+
 The runtime in \eqref{eq:main-runtime} has five interpretable factors. The $1/\varepsilon$ term is linear in target error. The factor $\sqrt{A_2}$ measures spectral crowding near $E_0$, where larger $A_2=(1/N)\sum d_k/(E_k-E_0)^2$ sharpens the minimum and narrows the crossing window. The denominator $A_1(A_1+1)$ encodes crossing location, since larger $A_1$ pushes $s^*$ toward $1$ and steepens the left arm. The term $1/\Delta^2$ is the cost of right-side control, with one $1/\Delta$ from $B_1$ and one from $B_2$. Finally, $\sqrt{N/d_0}$ is the Grover factor. In short, the speedup is quantum. The remaining terms are explicit spectral overheads of generality.
-Compared with the constant-rate theorem, the key gain is exactly here. Time
+Compared with the constant-rate theorem, the key gain is here. Time
 still scales linearly in the target error $1/\varepsilon$, and the minimum-gap
 scaling improves from $T=O(g_{\min}^{-2})$ to $T=O(g_{\min}^{-1})$. At the
 proof level, the improvement comes from replacing the $g^{-3}$ corridor with

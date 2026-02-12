@@ -31,8 +31,9 @@ For a general diagonal problem Hamiltonian, $H(s)$ has a single avoided crossing
 \section{From Cost Function to Adiabatic Path}
 \label{sec:aqo-problem}
 
-We now formalize the optimization setting and the interpolation path. Consider
-an $n$-qubit Hamiltonian $H_z$ that is diagonal in the computational basis.
+The adiabatic path is determined entirely by the spectrum of the problem Hamiltonian: its distinct energy levels and their degeneracies. Because $H_0 = -\ket{\psi_0}\bra{\psi_0}$ is a rank-one projector onto the uniform superposition, it treats all computational basis states symmetrically, and only the energy values and the number of states at each energy affect the crossing structure. The definitions below parameterize this spectral data. Permutation symmetry then confines the dynamics to a polynomial-dimensional subspace indexed by these levels (Section~\ref{sec:symmetry-reduction}), making the full analysis tractable.
+
+Consider an $n$-qubit Hamiltonian $H_z$ that is diagonal in the computational basis.
 \begin{equation}
 \label{eq:Hz-def}
 H_z = \sum_{z \in \{0,1\}^n} E_z \ket{z}\bra{z},
@@ -77,9 +78,9 @@ H(s) = -(1 - s)\ket{\psi_0}\bra{\psi_0} + s H_z, \qquad s \in [0, 1].
 \end{equation}
 At $s = 0$, the ground state is $\ket{\psi_0}$ with energy $-1$, and all other states have energy $0$. At $s = 1$, the Hamiltonian is $H_z$ itself, and its ground states encode the solutions. The adiabatic theorem guarantees that if the schedule $s(t)$ traverses $[0, 1]$ slowly enough, the evolved state remains close to the instantaneous ground state throughout, arriving at the end in a state with high overlap with the ground space of $H_z$.
 
-A rank-one $H_0$ produces exactly one avoided crossing between the two lowest energy levels. That single crossing is the structural reason the spectral analysis in Chapters 5--7 is possible at all. At $s = 0$, the spectrum has a non-degenerate ground state at $-1$ and an $(N-1)$-fold degenerate level at $0$. As $s$ increases, the degeneracy splits according to $H_z$. Because $H_0 = -\ket{\psi_0}\bra{\psi_0}$ has rank one, all coupling between eigenstates of $sH_z$ factors through $\ket{\psi_0}$. The matrix element $\bra{k}H_0\ket{j} = -\sqrt{d_k d_j}/N$ is nonzero for all pairs, yet the perturbation has only one degree of freedom, so eigenvalues repel through a single channel. Generic AQC Hamiltonians may exhibit multiple crossings requiring qualitatively different techniques \cite{albash2018adiabatic, arthurthesis, choi2011different}. Here, there is one.
+A rank-one $H_0$ produces exactly one avoided crossing between the two lowest energy levels. At $s = 0$, the spectrum has a non-degenerate ground state at $-1$ and an $(N-1)$-fold degenerate level at $0$. As $s$ increases, the degeneracy splits according to $H_z$. Because $H_0 = -\ket{\psi_0}\bra{\psi_0}$ has rank one, all coupling between eigenstates of $sH_z$ factors through $\ket{\psi_0}$. The matrix element $\bra{k}H_0\ket{j} = -\sqrt{d_k d_j}/N$ is nonzero for all pairs, yet the perturbation has only one degree of freedom, so eigenvalues repel through a single channel. That single crossing is what makes the spectral analysis of Chapters 5--7 possible.
 
-The standard alternative to the rank-one projector is the transverse-field driver $H_0 = -\sum_{j=1}^n \sigma_x^j$, which is the default in quantum annealing hardware and in much of the AQC literature \cite{albash2018adiabatic}. It couples every pair of computational basis states that differ in a single qubit, producing a dense web of avoided crossings throughout the interpolation. For random instances of NP-complete problems, Altshuler, Krovi, and Roland~\cite{altshuler2010anderson} showed that the resulting spectrum exhibits Anderson localization. One then gets exponentially many avoided crossings with exponentially small gaps, and no known analytical technique yields tight gap bounds in that regime. The rank-one projector avoids this entirely. Because $\ket{\psi_0}\bra{\psi_0}$ has a single non-zero eigenvalue, all coupling between eigenstates of $sH_z$ flows through one channel, producing one crossing that can be analyzed exactly. The tractability of Chapters 5--7 is a direct consequence of this choice. Whether comparable results can be obtained for the transverse-field driver remains open. The Discussion of \cite{braida2024unstructured} identifies this as a central challenge.
+The standard alternative is the transverse-field driver $H_0 = -\sum_{j=1}^n \sigma_x^j$, the default in quantum annealing hardware \cite{albash2018adiabatic}. It couples every pair of computational basis states that differ in a single qubit, producing a dense web of avoided crossings throughout the interpolation. For random instances of NP-complete problems, Altshuler, Krovi, and Roland~\cite{altshuler2010anderson} showed that the resulting spectrum exhibits Anderson localization: exponentially many avoided crossings with exponentially small gaps, and no known analytical technique yields tight gap bounds in that regime \cite{arthurthesis, choi2011different}. Whether comparable results can be obtained for the transverse-field driver remains open \cite{braida2024unstructured}.
 
 In the unstructured case, $H(s) = -(1-s)\ket{\psi_0}\bra{\psi_0} + s(I - \ket{w}\bra{w})$, where $\ket{w}$ is the marked item. Up to a global energy shift of $s$, this is the Roland-Cerf Hamiltonian \cite{roland2002quantum}. The spectrum has $N - 2$ states at energy $s$ (degenerate, orthogonal to both $\ket{\psi_0}$ and $\ket{w}$) and two states whose energies depend on $s$ and undergo an avoided crossing near $s = 1/2$.
 
@@ -128,11 +129,11 @@ also have $A_1 \leq A_2$. Hence
 A_2 \Delta \leq A_1 \leq A_2.
 \]
 
-The two-level approximation near the crossing is accurate only when the crossing window $\delta_s = O(\sqrt{d_0 A_2/N})$ is narrow compared to $[0,1]$. Since $\delta_s/s^* = O((1/\Delta)\sqrt{d_0/(A_2 N)})$, this requires the spectral parameters to be polynomially bounded relative to $N$.
+The two-level approximation near the crossing is accurate only when the crossing window $\delta_s = O(\sqrt{d_0 A_2/N})$ is narrow compared to $s^*$. Since $\delta_s/s^* = O((1/\Delta)\sqrt{d_0/(A_2 N)})$, this requires the spectral parameters to be polynomially bounded relative to $N$.
 
 \begin{definition}[Spectral condition]
 \label{def:spectral-condition}
-The problem Hamiltonian $H_z$ satisfies the spectral condition if there exists a constant $c \ll 1$ such that
+The problem Hamiltonian $H_z$ satisfies the spectral condition if there exists a constant $c < 1$ (choosing $c \approx 0.02$ suffices; see the monotonicity proof in Chapter~6) such that
 \begin{equation}
 \label{eq:spectral-condition}
 \frac{1}{\Delta} \sqrt{\frac{d_0}{A_2 N}} < c.
@@ -144,6 +145,7 @@ width and the problem-Hamiltonian spectral gap $\Delta$. When this ratio is smal
 approximation near the crossing is accurate. Higher levels stay perturbative,
 and the window occupies only a small part of $[0,1]$. The appendix
 of \cite{braida2024unstructured} shows that $c \approx 0.02$ is sufficient.
+The specific value emerges from tracking error terms through the eigenvalue approximation and the gap bounds. The quadratic truncation of the eigenvalue equation (Eq.~\eqref{eq:delta-pm-formula}) introduces relative errors of order $c^2$. When $c$ is small, these errors stay negligible: the approximate crossing position $s^*$ and minimum gap $g_{\min}$ match their exact values to within $O(c^2)$ corrections. The monotonicity proof in Chapter~6 inherits this precision, and the constant $c$ propagates into the spectral gap lower bounds through a factor $(1 - O(c^2))$.
 When the condition fails, the argument breaks in a specific place. The
 eigenvalue equation is still valid, but the quadratic truncation in $\delta$
 (Eq.~\eqref{eq:delta-pm-formula}) requires $|\delta| \ll s\Delta$. That fails
@@ -184,7 +186,7 @@ and the initial state decomposes as
 \end{equation}
 Since $\ket{\psi_0} \in \mathcal{H}_S$ and both $H_z$ and $\ket{\psi_0}\bra{\psi_0}$ map $\mathcal{H}_S$ to itself, the adiabatic Hamiltonian $H(s)$ leaves $\mathcal{H}_S$ invariant. The time evolution starting from $\ket{\psi_0}$ remains in $\mathcal{H}_S$ for all $s$.
 
-The complement $\mathcal{H}_S^\perp$ has dimension $N - M$ and is spanned by states orthogonal to $\ket{\psi_0}$ within each degenerate subspace. For each level $k$, order the bit-strings in $\Omega_k$ as $z_k^{(1)}, \ldots, z_k^{(d_k)}$ and define the Fourier basis
+The complement $\mathcal{H}_S^\perp$ has dimension $N - M$ and is spanned by states orthogonal to $\ket{\psi_0}$ within each degenerate subspace. Since $\ket{\psi_0}$ is a uniform superposition, its projection onto each degenerate subspace is proportional to $\ket{k}$. Any state in that subspace orthogonal to $\ket{k}$ therefore has zero inner product with $\ket{\psi_0}$, and the rank-one term $\ket{\psi_0}\bra{\psi_0}$ in $H(s)$ cannot couple it to anything. Fourier states provide a canonical orthogonal basis with this property. For each level $k$, order the bit-strings in $\Omega_k$ as $z_k^{(1)}, \ldots, z_k^{(d_k)}$ and define the Fourier basis
 \begin{equation}
 \label{eq:fourier-basis}
 \ket{k^{(\ell)}} = \frac{1}{\sqrt{d_k}} \sum_{\ell'=1}^{d_k} \exp\left[\frac{i 2\pi \ell \ell'}{d_k}\right] \ket{z_k^{(\ell')}}, \qquad 1 \leq \ell \leq d_k - 1.
@@ -498,7 +500,7 @@ Given the complete gap profile, the optimal runtime is
 \label{eq:runtime-preview}
 T = O\left(\frac{1}{\varepsilon} \cdot \frac{\sqrt{A_2}}{A_1(A_1+1) \Delta^2} \cdot \sqrt{\frac{N}{d_0}}\right),
 \end{equation}
-where $\varepsilon$ is the target error. For Ising Hamiltonians, this is $\widetilde{O}(\sqrt{N/d_0})$, matching the lower bound of Farhi, Goldstone, and Gutmann \cite{farhi2008fail}. Adiabatic quantum optimization achieves the Grover speedup. Chapter 7 derives this rigorously.
+where $\varepsilon$ is the target error. For Ising Hamiltonians, this is $\widetilde{O}(\sqrt{N/d_0})$, matching the lower bound of Farhi, Goldstone, and Gutmann \cite{farhi2008fail}. Adiabatic quantum optimization achieves the Grover speedup.
 
 The local adaptive schedule requires $s^*$ to precision
 $O(\delta_s)=O(2^{-n/2})$, so $A_1$ must be known at comparable precision.
