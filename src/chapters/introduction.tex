@@ -110,23 +110,18 @@ promised degeneracy). These extensions organize into a taxonomy of the
 information gap that separates the adiabatic and circuit models for unstructured
 optimization.
 
-The hardness reductions and spectral parameter identities are formalized in
-Lean~4 with Mathlib~\cite{moura2021lean4, mathlib2020}. The formalization
-comprises 330 named theorems, 15 explicit axioms organized by trust level, and
-zero unresolved proof obligations. The axiom budget is inspectable, and each
-axiom is a named interface that can be discharged as Lean's mathematical
-libraries grow.
 
-The argument requires three layers of preparation before reaching the main
-results, and each concept earns its place by answering a question the previous
-one left open. A cost function becomes a diagonal Hamiltonian, optimal
-solutions become ground states, and the classical hierarchy of P, NP, and $\#$P constrains what any
-computational procedure can achieve.
-Hamilton's equations generate the dynamics, the Gibbs distribution governs
-thermal equilibrium, and the Schr\"odinger equation carries the system into a
-quantum regime where the computational model must change. The chapter closes
-with the adiabatic mechanism as a physical heuristic, stopping short of
-quantitative guarantees (Chapter~2).
+\section{Structure}
+\label{sec:structure}
+
+A cost function becomes a diagonal Hamiltonian, optimal solutions become
+ground states, and the classical hierarchy of P, NP, and $\#$P constrains
+what any computational procedure can achieve. Hamilton's equations generate
+the dynamics, the Gibbs distribution governs thermal equilibrium, and the
+Schr\"odinger equation carries the system into a quantum regime where the
+computational model must change. The adiabatic mechanism emerges as a physical
+heuristic for optimization, but without quantitative guarantees
+(Chapter~2).
 
 Quantum computation provides a model with definite operations and countable
 resources. The tight characterization $\Theta(\sqrt{N/d_0})$ for unstructured
@@ -170,5 +165,11 @@ theorems for all instance-independent modifications within the rank-one
 framework, and the connections to counting complexity and partition functions.
 The information gap is simultaneously a spectral gap, an epistemic gap, and a
 model gap. It is a property of the computational model, not of the
-computational task (Chapter~9). The hardness reductions are formalized in
-Lean~4 in the appendix.
+computational task (Chapter~9).
+
+The hardness reductions and spectral parameter identities are formalized in
+Lean~4 with Mathlib~\cite{moura2021lean4, mathlib2020}. The formalization
+comprises 330 named theorems, 15 explicit axioms organized by trust level, and
+zero unresolved proof obligations. The axiom budget is inspectable, and each
+axiom is a named interface that can be discharged as Lean's mathematical
+libraries grow (Appendix).

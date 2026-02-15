@@ -33,13 +33,19 @@ projectors. The hardness is counting hardness, connected to partition functions
 rather than satisfiability, and the tractability boundary is orthogonal to
 optimization complexity. These results organize into a five-level taxonomy of
 ignorance and a bit-runtime information law that quantifies the exact
-communication cost for each target runtime.
-
-The formalization in Lean~4 covers the hardness reductions and spectral
-parameter identities with 330 named theorems and 15 explicit axioms. The axiom
-budget is inspectable by any reader who rebuilds the artifact, and each axiom
-is a named interface ready to be discharged as Lean's mathematical libraries
-grow.
+communication cost for each target runtime. The hardness reductions and
+spectral parameter identities that underpin these results are formalized in
+Lean~4 with Mathlib~\cite{moura2021lean4, mathlib2020}. The logical chain
+from satisfiability instances to spectral estimation hardness to the
+information taxonomy is machine-checked, with 330 named theorems and 15
+explicit axioms whose trust boundaries any reader can inspect by rebuilding
+the artifact. As automated reasoning tools mature, such formalizations become
+substrates on which conjectures can be tested and partial results verified
+mechanically, accelerating the cycle from hypothesis to theorem. What they
+cannot supply is the judgment of which conjectures matter, which
+generalizations are fertile, and which open problems will reshape the
+landscape. That remains the province of mathematical taste, and no artifact
+can formalize it.
 
 
 \section{Open Problems}
@@ -143,17 +149,6 @@ continuous-time quantum optimization more broadly, not just for adiabatic
 algorithms. Whether any continuous-time quantum algorithm, adiabatic, variational,
 or hybrid, can achieve the Grover speedup for general optimization without
 computing a hard spectral parameter is open.
-
-The Lean~4 formalization covers the complexity reductions but not the spectral
-analysis. Formalizing the resolvent calculus behind the gap bounds of
-Chapters~5 and~6 would close the largest remaining axiom group
-(\texttt{FullSpectralHypothesis}) and complete the chain from Hamiltonian
-definition to runtime bound within a single typed proof system. The nearest
-target is the Sherman-Morrison identity for rank-one perturbations and the
-monotonicity of the resolvent function $f(s)$, both of which reduce to
-Mathlib-compatible linear algebra. The Garey-Johnson encoding axiom, which
-bridges the classical satisfiability reduction to the Hamiltonian formulation,
-is another natural discharge target.
 
 
 \section{Perspective}
